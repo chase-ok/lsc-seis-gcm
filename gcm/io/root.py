@@ -6,6 +6,7 @@ import numpy as np
 def read_triggers(path):
     with root_open(path) as f:
         triggers = np.empty(len(f.triggers), dtype=structs.trigger)
+        print list(f.triggers)
         for row, raw in enumerate(f.triggers):
             triggers[row]['time'] = raw.time
             triggers[row]['time_min'] = raw.tstart
