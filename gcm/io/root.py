@@ -10,10 +10,11 @@ def read_triggers(path):
         buffer = tree._buffer
         
         triggers = np.empty(len(tree), dtype=structs.trigger)
+        for i, _ in enumerate(tree):
+            print buffer['time'].value
+        
         for trigger, _ in zip(triggers, tree):
             # need to also iterate the tree, hence the zip
-            print buffer['time']
-            
             trigger['time'] = buffer['time']
             trigger['time_min'] = buffer['tstart']
             trigger['time_max'] = buffer['tend']
