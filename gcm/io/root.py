@@ -6,7 +6,7 @@ import numpy as np
 def read_triggers(path):
     with root_open(path) as f:
         tree = f.triggers
-        tree.create_buffer(ignore_unspported=True)
+        tree.create_buffer(ignore_unsupported=True)
         
         triggers = np.empty(len(tree), dtype=structs.trigger)
         for trigger, raw in zip(triggers, tree):
