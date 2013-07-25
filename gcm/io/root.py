@@ -1,11 +1,11 @@
 
 from rootpy.io import root_open
-from gcm.structs import trigger_dtype
+from gcm import structs
 import numpy as np
 
 def read_triggers(path):
     with root_open(path) as f:
-        triggers = np.empty(len(f.triggers), dtype=trigger_dtype)
+        triggers = np.empty(len(f.triggers), dtype=structs.trigger)
         for i, (trigger, raw) in enumerate(zip(triggers, f.triggers)):
             trigger['time'] = raw.time
             trigger['time_min'] = raw.tstart
