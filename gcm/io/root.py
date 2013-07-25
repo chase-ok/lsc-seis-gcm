@@ -6,15 +6,15 @@ import numpy as np
 def read_triggers(path):
     with root_open(path) as f:
         triggers = np.empty(len(f.triggers), dtype=structs.trigger)
-        for i, (trigger, raw) in enumerate(zip(triggers, f.triggers)):
-            trigger['time'] = raw.time
-            trigger['time_min'] = raw.tstart
-            trigger['time_max'] = raw.tend
-            trigger['freq'] = raw.frequency
-            trigger['freq_min'] = raw.fstart
-            trigger['freq_max'] = raw.fend
-            trigger['amplitude'] = raw.amplitude
-            trigger['snr'] = raw.snr
-            trigger['q'] = raw.q
+        for row, raw in enumerate(f.triggers):
+            triggers[row]['time'] = raw.time
+            triggers[row]['time_min'] = raw.tstart
+            triggers[row]['time_max'] = raw.tend
+            triggers[row]['freq'] = raw.frequency
+            triggers[row]['freq_min'] = raw.fstart
+            triggers[row]['freq_max'] = raw.fend
+            triggers[row]['amplitude'] = raw.amplitude
+            triggers[row]['snr'] = raw.snr
+            triggers[row]['q'] = raw.q
     
     return triggers
