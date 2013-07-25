@@ -6,18 +6,22 @@ import numpy as np
 def read_triggers(path):
     with root_open(path) as f:
         tree = f.triggers
-        tree.create_buffer(ignore_unsupported=True)
+        tree.create_buffer()
+        buffer = tree._buffer
         
         triggers = np.empty(len(tree), dtype=structs.trigger)
-        for trigger, raw in zip(triggers, tree):
-            trigger['time'] = raw.time
-            trigger['time_min'] = raw.tstart
-            trigger['time_max'] = raw.tend
-            trigger['freq'] = raw.frequency
-            trigger['freq_min'] = raw.fstart
-            trigger['freq_max'] = raw.fend
-            trigger['amplitude'] = raw.amplitude
-            trigger['snr'] = raw.snr
-            trigger['q'] = raw.q
+        for trigger, _ in zip(triggers, tree):
+            # need to also iterate the tree, hence the zip
+            print buffer['time']
+            
+            trigger['time'] = buffer['time']
+            trigger['time_min'] = buffer['tstart']
+            trigger['time_max'] = buffer['tend']
+            trigger['freq'] = buffer['frequency']
+            trigger['freq_min'] = buffer['fstart']
+            trigger['freq_max'] = buffer['fend']
+            trigger['amplitude'] = buffer['amplitude']
+            trigger['snr'] = buffer['snr']
+            trigger['q'] = buffer['q']
     
     return triggers
