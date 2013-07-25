@@ -14,7 +14,7 @@ def find_coincidences(triggers1, triggers2, window=5.0, time_attr='time_min'):
     blocks = []
     for row, current in enumerate(triggers1):
         dt = match_times - current[time_attr]
-        in_window = dt.abs() < window
+        in_window = np.abs(dt) < window
         
         block = np.empty(in_window.sum(), dtype=structs.coincidence)
         block['dt'] = dt[in_window]
