@@ -5,8 +5,11 @@ import numpy as np
 
 def read_triggers(path):
     with root_open(path) as f:
-        triggers = np.empty(len(f.triggers), dtype=structs.trigger)
-        for trigger, raw in zip(triggers, f.triggers):
+        tree = f.triggers
+        tree.create_buffer(ignore_unspported=True)
+        
+        triggers = np.empty(len(tree), dtype=structs.trigger)
+        for trigger, raw in zip(triggers, tree):
             trigger['time'] = raw.time
             trigger['time_min'] = raw.tstart
             trigger['time_max'] = raw.tend
