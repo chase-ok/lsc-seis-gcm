@@ -359,14 +359,22 @@ class GenericTable(object):
         def read_row(self, row_index):
             if row_index >= self._length:
                 raise IndexError
+            if row_index < 0:
+                if -row_index > self._length:
+                    raise IndexError
+                row_index += self._length
             return self._row_class(*self.dataset[row_index])
 
         def write_dict(self, row_index, **fields):
-            self.write_row(row_index, aself.make_row(**fields))
+            self.write_row(row_index, self.make_row(**fields))
 
         def write_row(self, row_index, row):
             if row_index >= self._length:
                 raise IndexError
+            if row_index < 0:
+                if -row_index > self._length:
+                    raise IndexError
+                row_index += self._length
             self.dataset[row_index] = row
 
         def append_dict(self, **fields):
@@ -375,6 +383,15 @@ class GenericTable(object):
         def append_row(self, row):
             index = self._get_next_index()
             self.dataset[index] = row
+        
+        def append_array(self, array):
+            index = self._get_next_index()
+            end = index + len(array)
+            while end >= self.dataset.len():
+                self._expand()
+            
+            self.dataset[index:end] = array
+            self._length = end
 
         def iterdict(self):
             for i in range(len(self)):
@@ -426,7 +443,10 @@ class GenericTable(object):
         def _get_next_index(self):
             index = self._length
             if index >= self.dataset.len():
-                size = index*2 if index > 0 else 10
-                self.dataset.resize((size,))
+                self._expand()
             self._length = index + 1
             return index
+        
+        def _expand(self):
+            size = self._length*2 if self._length > 0 else 2**4
+            self.dataset.resize((size,))

@@ -47,18 +47,18 @@ def add_channel(ifo, subsystem, name, autosave=True):
     
 def get_channel(id):
     return get_channels()[id]
-    
+
+
 @utils.memoized
 def get_groups():
     path = make_data_path(GROUPS_FILE)
     if not os.path.exists(path): return []
     
-    all_channels = get_channels()
     groups = []
     with open(path, 'rb') as f:
         reader = csv.DictReader(f)
         for line in reader:
-            channels = [all_channels[id] for id in eval(line['channels'])]
+            channels = [get_channel(id) for id in eval(line['channels'])]
             groups.append(Group(int(line['id']), line['name'], channels))
     return groups
     
