@@ -1,5 +1,4 @@
 
-from numpy import dtype
 from os.path import join
 
 DATA_DIR = "/home/chase.kernan/data/seis-gcm/"
@@ -9,4 +8,4 @@ def make_data_path(name):
 
 
 def make_dtype(**fields):
-    return dtype(fields.items())
+    return fields.items()
