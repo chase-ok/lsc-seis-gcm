@@ -448,5 +448,9 @@ class GenericTable(object):
             return index
         
         def _expand(self):
-            size = self._length*2 if self._length > 0 else 2**4
+            size = self.dataset.len()
+            if size > 0:
+                size *= 2
+            else:
+                size = 2**4
             self.dataset.resize((size,))
