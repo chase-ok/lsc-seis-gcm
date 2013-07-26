@@ -79,8 +79,8 @@ def _calculate_coinc(output_table, base_table, trigger_table, chain_len,
         block = np.empty(in_window.sum(), dtype=coinc_dtype)
         block['dt'] = dt[in_window]
         block['time'] = average(match_times[in_window], base[time_attr])
-        block['snr'] = average(match_snrs[in_window], current['snr'])
-        block['freq'] = average(match_freqs[in_window], current['freq'])
+        block['snr'] = average(match_snrs[in_window], base['snr'])
+        block['freq'] = average(match_freqs[in_window], base['freq'])
         block['id'] = match_rows[in_window]
         block['coinc_id'] = row
         output_table.append_array(block)
