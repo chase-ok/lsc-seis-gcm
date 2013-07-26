@@ -4,7 +4,7 @@ from gcm import utils
 from collections import namedtuple
 import csv
 import numpy as np
-from os.path import join
+import os.path
 
 Channel = namedtuple("Channel", "id ifo subsystem name")
 Group = namedtuple("Group", "id name channels")
@@ -20,7 +20,10 @@ def get_channels():
         return [Channel(**line) for line in reader]
     
 def save_channels():
-    with open(make_data_path(CHANNELS_FILE), 'wb') as f:
+    path = make_data_path(CHANNELS_FILE)
+    if not os.path.exists(path): return []
+    
+    with open(path, 'wb') as f:
         writer = csv.DictWriter(f, Channel._fields)
         writer.writerow(dict((field, field) for field in Channel._fieds))
         for channel in get_channels():
@@ -43,8 +46,11 @@ def get_channel(id):
     
 @utils.memoized
 def get_groups():
+    path = make_data_path(GROUPS_FILE)
+    if not os.path.exists(path): return []
+    
     all_channels = get_channels()
-    with open(make_data_path(GROUPS_FILE), 'rb') as f:
+    with open(path, 'rb') as f:
         reader = csv.DictReader(f)
         groups = []
         for line in reader:
