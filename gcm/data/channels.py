@@ -18,9 +18,13 @@ def get_channels():
     path = make_data_path(CHANNELS_FILE)
     if not os.path.exists(path): return []
     
+    channels = []
     with open(path, 'rb') as f:
         reader = csv.DictReader(f)
-        return [Channel(**line) for line in reader]
+        for line in reader:
+            line['id'] = int(line['id'])
+            channels.append(Channel(**line))
+    return channels
     
 def save_channels():
     with open(make_data_path(CHANNELS_FILE), 'wb') as f:
@@ -55,7 +59,7 @@ def get_groups():
         reader = csv.DictReader(f)
         for line in reader:
             channels = [all_channels[id] for id in eval(line['channels'])]
-            groups.append(Group(line['id'], line['name'], channels))
+            groups.append(Group(int(line['id']), line['name'], channels))
     return groups
     
 def save_groups():
