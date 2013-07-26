@@ -71,6 +71,9 @@ class OmicronDirectoryStructure(object):
     
     def _get_start_time(self, file):
         # ...TIME_DURATION.extension
+        print file
+        print file.split(".")
+        print file.split(".")[0].split("_")
         return int(file.split(".")[0].split("_")[-2])
     
 
