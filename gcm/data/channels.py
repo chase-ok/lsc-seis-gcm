@@ -69,7 +69,7 @@ def get_group_by_name(name, h5=None):
     table = groups_table.attach(h5)
     for row, match in enumerate(table.iterdict()):
         if match['name'] == name:
-            return _read_group(h5, row, name)
+            return _read_group(h5, row, match)
     
     raise ValueError('No such channel group')
     
