@@ -25,7 +25,7 @@ def get_channels():
 def save_channels():
     with open(make_data_path(CHANNELS_FILE), 'wb') as f:
         writer = csv.DictWriter(f, Channel._fields)
-        writer.writerow(dict((field, field) for field in Channel._fieds))
+        writer.writerow(dict((field, field) for field in Channel._fields))
         for channel in get_channels():
             writer.writerow(channel._asdict())
 
@@ -60,7 +60,7 @@ def get_groups():
 def save_groups():
     with open(make_data_path(GROUPS_FILE), 'wb') as f:
         writer = csv.DictWriter(f, Group._fields)
-        writer.writerow(dict((field, field) for field in Group._fieds))
+        writer.writerow(dict((field, field) for field in Group._fields))
         
         for group in get_groups():
             d = group._asdict()
