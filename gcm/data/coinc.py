@@ -36,7 +36,7 @@ def calculate_coinc_pairs(group, channel1, channel2, window=0.5):
             with hdf5.read_h5(tr.make_trigger_h5_path(channel2)) as h5c2:
                 trigger_table2 = tr.trigger_table.attach(h5c2)
                 
-                _calculate_coinc(coinc_table, trigger_table1, trigger_table2,
+                _calculate_coinc(coinc_table, trigger_table1, trigger_table2, 2,
                                  time_attr='time_min', window=window)
 
 def append_coinc_chain(group, prev_channels, next_channel, window=0.5):
@@ -49,7 +49,7 @@ def append_coinc_chain(group, prev_channels, next_channel, window=0.5):
             trigger_table = tr.trigger_table.attach(h5c)
             
             _calculate_coinc(coinc_table, prev_coinc_table, trigger_table,
-                             window=window)
+                             len(prev_channels) + 1, window=window)
 
 def calculate_coinc_group(group):
     # pairs
@@ -58,7 +58,7 @@ def calculate_coinc_group(group):
         calculate_coinc_pairs(group, channel1, channel2)
 
 
-def _calculate_coinc(output_table, base_table, trigger_table, 
+def _calculate_coinc(output_table, base_table, trigger_table, chain_len
                      time_attr='time', window=0.5):
     num_base = len(base_table)
     num_triggers = len(trigger_table)
@@ -68,15 +68,19 @@ def _calculate_coinc(output_table, base_table, trigger_table,
     match_freqs = trigger_table.columns.freq
     match_rows = np.arange(num_triggers)
     
-    for row, current in enumerate(base_table.iterdict()):
-        dt = match_times - current[time_attr]
+    base_scale = (chain_len-1.0)/chain_len
+    match_scale = 1.0/chain_len
+    average = lambda match, base: base*base_scale + match*match_scale
+    
+    for row, base in enumerate(base_table.iterdict()):
+        dt = match_times - base[time_attr]
         in_window = np.abs(dt) < window
         
         block = np.empty(in_window.sum(), dtype=coinc_dtype)
         block['dt'] = dt[in_window]
-        block['mean_time'] = (match_times[in_window] + current[time_attr])/2
-        block['mean_snr'] = (match_snrs[in_window] + current['snr'])/2
-        block['mean_freq'] = (match_freqs[in_window] + current['freq'])/2
-        block['trigger_id'] = match_rows[in_window]
-        block['prev_coinc_id'] = row
+        block['time'] = average(match_times[in_window], base[time_attr])
+        block['snr'] = average(match_snrs[in_window], current['snr'])
+        block['freq'] = average(match_freqs[in_window], current['freq'])
+        block['id'] = match_rows[in_window]
+        block['coinc_id'] = row
         output_table.append_array(block)
