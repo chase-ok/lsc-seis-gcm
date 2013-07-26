@@ -15,14 +15,14 @@ GROUPS_FILE = "groups.csv"
 # memoize so we effectively have a global variable
 @utils.memoized
 def get_channels():
+    path = make_data_path(CHANNELS_FILE)
+    if not os.path.exists(path): return []
+    
     with open(make_data_path(CHANNELS_FILE), 'rb') as f:
         reader = csv.DictReader(f)
         return [Channel(**line) for line in reader]
     
 def save_channels():
-    path = make_data_path(CHANNELS_FILE)
-    if not os.path.exists(path): return []
-    
     with open(path, 'wb') as f:
         writer = csv.DictWriter(f, Channel._fields)
         writer.writerow(dict((field, field) for field in Channel._fieds))
