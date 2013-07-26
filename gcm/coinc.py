@@ -26,3 +26,4 @@ def find_coincidences(triggers1, triggers2, window=5.0, time_attr='time_min'):
         blocks.append(block)
     
     return np.concatenate(blocks)
+
