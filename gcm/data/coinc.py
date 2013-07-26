@@ -17,7 +17,7 @@ coinc_dtype = make_dtype(time=np.float32,
                          prev_coinc_id=np.int32)
 
 def get_coinc_table(channels):
-    name = "coincidences" + "_".join(c.id for c in channels)
+    name = "coincidences" + "_".join(str(c.id) for c in channels)
     return hdf5.GenericTable(name,
                              dtype=coinc_dtype,
                              chunk_size=2**10,
