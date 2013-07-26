@@ -63,7 +63,7 @@ def _calculate_coinc(output_table, base_table, trigger_table, chain_len,
     match_times = trigger_table.columns.time_min
     match_snrs = trigger_table.columns.snr
     match_freqs = trigger_table.columns.freq
-    match_rows = np.arange(num_triggers)
+    match_rows = np.arange(len(trigger_table))
     
     base_scale = (chain_len-1.0)/chain_len
     match_scale = 1.0/chain_len
