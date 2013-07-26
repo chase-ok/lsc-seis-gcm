@@ -83,4 +83,6 @@ def _calculate_coinc(output_table, base_table, trigger_table, chain_len,
         block['freq'] = average(match_freqs[in_window], base['freq'])
         block['trigger_id'] = match_rows[in_window]
         block['prev_coinc_id'] = row
-        output_table.append_array(block)
+        
+        if len(output_table) > 0:
+            output_table.append_array(block)
