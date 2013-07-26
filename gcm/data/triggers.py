@@ -60,6 +60,8 @@ class OmicronDirectoryStructure(object):
                 print "Syncing {0}".format(file)
                 
                 triggers = self._parser_func(file)
+                if len(triggers) == 0: continue
+                
                 append_triggers(channel, triggers, h5=h5)
                 latest = triggers[-1]["time_min"]
     
