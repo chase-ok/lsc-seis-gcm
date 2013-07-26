@@ -31,7 +31,7 @@ trigger_table = hdf5.GenericTable("triggers",
 def append_triggers(channel, triggers, h5=None):
     assert triggers.dtype == trigger_dtype
     
-    if not triggers:
+    if len(triggers) == 0:
         print "WARNING: Empty triggers!"
         return
 
