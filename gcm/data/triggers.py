@@ -70,11 +70,8 @@ class OmicronDirectoryStructure(object):
                 latest = triggers[-1]["time_min"]
     
     def _get_start_time(self, file):
-        # ...TIME_DURATION.extension
-        print file
-        print file.split(".")
-        print file.split(".")[0].split("_")
-        return int(file.split(".")[0].split("_")[-2])
+        # ..._TIME_DURATION.extension
+        return int(file.split(".")[-2].split("_")[-2])
     
 
 def _get_scott_trigger_files(group, channel):
