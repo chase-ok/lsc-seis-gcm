@@ -10,7 +10,8 @@ def make_coinc_h5_path(group):
     return make_data_path(join(COINC_DIR, "{0.name}.h5".format(group)))
 
 
-coinc_dtype = make_dtype(time=np.float32,
+coinc_dtype = make_dtype(dt=np.float32,
+                         time=np.float32,
                          freq=np.float32,
                          snr=np.float32,
                          trigger_id=np.int32,
