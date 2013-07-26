@@ -1,5 +1,6 @@
 
 from gcm.utils import memoized, float_find_index
+from gcm.data import make_data_path
 import h5py
 import numpy as np
 from lockfile import LockBase, LockTimeout
@@ -11,11 +12,13 @@ import time
 import os
 import inspect
 
-DATA_DIR = "/home/chase.kernan/data/seis-gcm/"
 LOCK_DIR = "/tmp/chase.kernan/"
 LOCK_WRITE_TIMEOUT = 10.0
 LOCK_READ_TIMEOUT = 5.0
 LOCK_POLL = 0.01
+
+def _make_lock_path(name):
+    return join(LOCK_DIR, name)
 
 # TODO: working, but could use some clean-up
 class ReadersWriterLock(object):
@@ -144,12 +147,6 @@ class ReadersWriterLock(object):
             time.sleep(LOCK_POLL)
 
 
-def _make_data_path(name):
-    return join(DATA_DIR, name)
-
-def _make_lock_path(name):
-    return join(LOCK_DIR, name)
-
 class _H5Store(object):
     
     _FileRecord = namedtuple('H5FileRecord', 'h5 accessors lock')
@@ -181,7 +178,7 @@ class _H5Store(object):
             elif mode == 'r':
                 lock.acquire_read()
             
-            h5 = h5py.File(_make_data_path(name), mode=self._mode_map[mode])
+            h5 = h5py.File(make_data_path(name), mode=self._mode_map[mode])
             record = self._FileRecord(accessors=0, lock=lock, h5=h5)
         
         records[name] = record._replace(accessors=record.accessors+1)
