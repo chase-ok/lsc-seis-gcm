@@ -58,7 +58,7 @@ def calculate_coinc_group(group):
         calculate_coinc_pairs(group, channel1, channel2)
 
 
-def _calculate_coinc(output_table, base_table, trigger_table, chain_len
+def _calculate_coinc(output_table, base_table, trigger_table, chain_len,
                      time_attr='time', window=0.5):
     num_base = len(base_table)
     num_triggers = len(trigger_table)
