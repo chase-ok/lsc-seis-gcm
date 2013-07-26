@@ -12,7 +12,7 @@ import os
 import inspect
 
 DATA_DIR = "/home/chase.kernan/data/seis-gcm/"
-LOCK_DIR = "/home/cgi_output/chase.kernan/"
+LOCK_DIR = "/tmp/chase.kernan/"
 LOCK_WRITE_TIMEOUT = 10.0
 LOCK_READ_TIMEOUT = 5.0
 LOCK_POLL = 0.01
