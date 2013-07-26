@@ -60,9 +60,6 @@ def calculate_coinc_group(group):
 
 def _calculate_coinc(output_table, base_table, trigger_table, chain_len,
                      time_attr='time', window=0.5):
-    num_base = len(base_table)
-    num_triggers = len(trigger_table)
-    
     match_times = trigger_table.columns.time_min
     match_snrs = trigger_table.columns.snr
     match_freqs = trigger_table.columns.freq
@@ -73,7 +70,7 @@ def _calculate_coinc(output_table, base_table, trigger_table, chain_len,
     average = lambda match, base: base*base_scale + match*match_scale
     
     for row, base in enumerate(base_table.iterdict()):
-        if row % 100 == 0: print row
+        if row % 100 == 0: print row, len(base_table)
         dt = match_times - base[time_attr]
         in_window = np.abs(dt) < window
         
