@@ -19,6 +19,12 @@ def sync_scott():
     print group
     triggers.scott_triggers.sync(group)
 
+def calculate_etmy_coinc():
+    from gcm.data import channels as chn, coinc
+    
+    group = chn.get_group(0)
+    coinc.calculate_coinc_group(group)
+    
 def test_coinc():
     print "Hello!"
     triggers1 = root.read_triggers("/home/scott.dossa/omicron/triggers/H1/1058400000_1058500000/H1:ISI-ETMY_ST1_BLND_Y_L4C_CUR_IN1_DQ/H1:ISI-ETMY_ST1_BLND_Y_L4C_CUR_IN1_DQ_1058400080_704.root")

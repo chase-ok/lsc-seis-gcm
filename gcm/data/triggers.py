@@ -25,7 +25,7 @@ trigger_dtype = make_dtype(time=np.float32,
 trigger_table = hdf5.GenericTable("triggers",
                                   dtype=trigger_dtype,
                                   chunk_size=2**10,
-                                  initial_size=2*14)
+                                  initial_size=2**14)
 
 
 def append_triggers(channel, triggers, h5=None):
