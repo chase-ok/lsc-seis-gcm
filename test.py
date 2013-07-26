@@ -6,8 +6,8 @@ def add_some_channels():
     from gcm.data import channels
     c1 = channels.add_channel("H1", "ISI-ETMY", "ST1_BLND_Y_L4C_CUR_IN1_DQ")
     c2 = channels.add_channel("H1", "ISI-ETMY", "BLND_Y_T240_CUR_IN1_DQ")
-    g = channels.add_group("testing", [c1, c2]
-    print c1, c2, g
+    g = channels.add_group("testing", [c1, c2])
+    return c1,c2, g
 
 def test_coinc():
     print "Hello!"
