@@ -2,7 +2,7 @@
 from gcm.data.triggers import trigger_dtype
 import numpy as np
 
-_ATTR_MAP = dict(time='time',
+_ATTR_MAP = dict(time='peak_time',
                  time_min='tstart', time_max='tend',
                  freq='frequency',
                  freq_min='fstart', freq_max='fend',
@@ -21,7 +21,14 @@ def read_triggers(path):
     
     triggers = np.empty(len(table), trigger_dtype)
     for i, row in enumerate(table):
-        for attr, mapped in _ATTR_MAP.iteritems():
-            triggers[i][attr] = getattr(row, mapped)
+        triggers[i]['time'] = row.peak_time + row.peak_time_ns*1e-9
+        triggers[i]['time_min'] = row.start_time + row.start_time_ns*1e-9
+        triggers[i]['time_max'] = row.stop_time + row.stop_time_ns*1e-9
+        triggers[i]['freq'] = row.central_freq
+        triggers[i]['freq_min'] = row.flow
+        triggers[i]['freq_max'] = row.fhigh
+        triggers[i]['amplitude'] = row.amplitude
+        triggers[i]['snr'] = row.snr
+        triggers[i]['q'] = 0.0 # not available in xml
     
     return triggers
