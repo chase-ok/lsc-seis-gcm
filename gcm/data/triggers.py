@@ -71,7 +71,7 @@ class OmicronDirectoryStructure(object):
     
 
 def _get_scott_trigger_files(group, channel):
-    base = "/home/scott.dossa/omicron/triggers"
+    base = "/home/scott.dossa/omicron/xml_triggers"
     
     ifo, chamber = group.name.split("-")
     all_channels = join(base, ifo, chamber)
@@ -81,8 +81,8 @@ def _get_scott_trigger_files(group, channel):
     return [join(channel_dir, name) for name in utils.get_files(channel_dir)]
 
 def _parse_scott_triggers(file):
-    from gcm.io import root
-    return root.read_triggers(file)
+    from gcm.io import ligolw_xml
+    return ligolw_xml.read_triggers(file)
     
 scott_triggers = OmicronDirectoryStructure(_get_scott_trigger_files,
                                            _parse_scott_triggers)
