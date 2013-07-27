@@ -4,11 +4,14 @@ define ['utils', 'jquery', 'datatables', 'd3'], (utils, $, _, d3) ->
         constructor: (container) ->
             @container = $ container
             
-            @columnIndex = ["ifo", "subsystem", "name", "triggers"]
+            @columnIndex = ["id", "ifo", "subsystem", "name", "triggers"]
             
             viewLink = (channel, source) =>
                 "<a href=\"#{@triggersUrl channel, source}\">View</a>"
             @columns =
+                id:
+                    sTitle: "ID"
+                    sWidth: "10%"
                 ifo:
                     sTitle: "IFO"
                     sWidth: "10%"
@@ -27,12 +30,11 @@ define ['utils', 'jquery', 'datatables', 'd3'], (utils, $, _, d3) ->
                 def.aTargets = [@columnIndex.indexOf name]
                 
             @dataMap =
+                id: (channel) -> channel.id
                 ifo: (channel) -> channel.ifo
                 subsystem: (channel) -> channel.subsystem
                 name: (channel) -> channel.name
-                triggers: (channel) ->
-                    "#{webRoot}/triggers/#{channel.ifo}/" +
-                    "#{channel.subsystem}/#{channel.name}"
+                triggers: (channel) -> "triggers/channel/#{channel.id}"
         
         prepare: ->
             @table = $ "<table/>", 
@@ -58,7 +60,7 @@ define ['utils', 'jquery', 'datatables', 'd3'], (utils, $, _, d3) ->
             row = (@dataMap[name] channel for name in @columnIndex)
             @table.fnAddData row
             
-        loadFromUrl: (url="#{webRoot}/channels/all") ->
+        loadFromUrl: (url="channels/all") ->
             d3.json url, (error, json) =>
                 if error? or not json.success
                     console.log error
