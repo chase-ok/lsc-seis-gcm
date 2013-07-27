@@ -3,7 +3,7 @@ import bottle
 import numpy as np
 from functools import wraps
 
-WEB_ROOT = '/~chase.kernan/cgi-bin/cmon-dev/cmon.py'
+WEB_ROOT = '/~chase.kernan/cgi-bin/lsc-seis-gcm/web_main.py'
 
 class QueryError(Exception):
     def __init__(self, reason):
