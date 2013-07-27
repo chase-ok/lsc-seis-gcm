@@ -76,6 +76,7 @@ def _calculate_coinc(output_table, base_table, trigger_table, chain_len, window,
     trigger_times = trigger_table.columns.time_min
     
     trigger_start = 0
+    trigger_end = 0
     for row, base in enumerate(base_table.iterdict()):
         if row % 10000 == 0: print row, len(base_table)
         
@@ -86,7 +87,7 @@ def _calculate_coinc(output_table, base_table, trigger_table, chain_len, window,
             if trigger_times[trigger_start] >= start_time:
                 break
         
-        for trigger_end in xrange(trigger_start, len(trigger_table)):
+        for trigger_end in xrange(trigger_end, len(trigger_table)):
             if trigger_times[trigger_end] > end_time:
                 break    
         
