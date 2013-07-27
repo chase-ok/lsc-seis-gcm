@@ -2,6 +2,7 @@
 from gcm.data import make_data_path, make_dtype, hdf5, triggers as tr
 from gcm import utils
 import numpy as np
+from itertools import combinations
 from os.path import join
 
 COINC_DIR = "coincidences/"
@@ -52,10 +53,17 @@ def append_coinc_chain(group, prev_channels, next_channel, window=0.5):
                              len(prev_channels) + 1, window=window)
 
 def calculate_coinc_group(group):
-    # pairs
+    assert len(group.channels) >= 2
+    
+    # pairs for base
     for channel1, channel2 in zip(group.channels, group.channels[1:]):
         print channel1, channel2
         calculate_coinc_pairs(group, channel1, channel2)
+    
+    for chain_len in range(3, len(group.channels)):
+        for channels in combinations(group.channels):
+            print channels
+            append_coinc_chain(group, list(channels[:-1]), channels[-1])
 
 
 def _calculate_coinc(output_table, base_table, trigger_table, chain_len,
@@ -68,7 +76,7 @@ def _calculate_coinc(output_table, base_table, trigger_table, chain_len,
     
     trigger_start = 0
     for row, base in enumerate(base_table.iterdict()):
-        if row % 100 == 0: print row, len(base_table)
+        if row % 10000 == 0: print row, len(base_table)
         
         start_time = base[time_attr] - window
         end_time = base[time_attr] + window
