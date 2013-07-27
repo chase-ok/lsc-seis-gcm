@@ -9,7 +9,7 @@ hdf5.use_locking = False
 STATIC_ROOT = '/home/chase.kernan/public_html/cgi-bin/lsc-seis-gcm/static/deploy'
 bottle.TEMPLATE_PATH.append(STATIC_ROOT + "/html/")
 
-#from gcm.web import channels
+from gcm.web import channels
 
 @route('/')
 def index():
