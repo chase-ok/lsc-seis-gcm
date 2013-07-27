@@ -25,7 +25,7 @@ def get_coinc_table(channels):
                              chunk_size=2**10,
                              initial_size=2**14)
 
-DEFAULT_WINDOW = 0.1
+DEFAULT_WINDOW = 0.25
 
 def calculate_coinc_pairs(group, channel1, channel2, window):
     with hdf5.write_h5(make_coinc_h5_path(group)) as h5:
@@ -59,7 +59,7 @@ def calculate_coinc_group(group, window=DEFAULT_WINDOW):
     # pairs for base
     for channel1, channel2 in zip(group.channels, group.channels[1:]):
         print channel1, channel2
-        #calculate_coinc_pairs(group, channel1, channel2, window)
+        calculate_coinc_pairs(group, channel1, channel2, window)
     
     for chain_len in range(3, len(group.channels)):
         for channels in combinations(group.channels, chain_len):
