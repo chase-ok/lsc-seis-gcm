@@ -17,6 +17,8 @@ LOCK_WRITE_TIMEOUT = 10.0
 LOCK_READ_TIMEOUT = 5.0
 LOCK_POLL = 0.01
 
+use_locking = True
+
 def _make_lock_path(name):
     return join(LOCK_DIR, name)
 
@@ -172,11 +174,14 @@ class _H5Store(object):
         try:
             record = records[name]
         except KeyError:
-            lock = ReadersWriterLock(_make_lock_path(name))
-            if mode == 'w': 
-                lock.acquire_write()
-            elif mode == 'r':
-                lock.acquire_read()
+            if use_locking:
+                lock = ReadersWriterLock(_make_lock_path(name))
+                if mode == 'w': 
+                    lock.acquire_write()
+                elif mode == 'r':
+                    lock.acquire_read()
+            else:
+                lock = None
             
             h5 = h5py.File(make_data_path(name), mode=self._mode_map[mode])
             record = self._FileRecord(accessors=0, lock=lock, h5=h5)
@@ -193,10 +198,10 @@ class _H5Store(object):
             if mode == 'w':
                 record.h5.flush()
                 record.h5.close()
-                record.lock.release_write()
+                if record.lock: record.lock.release_write()
             elif mode == 'r':
                 record.h5.close()
-                record.lock.release_read()
+                if record.lock: record.lock.release_read()
             
             del records[name]
         else:
@@ -205,7 +210,7 @@ class _H5Store(object):
     def clear_locks(self):
         for records in [self._readers, self._writers]:
             for record in records.itervalues():
-                record.lock.break_lock()
+                if record.lock: record.lock.break_lock()
         self._readers.clear()
         self._writers.clear()
 

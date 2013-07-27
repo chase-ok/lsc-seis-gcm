@@ -57,7 +57,7 @@ def calculate_coinc_group(group, window=DEFAULT_WINDOW):
     assert len(group.channels) >= 2
     
     # pairs for base
-    for channel1, channel2 in zip(group.channels, group.channels[1:]):
+    for channel1, channel2 in combinations(group.channels, 2):
         print channel1, channel2
         calculate_coinc_pairs(group, channel1, channel2, window)
     
