@@ -13,6 +13,10 @@ bottle.TEMPLATE_PATH.append(STATIC_ROOT + "/html/")
 #from web import channels
 #from web import triggers
 
+@route('/')
+def get_time():
+    return "hello world!"
+
 @route('/static/<filepath:path>')
 def server_static(filepath): 
     return static_file(filepath, root=STATIC_ROOT)
