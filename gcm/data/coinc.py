@@ -61,7 +61,7 @@ def calculate_coinc_group(group):
         #calculate_coinc_pairs(group, channel1, channel2)
     
     for chain_len in range(3, len(group.channels)):
-        for channels in combinations(group.channels):
+        for channels in combinations(group.channels, chain_len):
             print channels
             append_coinc_chain(group, list(channels[:-1]), channels[-1])
 
