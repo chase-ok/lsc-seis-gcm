@@ -73,8 +73,8 @@ class OmicronDirectoryStructure(object):
 def _get_scott_trigger_files(group, channel):
     base = "/home/scott.dossa/omicron/xml_triggers"
     
-    ifo, chamber = group.name.split("-")
-    all_channels = join(base, ifo, chamber)
+    #ifo, chamber = group.name.split("-")
+    all_channels = base #join(base, ifo, chamber)
     channel_dir = join(all_channels, 
                        "{0.ifo}:{0.subsystem}_{0.name}".format(channel))
     
