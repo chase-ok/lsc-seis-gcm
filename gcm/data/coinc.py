@@ -25,8 +25,9 @@ def get_coinc_table(channels):
                              chunk_size=2**10,
                              initial_size=2**14)
 
+DEFAULT_WINDOW = 0.1
 
-def calculate_coinc_pairs(group, channel1, channel2, window=0.5):
+def calculate_coinc_pairs(group, channel1, channel2, window):
     with hdf5.write_h5(make_coinc_h5_path(group)) as h5:
         coinc_table = get_coinc_table([channel1, channel2])
         coinc_table = coinc_table.attach(h5, reset=True)
@@ -38,9 +39,9 @@ def calculate_coinc_pairs(group, channel1, channel2, window=0.5):
                 trigger_table2 = tr.trigger_table.attach(h5c2)
                 
                 _calculate_coinc(coinc_table, trigger_table1, trigger_table2, 2,
-                                 time_attr='time_min', window=window)
+                                 window, time_attr='time_min')
 
-def append_coinc_chain(group, prev_channels, next_channel, window=0.5):
+def append_coinc_chain(group, prev_channels, next_channel, window):
     with hdf5.write_h5(make_coinc_h5_path(group)) as h5:
         coinc_table = get_coinc_table(prev_channels + [next_channel])
         coinc_table = coinc_table.attach(h5, reset=True)
@@ -50,24 +51,24 @@ def append_coinc_chain(group, prev_channels, next_channel, window=0.5):
             trigger_table = tr.trigger_table.attach(h5c)
             
             _calculate_coinc(coinc_table, prev_coinc_table, trigger_table,
-                             len(prev_channels) + 1, window=window)
+                             window, len(prev_channels) + 1)
 
-def calculate_coinc_group(group):
+def calculate_coinc_group(group, window=DEFAULT_WINDOW):
     assert len(group.channels) >= 2
     
     # pairs for base
     for channel1, channel2 in zip(group.channels, group.channels[1:]):
         print channel1, channel2
-        #calculate_coinc_pairs(group, channel1, channel2)
+        #calculate_coinc_pairs(group, channel1, channel2, window)
     
     for chain_len in range(3, len(group.channels)):
         for channels in combinations(group.channels, chain_len):
             print channels
-            append_coinc_chain(group, list(channels[:-1]), channels[-1])
+            append_coinc_chain(group, list(channels[:-1]), channels[-1], window)
 
 
-def _calculate_coinc(output_table, base_table, trigger_table, chain_len,
-                     time_attr='time', window=0.5):
+def _calculate_coinc(output_table, base_table, trigger_table, chain_len, window,
+                     time_attr='time'):
     base_scale = (chain_len-1.0)/chain_len
     match_scale = 1.0/chain_len
     average = lambda match, base: base*base_scale + match*match_scale

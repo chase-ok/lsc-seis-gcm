@@ -1,6 +1,5 @@
 
 from gcm.data import make_data_path, make_dtype, hdf5
-from gcm.io import root
 from gcm import utils
 import numpy as np
 from os.path import join
@@ -28,13 +27,14 @@ trigger_table = hdf5.GenericTable("triggers",
                                   initial_size=2**14)
 
 
-def append_triggers(channel, triggers, h5=None):
+def append_triggers(channel, triggers, snr_threshold=10, h5=None):
     assert triggers.dtype == trigger_dtype
-    if len(triggers) == 0: return
     
     with hdf5.write_h5(make_trigger_h5_path(channel), existing=h5) as h5:
         table = trigger_table.attach(h5)
-        table.append_array(triggers)
+        filtered = triggers[triggers['snr'] >= snr_threshold]
+        if len(filtered) > 0:
+            table.append_array(filtered)
 
 
 class OmicronDirectoryStructure(object):
@@ -80,6 +80,10 @@ def _get_scott_trigger_files(group, channel):
     
     return [join(channel_dir, name) for name in utils.get_files(channel_dir)]
 
+def _parse_scott_triggers(file):
+    from gcm.io import root
+    return root.read_triggers(file)
+    
 scott_triggers = OmicronDirectoryStructure(_get_scott_trigger_files,
-                                           root.read_triggers)
+                                           _parse_scott_triggers)
 
