@@ -12,7 +12,6 @@ def index():
 @bottle.get('/channels/all')
 @succeed_or_fail
 def get_all_channels():
-    channels = [convert_numpy_dict(c.todict()) 
-                for c in chn.get_channels()]
+    channels = [c._asdict() for c in chn.get_channels()]
     add_limit(channels)
     return {'channels': channels}
