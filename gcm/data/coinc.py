@@ -64,19 +64,21 @@ def _calculate_coinc(output_table, base_table, trigger_table, chain_len,
     match_scale = 1.0/chain_len
     average = lambda match, base: base*base_scale + match*match_scale
     
+    trigger_times = trigger_table.columns.time_min
+    
     trigger_start = 0
     for row, base in enumerate(base_table.iterdict()):
-        if row % 1000 == 0: print row, len(base_table)
+        if row % 100 == 0: print row, len(base_table)
         
         start_time = base[time_attr] - window
         end_time = base[time_attr] + window
         
-        for trigger_start in range(trigger_start, len(trigger_table)):
-            if trigger_table[trigger_start].time_min >= start_time:
+        for trigger_start in xrange(trigger_start, len(trigger_table)):
+            if trigger_times[trigger_start] >= start_time:
                 break
         
-        for trigger_end in range(trigger_start, len(trigger_table)):
-            if trigger_table[trigger_end].time_min > end_time:
+        for trigger_end in xrange(trigger_start, len(trigger_table)):
+            if trigger_times[trigger_end] > end_time:
                 break    
         
         if trigger_start == trigger_end: continue
