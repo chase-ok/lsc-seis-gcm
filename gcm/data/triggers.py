@@ -27,7 +27,7 @@ trigger_table = hdf5.GenericTable("triggers",
                                   initial_size=2**14)
 
 
-def append_triggers(channel, triggers, snr_threshold=10, h5=None):
+def append_triggers(channel, triggers, snr_threshold=20, h5=None):
     assert triggers.dtype == trigger_dtype
     
     with hdf5.write_h5(make_trigger_h5_path(channel), existing=h5) as h5:
