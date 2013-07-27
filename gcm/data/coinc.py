@@ -60,27 +60,33 @@ def calculate_coinc_group(group):
 
 def _calculate_coinc(output_table, base_table, trigger_table, chain_len,
                      time_attr='time', window=0.5):
-    match_times = trigger_table.columns.time_min
-    match_snrs = trigger_table.columns.snr
-    match_freqs = trigger_table.columns.freq
-    match_rows = np.arange(len(trigger_table))
-    
     base_scale = (chain_len-1.0)/chain_len
     match_scale = 1.0/chain_len
     average = lambda match, base: base*base_scale + match*match_scale
     
+    trigger_start = 0
     for row, base in enumerate(base_table.iterdict()):
-        if row % 100 == 0: print row, len(base_table)
-        dt = match_times - base[time_attr]
-        in_window = np.abs(dt) < window
+        if row % 1000 == 0: print row, len(base_table)
         
-        block = np.empty(in_window.sum(), dtype=coinc_dtype)
-        block['dt'] = dt[in_window]
-        block['time'] = average(match_times[in_window], base[time_attr])
-        block['snr'] = average(match_snrs[in_window], base['snr'])
-        block['freq'] = average(match_freqs[in_window], base['freq'])
-        block['trigger_id'] = match_rows[in_window]
+        start_time = base[time_attr] - window
+        end_time = base[time_attr] + window
+        
+        for trigger_start in range(trigger_start, len(trigger_table)):
+            if trigger_table[trigger_start].time_min >= start_time:
+                break
+        
+        for trigger_end in range(trigger_start, len(trigger_table)):
+            if trigger_table[trigger_end].time_min > end_time:
+                break    
+        
+        if trigger_start == trigger_end: continue
+        
+        matches = trigger_table.dataset[trigger_start:trigger_end+1]
+        block = np.empty(matches.size, dtype=coinc_dtype)
+        block['dt'] = matches['time_min'] - base[time_attr]
+        block['time'] = average(matches['time_min'], base[time_attr])
+        block['snr'] = average(matches['snr'], base['snr'])
+        block['freq'] = average(matches['freq'], base['freq'])
+        block['trigger_id'] = np.arange(trigger_start, trigger_end + 1)
         block['prev_coinc_id'] = row
-        
-        if len(output_table) > 0:
-            output_table.append_array(block)
+        output_table.append_array(block)
