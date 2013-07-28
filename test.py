@@ -13,11 +13,12 @@ def add_etmy_channels():
     etmy = chn.add_group("H1-ETMY", channels)
 
 def sync_scott():
-    from gcm.data import triggers, channels as chn
+    from gcm.data import channels as chn
+    from gcm.io import triggers as tr
     
     group = chn.get_group(0)
     print group
-    triggers.scott_triggers.sync(group)
+    tr.default_source.sync(group)
 
 def calculate_etmy_coinc():
     from gcm.data import channels as chn, coinc

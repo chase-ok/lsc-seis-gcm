@@ -288,6 +288,23 @@ class use_h5(object):
         return wrapper
 
 
+class open_table(object):
+    
+    def __init__(self, h5_file, table, mode='r'):
+        self.h5_file = h5_file
+        self.table = table
+        self.mode = mode
+        assert mode in ['r', 'w']
+    
+    def __enter__(self):
+        self.h5_context = (read_h5 if mode == 'r' else write_h5)(self.h5_file)
+        h5 = h5_context.__enter__()
+        return self.table.attach(h5)
+
+    def __exit__(self, type, value, traceback):
+        self.h5_context.__exit__(type, value, traceback)
+
+
 class GenericTable(object):
 
     def __init__(self, path, 

@@ -26,64 +26,29 @@ trigger_table = hdf5.GenericTable("triggers",
                                   chunk_size=2**10,
                                   initial_size=2**14)
 
+def open_triggers(channel, mode='r'):
+    return hdf5.open_table(make_trigger_h5_path(channel), trigger_table,
+                           mode=mode)
 
-def append_triggers(channel, triggers, snr_threshold=20, h5=None):
+
+def append_triggers(channel, triggers, snr_threshold=5):
     assert triggers.dtype == trigger_dtype
     
-    with hdf5.write_h5(make_trigger_h5_path(channel), existing=h5) as h5:
-        table = trigger_table.attach(h5)
-        filtered = triggers[triggers['snr'] >= snr_threshold]
-        if len(filtered) > 0:
-            table.append_array(filtered)
+    with open_triggers(channel, mode='w') as table:
+        if snr_threshold > 0:
+            triggers = triggers[triggers['snr'] >= snr_threshold]
+        if len(triggers) > 0:
+            table.append_array(triggers)
 
 
-class OmicronDirectoryStructure(object):
-    
-    def __init__(self, get_trigger_files, parse_file):
-        self._file_func = get_trigger_files
-        self._parser_func = parse_file
-    
-    def sync(self, group):
-        for channel in group.channels:
-            self._sync_channel(group, channel)
-    
-    def _sync_channel(self, group, channel):
-        with hdf5.write_h5(make_trigger_h5_path(channel)) as h5:
-            table = trigger_table.attach(h5)
-            latest = table[-1].time_min if len(table) > 0 else 0
-            
-            files = self._file_func(group, channel)
-            for file in files:
-                start_time = self._get_start_time(file)
-                if start_time < latest: continue
-                
-                print "Syncing {0}".format(file)
-                
-                triggers = self._parser_func(file)
-                if len(triggers) == 0: continue
-                
-                append_triggers(channel, triggers, h5=h5)
-                latest = triggers[-1]["time_min"]
-    
-    def _get_start_time(self, file):
-        # ..._TIME_DURATION.extension
-        return int(file.split(".")[-2].split("_")[-2])
+def time_to_trigger_index(table, time, low=0, high=None):
+    if low < 0: raise ValueError('low must be non-negative')
+    if high is None: high = len(table)
+    while low < high:
+        mid = (low + high)//2
+        if table[mid].time_min < time: low = mid + 1
+        else: high = mid
+    return low
     
 
-def _get_scott_trigger_files(group, channel):
-    base = "/home/scott.dossa/omicron/xml_triggers"
-    
-    #ifo, chamber = group.name.split("-")
-    all_channels = base #join(base, ifo, chamber)
-    channel_dir = join(all_channels, 
-                       "{0.ifo}:{0.subsystem}_{0.name}".format(channel))
-    
-    return [join(channel_dir, name) for name in utils.get_files(channel_dir)]
-
-def _parse_scott_triggers(file):
-    from gcm.io import ligolw_xml
-    return ligolw_xml.read_triggers(file)
-    
-scott_triggers = OmicronDirectoryStructure(_get_scott_trigger_files,
-                                           _parse_scott_triggers)
 
