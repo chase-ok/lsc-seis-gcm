@@ -41,18 +41,15 @@ def get_triggers_in_range(channel_id, start_time, end_time):
 
     return {'triggers': triggers}
     
-# @bottle.get('/triggers/<ifo>/<subsystem>/<name>/densities')
-# @succeed_or_fail
-# def get_densities(ifo, subsystem, name):
-#     source = _get_source()
-#     channel = chn.get_channel(ifo, subsystem, name)
+@bottle.get('/triggers/channel/<channel_id:int>/densities')
+@succeed_or_fail
+def get_densities(channel_id):
+    channel = chn.get_channel(channel_id)
     
-#     freq_bins = tr.DENSITY_FREQ_BINS
-#     with data.read_h5(tr.get_h5_file(channel)) as h5:
-#         table = tr.get_density_table(source).attach(h5)
-#         times = table.dataset[:len(table), "time"]
-#         densities = table.dataset[:len(table), "density"]
+    with tr.open_densities(channel, mode='r') as table:
+        times = table.dataset[:len(table), "time"]
+        densities = table.dataset[:len(table), "density"]
 
-#     return {'frequencies': freq_bins.tolist(),
-#             'times': times.tolist(),
-#             'densities': densities.tolist()}
+    return {'frequencies': tr.density_freq_bins.tolist(),
+            'times': times.tolist(),
+            'densities': densities.tolist()}
