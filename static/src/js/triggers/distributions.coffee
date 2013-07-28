@@ -13,7 +13,7 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
         clustered: (clustered) ->
             if clustered?
                 @_clustered = clustered
-                @load()
+                @declareDirty()
                 this
             else
                 @_clustered
@@ -30,7 +30,6 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                     else
                         throw new Error("Invalid field: #{field}")
                 @declareDirty()
-                @load()
                 this
             else
                 @_field

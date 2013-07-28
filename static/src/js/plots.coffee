@@ -305,6 +305,7 @@ define ['utils', 'd3'], (utils, d3) ->
             
             histogram = d3.layout.histogram()
             histogram.bins x.ticks @numBins()
+            histogram.frequency not @useProbability()
             data = histogram values
             
             console.log data
