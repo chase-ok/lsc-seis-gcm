@@ -24,7 +24,7 @@ def get_channel(channel_id):
             'num_triggers': num}
 
 @bottle.get('/triggers/channel/<channel_id:int>/<start_time:int>-<end_time:int>')
-#@succeed_or_fail
+@succeed_or_fail
 def get_triggers_in_range(channel_id, start_time, end_time):
     if start_time >= end_time: 
         raise ValueError('Start time must come before end time!')

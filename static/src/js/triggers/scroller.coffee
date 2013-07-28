@@ -39,7 +39,7 @@ define ['utils', 'plots', 'd3'], (utils, plots, d3) ->
             @store.indicateWindow scrollWindow...
             
             timeOffset = (trigger, time) -> 
-                trigger.start_time + trigger.start_time_ns*1e-9 - time
+                trigger.time_min - time
             
             maps = @maps()
             widthScale = @canvasSize.x/windowSize
@@ -52,16 +52,13 @@ define ['utils', 'plots', 'd3'], (utils, plots, d3) ->
                 class: "value"
                 x: (trigger) -> 
                     Math.round maps.x timeOffset trigger, lastTime
-                y: (trigger) ->
-                    freqMax = trigger.central_freq - trigger.bandwidth/2
-                    Math.round maps.y freqMax
+                y: (trigger) ->  
+                    Math.round maps.y trigger.freq_max
                 width: (trigger) -> 
-                    Math.ceil widthScale*trigger.duration
+                    Math.ceil widthScale*(trigger.time_max - trigger.time_min)
                 height: (trigger) ->
-                    halfBand = trigger.bandwidth/2
                     # need to use mapY in case of logarithmic freq scale
-                    diff = maps.y(trigger.central_freq - halfBand) - 
-                           maps.y(trigger.central_freq + halfBand)
+                    diff = maps.y(trigger.freq_min) - maps.y(trigger.freq_max)
                     Math.ceil Math.abs diff
                 fill: (trigger) -> 
                     maps.z trigger.snr
