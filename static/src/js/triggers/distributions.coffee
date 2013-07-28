@@ -24,7 +24,7 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                 switch field
                     when "SNR" then @axisLabels {x: "SNR"}
                     when "Amplitude" then @axisLabels {x: "Amplitude"}
-                    when "Frequency" then
+                    when "Frequency"
                         @scales {x: d3.log().clamp yes}
                         @axisLabels {x: "Frequency"}
                     else
