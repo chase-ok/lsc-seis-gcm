@@ -113,10 +113,10 @@ def cluster_triggers(channel):
         for row, trigger in enumerate(triggers.iterdict()):
             if row % 10000: print row, len(triggers), len(current_clusters)
             
-            time = trigger.time_min
+            time = trigger['time_min']
             # iterate backwards so that we can remove elements in-place
             for index, cluster in reversed(enumerate(current_clusters)):
-                if cluster.time_max < time:
+                if cluster['time_max'] < time:
                     clusters.append(cluster)
                     current_clusters.pop(index)
             
