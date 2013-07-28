@@ -162,11 +162,12 @@ def _merge_trigger_into(trigger, cluster):
     cluster['time_max'] = max(trigger['time_max'], cluster['time_max'])
     cluster['freq_min'] = min(trigger['freq_min'], cluster['freq_min'])
     cluster['freq_max'] = max(trigger['freq_max'], cluster['freq_max'])
-    cluster['time'] = (cluster['time_min'] + cluster['time_max'])/2
-    cluster['freq'] = (cluster['freq_min'] + cluster['freq_max'])/2
-    cluster['snr'] = max(trigger['snr'], cluster['snr'])
-    cluster['amplitude'] = max(trigger['amplitude'], cluster['amplitude'])
-    cluster['q'] = max(trigger['q'], cluster['q'])
+    if trigger['snr'] > cluster['snr']:
+        cluster['time'] = trigger['time']
+        cluster['freq'] = trigger['freq']
+        cluster['snr'] = trigger['snr']
+        cluster['amplitude'] = max(trigger['amplitude'], cluster['amplitude'])
+        cluster['q'] = max(trigger['q'], cluster['q'])
     return cluster
     
     

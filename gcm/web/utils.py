@@ -58,7 +58,15 @@ def add_limit(values, default=None):
         raise QueryError(str(e))
 
     return values[:limit]
-    
+
+
+def get_bool_query(name, default=False):
+    value = getattr(bottle.request.query, name)
+    if value:
+        return value.lower() in ['true', 'yes', '1']
+    else:
+        return default
+
 def convert_numpy_dict(d):
     converted = {}
     for key, value in d.iteritems():
