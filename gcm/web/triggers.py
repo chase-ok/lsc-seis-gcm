@@ -12,7 +12,7 @@ def get_channel(channel_id):
     except:
         bottle.abort(404, "No triggers for {0}".format(channel_id))
         
-    with tr.open_triggers(channel, 'r') as table:
+    with tr.open_triggers(channel, mode='r') as table:
         time_min = table[0].time_min
         time_max = table[-1].time_max
         num = len(table)
@@ -32,7 +32,7 @@ def get_triggers_in_range(channel_id, start_time, end_time):
     limit = int(bottle.request.query.limit or 100)
     channel = chn.get_channel(channel_id)
     
-    with tr.open_triggers(channel, 'r') as table:
+    with tr.open_triggers(channel, mode='r') as table:
         low_index = tr.time_to_trigger_index(table, start_time)
         max_high = min(len(table), low_index + limit)
         high_index = tr.time_to_trigger_index(table, end_time,
