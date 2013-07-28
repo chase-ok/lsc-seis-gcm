@@ -104,7 +104,7 @@ def open_clusters(channel, **kwargs):
     return hdf5.open_table(make_trigger_h5_path(channel), clusters_table,
                            **kwargs)
 
-def cluster_triggers(channel):
+def cluster_triggers(channel, time_history=100):
     def do_clustering(source):
         clusters = []
         current_clusters = []
@@ -112,7 +112,7 @@ def cluster_triggers(channel):
         for row, trigger in enumerate(source):
             if row % 10000 == 0: print row, len(current_clusters)
             
-            time_cutoff = trigger['time_min']
+            time_cutoff = trigger['time_min'] - time_history
             # iterate backwards so that we can remove elements in-place
             for i, cluster in reversed(list(enumerate(current_clusters))):
                 if cluster['time_max'] < time_cutoff:
