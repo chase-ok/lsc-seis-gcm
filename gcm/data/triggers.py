@@ -95,3 +95,71 @@ def compute_densities(channel):
                 
                 densities.append_row((chunk, sums/density_time_chunk))
                 print chunk, sums
+
+clusters_table = hdf5.GenericTable("clusters",
+                                    dtype=trigger_dtype,
+                                    chunk_size=2**10,
+                                    initial_size=2**14)
+def open_clusters(channel, **kwargs):
+    return hdf5.open_table(make_trigger_h5_path(channel), clusters_table,
+                           **kwargs)
+
+def cluster_triggers(channel):
+    with open_triggers(channel, mode='r') as triggers:
+        clusters = []
+        current_clusters = []
+        current_row = 0
+        
+        for row in xrange(len(triggers)):
+            if row % 10000: print row, len(triggers), len(current_clusters)
+            trigger = triggers.dataset[row].copy()
+            
+            time = trigger.time_min
+            # iterate backwards so that we can remove elements in-place
+            for index, cluster in reversed(enumerate(current_clusters)):
+                if cluster.time_max < time:
+                    clusters.append(cluster)
+                    current_clusters.pop(index)
+            
+            for index, cluster in reversed(enumerate(current_clusters)):
+                if _triggers_touch(trigger, cluster):
+                    trigger = _merge_trigger_into(trigger, cluster)
+                    current_clusters.pop(index)
+            current_clusters.append(trigger)
+        
+        clusters.extend(current_clusters)
+    
+    print "sorting"
+    clusters.sort(key=lambda trigger: trigger.time_min)
+    
+    print "appending"
+    with open_clusters(channel, mode='w') as table:
+        for cluster in clusters:
+            table.append_array(cluster)
+
+def _triggers_touch(trigger1, trigger2):
+    time_min1, time_min2 = trigger1['time_min'], trigger2['time_min']
+    time_max1, time_max2 = trigger1['time_max'], trigger2['time_max']
+    if time_min2 <= time_min1 <= time_max2 or\
+            time_min1 <= time_min2 <= time_max1:
+        freq_min1, freq_min2 = trigger1['freq_min'], trigger2['freq_min']
+        freq_max1, freq_max2 = trigger1['freq_max'], trigger2['freq_max']
+        
+        return freq_min2 <= frqe_min1 <= freq_max2 or\
+               freq_min1 <= frqe_min2 <= freq_max1
+    else:
+        return False
+
+def _merge_trigger_into(trigger, cluster):
+    cluster['time_min'] = min(trigger['time_min'], cluster['time_min'])
+    cluster['time_max'] = max(trigger['time_max'], cluster['time_max'])
+    cluster['freq_min'] = min(trigger['freq_min'], cluster['freq_min'])
+    cluster['freq_max'] = max(trigger['freq_max'], cluster['freq_max'])
+    cluster['time'] = (cluster['time_min'] + cluster['time_max'])/2
+    cluster['freq'] = (cluster['freq_min'] + cluster['freq_max'])/2
+    cluster['snr'] = max(trigger['snr'], cluster['snr'])
+    cluster['amplitude'] = max(trigger['amplitude'], cluster['amplitude'])
+    cluster['q'] = max(trigger['q'], cluster['q'])
+    return cluster
+    
+    
