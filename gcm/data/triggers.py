@@ -67,8 +67,8 @@ def open_densities(channel, **kwargs):
                            **kwargs)
 
 def compute_densities(channel):
-    with open_densities(channel, 'w', reset=True) as densities:
-        with open_triggers(channel, 'r') as triggers:
+    with open_densities(channel, mode='w', reset=True) as densities:
+        with open_triggers(channel, mode='r') as triggers:
             index = 0
             num_triggers = len(triggers)
             bins = density_freq_bins
