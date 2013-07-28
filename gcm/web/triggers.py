@@ -4,7 +4,7 @@ from gcm.data import channels as chn, triggers as tr
 from gcm.web.utils import *
 import numpy as np
 
-@bottle.get('/triggers/<channel_id:int>')
+@bottle.get('/triggers/channel/<channel_id:int>')
 @bottle.view('triggers.html')
 def get_channel(channel_id):
     try:
@@ -23,7 +23,7 @@ def get_channel(channel_id):
             'time_max': time_max,
             'num_triggers': num}
 
-@bottle.get('/triggers/<channel_id:int>/<start_time:int>-<end_time:int>')
+@bottle.get('/triggers/channel/<channel_id:int>/<start_time:int>-<end_time:int>')
 @succeed_or_fail
 def get_triggers_in_range(channel_id, start_time, end_time):
     if start_time >= end_time: 
