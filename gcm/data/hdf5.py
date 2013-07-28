@@ -17,7 +17,7 @@ LOCK_WRITE_TIMEOUT = 10.0
 LOCK_READ_TIMEOUT = 5.0
 LOCK_POLL = 0.01
 
-use_locking = True
+use_locking = False
 
 def _make_lock_path(name):
     return join(LOCK_DIR, name)
