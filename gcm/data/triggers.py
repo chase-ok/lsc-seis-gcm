@@ -129,7 +129,7 @@ def cluster_triggers(channel):
         clusters.extend(current_clusters)
     
     print "sorting"
-    clusters.sort(key=lambda trigger: trigger.time_min)
+    clusters.sort(key=lambda trigger: trigger['time_min'])
     
     print "appending"
     with open_clusters(channel, mode='w') as table:
