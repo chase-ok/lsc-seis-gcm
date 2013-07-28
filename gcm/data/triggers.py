@@ -145,13 +145,15 @@ def cluster_triggers(channel):
 def _triggers_touch(trigger1, trigger2):
     time_min1, time_min2 = trigger1['time_min'], trigger2['time_min']
     time_max1, time_max2 = trigger1['time_max'], trigger2['time_max']
-    if time_min2 <= time_min1 <= time_max2 or\
-            time_min1 <= time_min2 <= time_max1:
+    if time_min1 <= time_min2 <= time_max1 or\
+            time_min1 <= time_max2 <= time_max1 or\
+            (time_min2 <= time_min1 and time_max2 >= time_max1):
         freq_min1, freq_min2 = trigger1['freq_min'], trigger2['freq_min']
         freq_max1, freq_max2 = trigger1['freq_max'], trigger2['freq_max']
         
         return freq_min2 <= freq_min1 <= freq_max2 or\
-               freq_min1 <= freq_min2 <= freq_max1
+               freq_min1 <= freq_min2 <= freq_max1 or\
+               (freq_min2 <= freq_min1 and freq_max2 >= freq_max1)
     else:
         return False
 
