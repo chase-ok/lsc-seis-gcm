@@ -36,7 +36,7 @@ def calculate_coinc_pairs(group, channel1, channel2, window):
     pair = [channel1, channel2]
     with open_coinc(group, pair, mode='w', reset=True) as coinc_table:
         with tr.open_triggers(channel1, mode='r') as trigger_table1:
-            with tr.open_triggers(channel2, mode='r') as trigger_table2:
+            with tr.open_clusters(channel2, mode='r') as trigger_table2:
                 _calculate_coinc(coinc_table, trigger_table1, trigger_table2, 2,
                                  window, time_attr='time_min')
 
@@ -44,7 +44,7 @@ def append_coinc_chain(group, prev_channels, next_channel, window):
     channels = prev_channels + [next_channel]
     with open_coinc(group, channels, mode='w', reset=True) as coinc_table:
         with open_coinc(group, prev_channels, mode='r') as prev_coinc_table:
-            with tr.open_triggers(next_channel, mode='r') as trigger_table:
+            with tr.open_clusters(next_channel, mode='r') as trigger_table:
                 _calculate_coinc(coinc_table, prev_coinc_table, trigger_table,
                                  window, len(channels))
 
