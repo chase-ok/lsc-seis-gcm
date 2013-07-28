@@ -39,7 +39,7 @@ def get_triggers_in_range(channel_id, start_time, end_time):
                                               low=low_index, high=max_high)
         triggers = [table.read_dict(i) for i in xrange(low_index, high_index)]
 
-    return {'triggers': map(convert_numpy_dict, triggers)}
+    return {'triggers': triggers}
     
 # @bottle.get('/triggers/<ifo>/<subsystem>/<name>/densities')
 # @succeed_or_fail
