@@ -25,15 +25,16 @@ def get_coinc_table(channels):
                              chunk_size=2**10,
                              initial_size=2**14)
 
-def open_coinc(channels, **kwargs):
-    return hdf5.open_table(make_coinc_h5_path(channel), 
+def open_coinc(group, channels, **kwargs):
+    return hdf5.open_table(make_coinc_h5_path(group), 
                            get_coinc_table(channels),
                            **kwargs)
 
 DEFAULT_WINDOW = 0.25
 
 def calculate_coinc_pairs(group, channel1, channel2, window):
-    with open_coinc([channel1, channel2], mode='w', reset=True) as coinc_table:
+    pair = [channel1, channel2]
+    with open_coinc(group, pair, mode='w', reset=True) as coinc_table:
         with tr.open_triggers(channel1, mode='r') as trigger_table1:
             with tr.open_triggers(channel2, mode='r') as trigger_table2:
                 _calculate_coinc(coinc_table, trigger_table1, trigger_table2, 2,
@@ -41,8 +42,8 @@ def calculate_coinc_pairs(group, channel1, channel2, window):
 
 def append_coinc_chain(group, prev_channels, next_channel, window):
     channels = prev_channels + [next_channel]
-    with open_coinc(channels, mode='w', reset=True) as coinc_table:
-        with open_coinc(prev_channels, mode='r') as prev_coinc_table:
+    with open_coinc(group, channels, mode='w', reset=True) as coinc_table:
+        with open_coinc(group, prev_channels, mode='r') as prev_coinc_table:
             with tr.open_triggers(next_channel, mode='r') as trigger_table:
                 _calculate_coinc(coinc_table, prev_coinc_table, trigger_table,
                                  window, len(channels))
