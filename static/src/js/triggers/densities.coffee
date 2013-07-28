@@ -69,7 +69,7 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
             @limits
                 x: [times[0], times[times.length-1]].map toDate
                 y: d3.extent frequencies
-                z: [1e1, 1e10]
+                z: [1e1, 1e4]
             maps = @maps()
             
             # We're going to render to an image to save on memory
