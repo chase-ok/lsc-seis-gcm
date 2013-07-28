@@ -107,49 +107,43 @@ def open_clusters(channel, **kwargs):
 def cluster_triggers(channel, num_passes=3):
     assert num_passes >= 1
     
-    def do_clustering(source):
-        clusters = []
-        current_clusters = []
-        
-        for row, trigger in enumerate(source):
-            if row < 10:
-                print row
-                print trigger
-                print current_clusters
-                print clusters
-            if row > 10000: break
-            if row % 10000 == 0: print row, len(current_clusters)
-            
-            time_cutoff = trigger['time_min']
-            # iterate backwards so that we can remove elements in-place
-            for i, cluster in reversed(list(enumerate(current_clusters))):
-                if cluster['time_max'] < time_cutoff:
-                    clusters.append(cluster)
-                    current_clusters.pop(i)
-            
-            for i, cluster in reversed(list(enumerate(current_clusters))):
-                if _triggers_touch(trigger, cluster):
-                    trigger = _merge_trigger_into(trigger, cluster)
-                    current_clusters.pop(i)
-            current_clusters.append(trigger)
-        
-        clusters.extend(current_clusters)
-        print "sorting"
-        clusters.sort(key=lambda cluster: cluster['time_min'])
-        return clusters
-    
     # first round
     with open_triggers(channel, mode='r') as triggers:
-        clusters = do_clustering(triggers.iterdict())
+        clusters = _do_clustering(triggers.iterdict())
     
     # wish we didn't actually have to tdo this
     for _ in range(num_passes-1):
-        clusters = do_clustering(clusters)
+        clusters = _do_clustering(clusters)
     
     print "appending"
     with open_clusters(channel, mode='w') as table:
         for cluster in clusters:
             table.append_dict(**cluster)
+            
+def _do_clustering(source):
+    clusters = []
+    current_clusters = []
+    
+    for row, trigger in enumerate(source):
+        if row % 10000 == 0: print row, len(current_clusters)
+        
+        time_cutoff = trigger['time_min']
+        # iterate backwards so that we can remove elements in-place
+        for i, cluster in reversed(list(enumerate(current_clusters))):
+            if cluster['time_max'] < time_cutoff:
+                clusters.append(cluster)
+                current_clusters.pop(i)
+        
+        for i, cluster in reversed(list(enumerate(current_clusters))):
+            if _triggers_touch(trigger, cluster):
+                trigger = _merge_trigger_into(trigger, cluster)
+                current_clusters.pop(i)
+        current_clusters.append(trigger)
+    
+    clusters.extend(current_clusters)
+    print "sorting"
+    clusters.sort(key=lambda cluster: cluster['time_min'])
+    return clusters
 
 def _triggers_touch(trigger1, trigger2):
     time_range1 = trigger1['time_min'], trigger1['time_max']
