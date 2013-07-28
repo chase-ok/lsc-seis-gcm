@@ -46,7 +46,7 @@ def get_triggers_in_range(channel_id, start_time, end_time):
 @bottle.get('/triggers/channel/<channel_id:int>/field/<field>')
 @succeed_or_fail
 def get_triggers_in_range(channel_id, field):
-    if field not in ['snr', 'freq', 'amplitude']
+    if field not in ['snr', 'freq', 'amplitude']:
         raise ValueError('Start time must come before end time!')
     
     limit = int(bottle.request.query.limit or 1e10)
