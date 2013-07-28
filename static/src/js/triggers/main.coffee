@@ -19,8 +19,8 @@ define ['utils',
             z: d3.scale.log().clamp yes
         scroller.title "Triggers"
         scroller.limits
-            y: [1000, 5000]
-            z: [10, 200]
+            y: [0.1, 100]
+            z: [1, 200]
             
         scroller.scrollTo startTime
         scroller.autoRefresh yes
