@@ -290,16 +290,17 @@ class use_h5(object):
 
 class open_table(object):
     
-    def __init__(self, h5_file, table, mode='r'):
+    def __init__(self, h5_file, table, mode='r', reset=False):
         self.h5_file = h5_file
         self.table = table
         self.mode = mode
         assert mode in ['r', 'w']
+        self.reset = reset
     
     def __enter__(self):
         cls = (read_h5 if self.mode == 'r' else write_h5)
         self.h5_context = cls(self.h5_file)
-        return self.table.attach(self.h5_context.__enter__())
+        return self.table.attach(self.h5_context.__enter__(), reset=reset)
 
     def __exit__(self, type, value, traceback):
         self.h5_context.__exit__(type, value, traceback)

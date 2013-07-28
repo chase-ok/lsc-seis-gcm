@@ -2,6 +2,7 @@
 from gcm.data import make_data_path, make_dtype, hdf5
 from gcm import utils
 import numpy as np
+import bisect
 from os.path import join
 
 TRIGGER_DIR = "triggers/"
@@ -26,9 +27,9 @@ trigger_table = hdf5.GenericTable("triggers",
                                   chunk_size=2**10,
                                   initial_size=2**14)
 
-def open_triggers(channel, mode='r'):
+def open_triggers(channel, **kwargs):
     return hdf5.open_table(make_trigger_h5_path(channel), trigger_table,
-                           mode=mode)
+                           **kwargs)
 
 
 def append_triggers(channel, triggers, snr_threshold=5):
@@ -51,4 +52,46 @@ def time_to_trigger_index(table, time, low=0, high=None):
     return low
     
 
+density_freq_bins = np.logspace(-1, 2, 8)
+density_time_chunk = 100 # secs
+density_dtype = [('time', np.uint32), 
+                 ('density', (np.float32, (density_freq_bins.size,)))]
 
+density_table = hdf5.GenericTable("densities",
+                                  dtype=density_dtype,
+                                  chunk_size=2**10,
+                                  initial_size=2**14)
+
+def open_densities(channel, **kwargs):
+    return hdf5.open_table(make_trigger_h5_path(channel), density_table,
+                           **kwargs)
+
+def compute_densities(channel):
+    with open_densities(channel, 'w', reset=True) as densities:
+        with open_triggers(channel, 'r') as triggers:
+            index = 0
+            num_triggers = len(triggers)
+            bins = density_freq_bins
+            num_bins = len(bins)
+            
+            start = triggers[0].time_min
+            end = triggers[-1].time_min
+            assert start < end
+            
+            sums = np.zeros_like(bins).astype(np.float32)
+            for chunk in range(start, end, density_time_chunk):            
+                cutoff = chunk + density_time_chunk
+                
+                sums.fill(0)
+                while index < num_triggers:
+                    trigger = triggers[index]
+                    if trigger.time_min > cutoff: break
+                    
+                    bin = min(num_bins-1, bisect.bisect(bins, trigger.freq))
+                    duration = trigger.time_max - trigger.time_min
+                    bandwidth = trigger.freq_max - trigger.freq_min
+                    sums[bin] += trigger.snr*duration*bandwidth
+                    index += 1
+                
+                densities.append_row((chunk, sums/density_time_chunk))
+                print chunk, sums
