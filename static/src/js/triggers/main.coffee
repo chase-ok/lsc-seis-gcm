@@ -6,8 +6,10 @@ define ['utils',
 (utils, scroller, store, densities, $, _) ->
     console.log "Starting"
     
+    channel = utils.definitions.channel
+    
     $ ->
-        $('#tabs').tabs()
+        tabs = $('#tabs').tabs()
     
     #console.log 'hello world!'
     #startTime = utils.definitions.time_min

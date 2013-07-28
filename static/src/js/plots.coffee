@@ -272,5 +272,56 @@ define ['utils', 'd3'], (utils, d3) ->
                 "text-anchor": "middle"
                 "font-size": "#{fontHeight}"
                 class: "z axis-label"
+    
+    class Histogram extends BasicPlot
+        constructor: (rootSelector) ->
+            super rootSelector
+            
+            @numBins 20
+            @useProbability yes
+            @limits {y: [0, 1]}
+            
+        numBins: (numBins) ->
+            if numBins?
+                @_numBins = numBins
+                @ticks {x: numBins + 1}
+                @declareDirty()
+                this
+            else
+                @_numBins
+        
+        useProbability: (useProbability) ->
+            if useProbability?
+                @_useProbability = useProbability
+                @axisLabels
+                    y: if useProbability then "Probability" else "Frequency"
+                @declareDirty()
+                this
+            else
+                @_useProbabilities
+            
+        prepare: ->
+            super()
+            @_prepareZGradient()
+            @_prepareZColorBar()
+            @_prepareZAxis()
+            @_prepareZLabel()
+        
+        plot: (values) ->
+            {x, y} = @scales()
+            
+            histogram = d3.layout.histogram()
+            histogram.bins x.ticks @numBins()
+            data = histogram values
+            
+            rects = @canvas.selectAll("rect.bar").data data
+            describe rects.enter().append("rect"),
+                class: "bar"
+                x: (d) -> x(d.x) + 1
+                y: (d) -> y d.y
+                width: (d) -> x(d.x + d.dx) - x(d.x) - 1
+                height: (d) -> y(0) - y(d.y)
+            
+            rects.exit().remove()
 
-    return {BasicPlot, ZColorPlot}
+    return {BasicPlot, ZColorPlot, Histogram}

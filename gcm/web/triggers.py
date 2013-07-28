@@ -43,6 +43,24 @@ def get_triggers_in_range(channel_id, start_time, end_time):
 
     return {'triggers': triggers}
     
+@bottle.get('/triggers/channel/<channel_id:int>/field/<field>')
+@succeed_or_fail
+def get_triggers_in_range(channel_id, field):
+    if field not in ['snr', 'freq', 'amplitude']
+        raise ValueError('Start time must come before end time!')
+    
+    limit = int(bottle.request.query.limit or 1e10)
+    clustered = get_bool_query("clustered", default=False)
+    channel = chn.get_channel(channel_id)
+    
+    context = tr.open_clusters if clustered else tr.open_triggers
+    with context(channel, mode='r') as table:
+        column = getattr(table.columns, field)
+        values = column[:min(limit, len(table))].tolist()
+
+    return {'values': values}
+
+    
 @bottle.get('/triggers/channel/<channel_id:int>/densities')
 @succeed_or_fail
 def get_densities(channel_id):
