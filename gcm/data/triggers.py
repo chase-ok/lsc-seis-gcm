@@ -143,19 +143,16 @@ def cluster_triggers(channel):
             table.append_dict(**cluster)
 
 def _triggers_touch(trigger1, trigger2):
-    time_min1, time_min2 = trigger1['time_min'], trigger2['time_min']
-    time_max1, time_max2 = trigger1['time_max'], trigger2['time_max']
-    if time_min1 <= time_min2 <= time_max1 or\
-            time_min1 <= time_max2 <= time_max1 or\
-            (time_min2 <= time_min1 and time_max2 >= time_max1):
-        freq_min1, freq_min2 = trigger1['freq_min'], trigger2['freq_min']
-        freq_max1, freq_max2 = trigger1['freq_max'], trigger2['freq_max']
+    time_range1 = trigger1['time_min'], trigger1['time_max']
+    time_range2 = trigger2['time_min'], trigger2['time_max']
+    if not _ranges_overlap(time_range1, time_range2): return False
+    
+    freq_range1 = trigger1['freq_min'], trigger1['freq_max']
+    freq_range2 = trigger2['freq_min'], trigger2['freq_max']
+    return _ranges_overlap(freq_range1, freq_range2)
         
-        return freq_min2 <= freq_min1 <= freq_max2 or\
-               freq_min1 <= freq_min2 <= freq_max1 or\
-               (freq_min2 <= freq_min1 and freq_max2 >= freq_max1)
-    else:
-        return False
+def _ranges_overlap(range1, range2):
+    return range1[0] <= range2[1] and range2[0] <= range1[1]
 
 def _merge_trigger_into(trigger, cluster):
     cluster['time_min'] = min(trigger['time_min'], cluster['time_min'])
