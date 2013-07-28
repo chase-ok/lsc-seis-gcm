@@ -105,29 +105,19 @@ def open_clusters(channel, **kwargs):
                            **kwargs)
 
 def cluster_triggers(channel):
-    with open_triggers(channel, mode='r') as triggers:
+    def do_clustering(source):
         clusters = []
         current_clusters = []
         
-        for row, trigger in enumerate(triggers.iterdict()):
-            if row % 10000 == 0: print row, len(triggers), len(current_clusters)
+        for row, trigger in enumerate(source):
+            if row % 10000 == 0: print row, len(current_clusters)
             
             time_cutoff = trigger['time_min']
             # iterate backwards so that we can remove elements in-place
             for i, cluster in reversed(list(enumerate(current_clusters))):
                 if cluster['time_max'] < time_cutoff:
-                    # check if we can actually merge still
-                    merged = False
-                    for match in current_clusters:
-                        if match is not cluster and \
-                                _triggers_touch(cluster, match):
-                            _merge_trigger_into(cluster, match)
-                            merged = True
-                            break
-                    
-                    if not merged: clusters.append(cluster)
+                    clusters.append(cluster)
                     current_clusters.pop(i)
-            
             
             for i, cluster in reversed(list(enumerate(current_clusters))):
                 if _triggers_touch(trigger, cluster):
@@ -136,9 +126,16 @@ def cluster_triggers(channel):
             current_clusters.append(trigger)
         
         clusters.extend(current_clusters)
+        print "sorting"
+        clusters.sort(key=lambda cluster: cluster['time_min'])
+        return clusters
     
-    print "sorting"
-    clusters.sort(key=lambda trigger: trigger['time_min'])
+    # first round
+    with open_triggers(channel, mode='r') as triggers:
+        clusters = do_clustering(triggers.iterdict())
+    
+    # second round, catch the stragglers, wish this wasn't necessary
+    clusters = do_clustering(clusters)
     
     print "appending"
     with open_clusters(channel, mode='w') as table:
