@@ -300,7 +300,7 @@ class open_table(object):
     def __enter__(self):
         cls = (read_h5 if self.mode == 'r' else write_h5)
         self.h5_context = cls(self.h5_file)
-        return self.table.attach(self.h5_context.__enter__(), reset=reset)
+        return self.table.attach(self.h5_context.__enter__(), reset=self.reset)
 
     def __exit__(self, type, value, traceback):
         self.h5_context.__exit__(type, value, traceback)
