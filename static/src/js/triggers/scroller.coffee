@@ -62,7 +62,7 @@ define ['utils', 'plots', 'd3'], (utils, plots, d3) ->
                     Math.ceil Math.abs diff
                 fill: (trigger) -> 
                     maps.z trigger.snr
-                fill-opacity: "0.1"
+                'fill-opacity': '0.1'
                 stroke: "none"
                 "clip-path": "url(##{@canvasClipId})"
                 
