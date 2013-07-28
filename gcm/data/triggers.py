@@ -111,7 +111,7 @@ def cluster_triggers(channel):
         current_row = 0
         
         for row, trigger in enumerate(triggers.iterdict()):
-            if row % 10000: print row, len(triggers), len(current_clusters)
+            if row % 100: print row, len(triggers), len(current_clusters)
             
             time = trigger['time_min']
             # iterate backwards so that we can remove elements in-place
