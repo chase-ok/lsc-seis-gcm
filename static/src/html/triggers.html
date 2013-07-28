@@ -3,18 +3,18 @@
   <head>
     <meta charset="utf-8" />
     <title>Triggers {{channel['ifo']}}/{{channel['subsystem']}}/{{channel['name']}}</title>
-    <link rel="stylesheet" type="text/css" href="static/css/default_plot.css"/>
-    <link rel="stylesheet" type="text/clss" href="static/css/smoothness/smoothness-theme.css"/>
+    <link rel="stylesheet" type="text/css" href="{{root}}/static/css/default_plot.css"/>
+    <link rel="stylesheet" type="text/clss" href="{{root}}/static/css/smoothness/smoothness-theme.css"/>
     <script type="text/javascript">
       var definitions = {
-          'channel': {{channel}},
+          'channel': {{str(channel)}},
           'time_min': {{time_min}},
           'time_max': {{time_max}},
           'webRoot': "{{root}}"
       };
     </script>
-    <script type="text/javascript"> var require = { baseUrl: "static/js" }; </script>
-    <script type="text/javascript" src="static/js/lib/require.js" data-main="triggers/main"></script>
+    <script type="text/javascript"> var require = { baseUrl: "{{root}}/static/js" }; </script>
+    <script type="text/javascript" src="{{root}}/static/js/lib/require.js" data-main="triggers/main"></script>
   </head>
   <body>
     <svg id="triggers" width="1400" height="650"></svg>
