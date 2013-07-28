@@ -115,12 +115,12 @@ def cluster_triggers(channel):
             
             time = trigger['time_min']
             # iterate backwards so that we can remove elements in-place
-            for index, cluster in reversed(enumerate(current_clusters)):
+            for index, cluster in reversed(list(enumerate(current_clusters))):
                 if cluster['time_max'] < time:
                     clusters.append(cluster)
                     current_clusters.pop(index)
             
-            for index, cluster in reversed(enumerate(current_clusters)):
+            for index, cluster in reversed(list(enumerate(current_clusters))):
                 if _triggers_touch(trigger, cluster):
                     trigger = _merge_trigger_into(trigger, cluster)
                     current_clusters.pop(index)
