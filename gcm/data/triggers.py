@@ -110,9 +110,8 @@ def cluster_triggers(channel):
         current_clusters = []
         current_row = 0
         
-        for row in xrange(len(triggers)):
+        for row, trigger in enumerate(triggers.iterdict()):
             if row % 10000: print row, len(triggers), len(current_clusters)
-            trigger = triggers.dataset[row].copy()
             
             time = trigger.time_min
             # iterate backwards so that we can remove elements in-place
@@ -135,7 +134,7 @@ def cluster_triggers(channel):
     print "appending"
     with open_clusters(channel, mode='w') as table:
         for cluster in clusters:
-            table.append_array(cluster)
+            table.append_dict(cluster)
 
 def _triggers_touch(trigger1, trigger2):
     time_min1, time_min2 = trigger1['time_min'], trigger2['time_min']
@@ -145,8 +144,8 @@ def _triggers_touch(trigger1, trigger2):
         freq_min1, freq_min2 = trigger1['freq_min'], trigger2['freq_min']
         freq_max1, freq_max2 = trigger1['freq_max'], trigger2['freq_max']
         
-        return freq_min2 <= frqe_min1 <= freq_max2 or\
-               freq_min1 <= frqe_min2 <= freq_max1
+        return freq_min2 <= freq_min1 <= freq_max2 or\
+               freq_min1 <= freq_min2 <= freq_max1
     else:
         return False
 
