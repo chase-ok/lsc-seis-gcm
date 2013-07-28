@@ -50,7 +50,7 @@ def get_triggers_in_range(channel_id, field):
         raise ValueError('Start time must come before end time!')
     
     limit = int(bottle.request.query.limit or 1e10)
-    clustered = get_bool_query("clustered", default=False)
+    clustered = get_bool_query("clustered", default=True)
     channel = chn.get_channel(channel_id)
     
     context = tr.open_clusters if clustered else tr.open_triggers

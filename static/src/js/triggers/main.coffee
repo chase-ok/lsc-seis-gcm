@@ -2,14 +2,19 @@ define ['utils',
         'triggers/scroller', 
         'triggers/store',
         'triggers/densities',
+        'triggers/distributions',
         'jquery', 'jquery-ui'], 
-(utils, scroller, store, densities, $, _) ->
+(utils, scroller, store, densities, dist, $, _) ->
     console.log "Starting"
     
     channel = utils.definitions.channel
     
     $ ->
         tabs = $('#tabs').tabs()
+        
+        distPlot = new dist.TriggerDistributionPlot "#distributions"
+        distPlot.field "SNR"
+        distPlot.load()
     
     #console.log 'hello world!'
     #startTime = utils.definitions.time_min
