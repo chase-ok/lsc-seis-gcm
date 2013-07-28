@@ -60,7 +60,7 @@ define ['d3'], (d3) ->
         obj[prop[0]] = prop[1] for prop in properties
         obj
         
-    loadJSON: (url, onData, numRetries=3) ->
+    loadJSON: loadJSON = (url, onData, numRetries=3) ->
         return unless numRetries > 0
         
         d3.json url, (error, json) ->
