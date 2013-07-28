@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Triggers {{channel.ifo}}/{{channel.subsystem}}/{{channe.name}}</title>
+    <link rel="stylesheet" type="text/css" href="static/css/default_plot.css"/>
+    <link rel="stylesheet" type="text/clss" href="static/css/smoothness/smoothness-theme.css"/>
+    <script type="text/javascript">
+      var definitions = {
+          'channel': {{channel}},
+          'time_min': {{time_min}},
+          'time_max': {{time_max}},
+          'webRoot': "{{root}}"
+      };
+    </script>
+    <script type="text/javascript"> var require = { baseUrl: "static/js" }; </script>
+    <script type="text/javascript" src="static/js/lib/require.js" data-main="triggers/main"></script>
+  </head>
+  <body>
+    <svg id="triggers" width="1400" height="650"></svg>
+    <p>Click on the SNR density plot below to scroll to that time in the glitch series. Arrow keys will move the glitch series more slowly.</p>
+    <svg id="densities" width="1400" height="250"></svg>
+  </body>
+</html>
