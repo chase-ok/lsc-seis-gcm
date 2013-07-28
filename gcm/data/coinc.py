@@ -35,7 +35,7 @@ DEFAULT_WINDOW = 0.25
 def calculate_coinc_pairs(group, channel1, channel2, window):
     pair = [channel1, channel2]
     with open_coinc(group, pair, mode='w', reset=True) as coinc_table:
-        with tr.open_triggers(channel1, mode='r') as trigger_table1:
+        with tr.open_clusters(channel1, mode='r') as trigger_table1:
             with tr.open_clusters(channel2, mode='r') as trigger_table2:
                 _calculate_coinc(coinc_table, trigger_table1, trigger_table2, 2,
                                  window, time_attr='time_min')
