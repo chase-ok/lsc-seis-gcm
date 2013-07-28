@@ -307,12 +307,14 @@ define ['utils', 'd3'], (utils, d3) ->
             histogram.bins x.ticks @numBins()
             data = histogram values
             
+            console.log data
+            
             rects = @canvas.selectAll("rect.bar").data data
             describe rects.enter().append("rect"),
                 class: "bar"
-                x: (d) -> x(d.x) + 1
+                x: (d) -> x(d.x)
                 y: (d) -> y d.y
-                width: (d) -> x(d.x + d.dx) - x(d.x) - 1
+                width: (d) -> x(d.x + d.dx) - x(d.x)
                 height: (d) -> y(0) - y(d.y)
             
             rects.exit().remove()
