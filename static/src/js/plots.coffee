@@ -284,7 +284,7 @@ define ['utils', 'd3'], (utils, d3) ->
         numBins: (numBins) ->
             if numBins?
                 @_numBins = numBins
-                @ticks {x: numBins + 1}
+                @ticks {x: [numBins + 1]}
                 @declareDirty()
                 this
             else
