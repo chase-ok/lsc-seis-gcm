@@ -112,6 +112,12 @@ def cluster_triggers(channel, num_passes=3):
         current_clusters = []
         
         for row, trigger in enumerate(source):
+            if row < 10:
+                print row
+                print trigger
+                print current_clusters
+                print clusters
+            if row > 10000: break
             if row % 10000 == 0: print row, len(current_clusters)
             
             time_cutoff = trigger['time_min']
