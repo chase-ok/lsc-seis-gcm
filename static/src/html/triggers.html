@@ -7,7 +7,7 @@
     <link rel="stylesheet" type="text/clss" href="{{root}}/static/css/smoothness/smoothness-theme.css"/>
     <script type="text/javascript">
       var definitions = {
-          'channel': eval("{{channel_str}}"),
+          'channel': {{!str(channel)}},
           'time_min': {{time_min}},
           'time_max': {{time_max}},
           'webRoot': "{{root}}"
