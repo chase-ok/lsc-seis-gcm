@@ -116,17 +116,23 @@ def cluster_triggers(channel):
             # iterate backwards so that we can remove elements in-place
             for i, cluster in reversed(list(enumerate(current_clusters))):
                 if cluster['time_max'] < time_cutoff:
-                    clusters.append(cluster)
+                    # check if we can actually merge still
+                    merged = False
+                    for match in current_clusters:
+                        if match is not cluster and \
+                                _triggers_touch(cluster, match):
+                            _merge_trigger_into(cluster, match)
+                            merged = True
+                            break
+                    
+                    if not merged: clusters.append(cluster)
                     current_clusters.pop(i)
             
-            still_merging = True
-            while still_merging:
-                still_merging = False
-                for i, cluster in reversed(list(enumerate(current_clusters))):
-                    if _triggers_touch(trigger, cluster):
-                        trigger = _merge_trigger_into(trigger, cluster)
-                        current_clusters.pop(i)
-                        still_merging = True
+            
+            for i, cluster in reversed(list(enumerate(current_clusters))):
+                if _triggers_touch(trigger, cluster):
+                    trigger = _merge_trigger_into(trigger, cluster)
+                    current_clusters.pop(i)
             current_clusters.append(trigger)
         
         clusters.extend(current_clusters)
