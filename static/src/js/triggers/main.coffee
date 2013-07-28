@@ -13,7 +13,7 @@ define ['utils',
         store.indicateWindow startTime, startTime + 30
         
         scroller = new scroller.TriggerScroller store, "#triggers"
-        scroller.windowSize 30
+        scroller.windowSize 120
         scroller.scales
             y: d3.scale.log().clamp yes
             z: d3.scale.log().clamp yes
