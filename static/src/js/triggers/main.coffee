@@ -5,7 +5,7 @@ define ['utils',
         'jquery'], 
 (utils, scroller, store, densities, $) ->
     console.log 'hello world!'
-    startTime = utils.definitions.startTime
+    startTime = utils.definitions.time_min
     
     $ ->
         store = new store.TriggerStore()
