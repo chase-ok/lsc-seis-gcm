@@ -19,6 +19,7 @@ def get_channel(channel_id):
     
     return {'root': WEB_ROOT,
             'channel': channel._asdict(),
+            'channel_str': str(channel._asdict()),
             'time_min': time_min,
             'time_max': time_max,
             'num_triggers': num}
