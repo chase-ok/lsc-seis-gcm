@@ -32,7 +32,8 @@ def get_triggers_in_range(channel_id, start_time, end_time):
     limit = int(bottle.request.query.limit or 100)
     channel = chn.get_channel(channel_id)
     
-    with tr.open_triggers(channel, mode='r') as table:
+    #with tr.open_triggers(channel, mode='r') as table:
+    with tr.open_clusters(channel, mode='r') as table:
         low_index = tr.time_to_trigger_index(table, start_time)
         max_high = min(len(table), low_index + limit)
         high_index = tr.time_to_trigger_index(table, end_time,
