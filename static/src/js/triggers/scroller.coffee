@@ -62,7 +62,6 @@ define ['utils', 'plots', 'd3'], (utils, plots, d3) ->
                     Math.ceil Math.abs diff
                 fill: (trigger) -> 
                     maps.z trigger.snr
-                'fill-opacity': '0.1'
                 stroke: "none"
                 "clip-path": "url(##{@canvasClipId})"
                 
@@ -116,7 +115,7 @@ define ['utils', 'plots', 'd3'], (utils, plots, d3) ->
             else
                 @_mouseScroll.running()
                 
-        keyScroll: (keyScroll, period=300, rate=1.0, left=37, right=39) ->
+        keyScroll: (keyScroll, period=300, rate=5.0, left=37, right=39) ->
             if keyScroll?
                 @_keyScroll.running no
                 

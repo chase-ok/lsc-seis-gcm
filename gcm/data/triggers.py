@@ -104,7 +104,7 @@ def open_clusters(channel, **kwargs):
     return hdf5.open_table(make_trigger_h5_path(channel), clusters_table,
                            **kwargs)
 
-def cluster_triggers(channel, time_history=60):
+def cluster_triggers(channel):
     with open_triggers(channel, mode='r') as triggers:
         clusters = []
         current_clusters = []
@@ -112,17 +112,21 @@ def cluster_triggers(channel, time_history=60):
         for row, trigger in enumerate(triggers.iterdict()):
             if row % 10000 == 0: print row, len(triggers), len(current_clusters)
             
-            time_cutoff = trigger['time_min'] - time_history
+            time_cutoff = trigger['time_min']
             # iterate backwards so that we can remove elements in-place
-            for index, cluster in reversed(list(enumerate(current_clusters))):
+            for i, cluster in reversed(list(enumerate(current_clusters))):
                 if cluster['time_max'] < time_cutoff:
                     clusters.append(cluster)
-                    current_clusters.pop(index)
+                    current_clusters.pop(i)
             
-            for index, cluster in reversed(list(enumerate(current_clusters))):
-                if _triggers_touch(trigger, cluster):
-                    trigger = _merge_trigger_into(trigger, cluster)
-                    current_clusters.pop(index)
+            still_merging = True
+            while still_merging:
+                still_merging = False
+                for i, cluster in reversed(list(enumerate(current_clusters))):
+                    if _triggers_touch(trigger, cluster):
+                        trigger = _merge_trigger_into(trigger, cluster)
+                        current_clusters.pop(i)
+                        still_merging = True
             current_clusters.append(trigger)
         
         clusters.extend(current_clusters)
