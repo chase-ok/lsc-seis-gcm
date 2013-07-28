@@ -299,13 +299,6 @@ define ['utils', 'd3'], (utils, d3) ->
                 this
             else
                 @_useProbabilities
-            
-        prepare: ->
-            super()
-            @_prepareZGradient()
-            @_prepareZColorBar()
-            @_prepareZAxis()
-            @_prepareZLabel()
         
         plot: (values) ->
             {x, y} = @scales()
