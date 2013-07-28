@@ -25,33 +25,27 @@ def get_coinc_table(channels):
                              chunk_size=2**10,
                              initial_size=2**14)
 
+def open_coinc(channels, **kwargs):
+    return hdf5.open_table(make_coinc_h5_path(channel), 
+                           get_coinc_table(channels),
+                           **kwargs)
+
 DEFAULT_WINDOW = 0.25
 
 def calculate_coinc_pairs(group, channel1, channel2, window):
-    with hdf5.write_h5(make_coinc_h5_path(group)) as h5:
-        coinc_table = get_coinc_table([channel1, channel2])
-        coinc_table = coinc_table.attach(h5, reset=True)
-        
-        with hdf5.read_h5(tr.make_trigger_h5_path(channel1)) as h5c1:
-            trigger_table1 = tr.trigger_table.attach(h5c1)
-            
-            with hdf5.read_h5(tr.make_trigger_h5_path(channel2)) as h5c2:
-                trigger_table2 = tr.trigger_table.attach(h5c2)
-                
+    with open_coinc([channel1, channel2], mode='w', reset=True) as coinc_table:
+        with tr.open_triggers(channel1, mode='r') as trigger_table1:
+            with tr.open_triggers(channel2, mode='r') as trigger_table2:
                 _calculate_coinc(coinc_table, trigger_table1, trigger_table2, 2,
                                  window, time_attr='time_min')
 
 def append_coinc_chain(group, prev_channels, next_channel, window):
-    with hdf5.write_h5(make_coinc_h5_path(group)) as h5:
-        coinc_table = get_coinc_table(prev_channels + [next_channel])
-        coinc_table = coinc_table.attach(h5, reset=True)
-        prev_coinc_table = get_coinc_table(prev_channels).attach(h5)
-        
-        with hdf5.read_h5(tr.make_trigger_h5_path(next_channel)) as h5c:
-            trigger_table = tr.trigger_table.attach(h5c)
-            
-            _calculate_coinc(coinc_table, prev_coinc_table, trigger_table,
-                             window, len(prev_channels) + 1)
+    channels = prev_channels + [next_channel]
+    with open_coinc(channels, mode='w', reset=True) as coinc_table:
+        with open_coinc(prev_channels, mode='r') as prev_coinc_table:
+            with tr.open_triggers(next_channel, mode='r') as trigger_table:
+                _calculate_coinc(coinc_table, prev_coinc_table, trigger_table,
+                                 window, len(channels))
 
 def calculate_coinc_group(group, window=DEFAULT_WINDOW):
     assert len(group.channels) >= 2
