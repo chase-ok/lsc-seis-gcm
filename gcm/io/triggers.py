@@ -80,7 +80,7 @@ class Omicron(TriggerSource):
                 triggers = self._parse_file(file)
                 if len(triggers) == 0: continue
                 
-                append_triggers(channel, triggers, h5=h5)
+                tr.append_triggers(channel, triggers)
                 latest = triggers[-1]["time_min"]
     
     def _get_files(self, group, channel):
