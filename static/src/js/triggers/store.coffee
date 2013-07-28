@@ -12,7 +12,7 @@ define ['utils', 'd3'], (utils, d3) ->
             @accessedTime = new Date().getTime()
             return if @loaded
             
-            url = "#{defs.webRoot}/triggers/#{defs.channel.id}/" + 
+            url = "#{defs.webRoot}/triggers/channel/#{defs.channel.id}/" + 
                   "#{@startTime}-#{@endTime}?limit=#{limit}"
             loadJSON url, (data) =>
                 @triggers = data.triggers
