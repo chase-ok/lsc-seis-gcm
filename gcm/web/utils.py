@@ -70,11 +70,11 @@ def get_bool_query(name, default=False):
 def convert_numpy_dict(d):
     converted = {}
     for key, value in d.iteritems():
-        if isinstance(value, basestring):
+        if isinstance(value, (basestring, int, float)):
             converted[key] = value
         elif isinstance(value, dict):
             converted[key] =  convert_numpy_dict(value)
-        else:
+        else: # assume numpy
             if value.size == 1:
                 converted[key] = np.asscalar(value)
             else:
