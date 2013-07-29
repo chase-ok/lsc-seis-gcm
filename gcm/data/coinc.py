@@ -32,6 +32,18 @@ def open_coincs(group, **kwargs):
                            get_coinc_table(group),
                            **kwargs)
 
+def coincs_to_list(group):
+    coincs = []
+    with open_coincs(group, mode='r') as coinc_table:
+        for coinc in coinc_table.iterdict():
+            length = coinc['length']
+            coinc['times'] = coinc['times'][:length]
+            coinc['freqs'] = coinc['freqs'][:length]
+            coinc['snrs'] = coinc['snrs'][:length]
+            coinc['channel_ids'] = coinc['channel_ids'][:length]
+            coincs.append(coinc)
+    return coincs
+
 
 def find_coincidences(group, window=0.1):
     channels = group.channels
@@ -49,9 +61,6 @@ def find_coincidences(group, window=0.1):
             while times:
                 times_sorted = sorted(times.iteritems(),
                                       key=lambda item: item[1])
-
-                if rows[channels[0]] % 100 == 0:
-                    print rows, times, len(coincs)
 
                 starting_channel, starting_time = times_sorted[0]
                 linked_channels = [starting_channel]

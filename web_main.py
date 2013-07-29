@@ -11,6 +11,7 @@ bottle.TEMPLATE_PATH.append(STATIC_ROOT + "/html/")
 
 from gcm.web import channels
 from gcm.web import triggers
+from gcm.web import coinc
 
 @route('/')
 def index():
