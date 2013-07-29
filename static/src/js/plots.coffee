@@ -285,8 +285,7 @@ define ['utils', 'd3'], (utils, d3) ->
         bins: (bins) ->
             if bins?
                 @_bins = bins
-                console.log bins
-                @ticks {x: bins}
+                #@ticks {x: bins}
                 @declareDirty()
                 this
             else
