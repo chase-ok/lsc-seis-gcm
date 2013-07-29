@@ -24,14 +24,14 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                 switch field
                     when "SNR" 
                         @axisLabels {x: "SNR"}
-                        @bins [0..20]
+                        @bins [0..20].concat [30]
                     when "Amplitude" 
                         @axisLabels {x: "Amplitude"}
-                        @bins [0.05*i for i in [0..20]]
+                        @bins [0.05*i for i in [0..20]].concat [2]
                     when "Frequency"
                         @scales {x: d3.log().clamp yes}
                         @axisLabels {x: "Frequency"}
-                        @bins [Math.exp(0.2*i - 1) for i in [0..20]]
+                        @bins [Math.exp(0.2*i - 1) for i in [0..20]].concat [50]
                     else
                         throw new Error("Invalid field: #{field}")
                 @declareDirty()
