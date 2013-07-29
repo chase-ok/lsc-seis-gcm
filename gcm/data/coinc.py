@@ -46,7 +46,7 @@ def coincs_to_list(group):
     return coincs
 
 
-def find_coincidences(group, window=0.1):
+def find_coincidences(group, window=0.05):
     channels = group.channels
     num_channels = len(channels)
     assert num_channels > 1
