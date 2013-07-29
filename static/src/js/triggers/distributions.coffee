@@ -53,7 +53,7 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                 #if @field() is "Frequency"
                 #    xLimit[0] = Math.max(1e-10, xLimit[0])
                 #@limits {x: xLimit}
-                @limits @bins()
+                @limits d3.extent @bins()
                 @plot values
 
     return {TriggerDistributionPlot}
