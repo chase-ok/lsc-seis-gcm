@@ -15,8 +15,8 @@ define ['utils',
         snrPlot = new dist.TriggerDistributionPlot("#snrs").field "SNR"
         snrPlot.load()
         
-        freqPlot = new dist.TriggerDistributionPlot("#freqs").field "Frequency"
-        freqPlot.load()
+        #freqPlot = new dist.TriggerDistributionPlot("#freqs").field "Frequency"
+        #freqPlot.load()
         
         amplPlot = new dist.TriggerDistributionPlot("#ampls").field "Amplitude"
         amplPlot.load()
