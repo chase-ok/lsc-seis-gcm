@@ -44,7 +44,7 @@ def find_coincidences(group, window=0.1):
 
             rows = dict((c, 0) for c in channels)
             ends = dict((c, len(triggers[c])) for c in channels)
-            times = dict((c, triggers[0].time_min) for c in channels)
+            times = dict((c, triggers[c][0].time_min) for c in channels)
 
             while times:
                 times_sorted = sorted(times.iteritems(),
@@ -83,9 +83,10 @@ def find_coincidences(group, window=0.1):
                                        length=len(linked_channels))
 
                 for channel in linked_channels:
-                    rows[channel] += 1
-                    if rows[channel] < ends[channel]:
-                        times[channel] = triggers[rows[channel]].time_min
+                    row = rows[channel] + 1
+                    rows[channel] = row
+                    if row < ends[channel]:
+                        times[channel] = triggers[channel][row].time_min
                     else:
                         del times[channel]
 
