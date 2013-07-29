@@ -18,5 +18,5 @@ def get_group(group_id):
 @succeed_or_fail
 def get_all_coinc(group_id):
     group = chn.get_group(group_id)
-    coincs = coinc.coinc_to_list(group)
+    coincs = coinc.coincs_to_list(group)
     return {'coincs': map(convert_numpy_dict, coincs)}
