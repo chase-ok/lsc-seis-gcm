@@ -39,6 +39,6 @@ define ['utils',
         scroller.autoRefresh yes
         scroller.keyScroll yes
         
-        densityPlot = new densities.DensityPlot "#densities", channel
-        densityPlot.scroller scroller
-        densityPlot.load()
+        #densityPlot = new densities.DensityPlot "#densities", channel
+        #densityPlot.scroller scroller
+        #densityPlot.load()
