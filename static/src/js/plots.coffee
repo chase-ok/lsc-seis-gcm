@@ -277,18 +277,18 @@ define ['utils', 'd3'], (utils, d3) ->
         constructor: (rootSelector) ->
             super rootSelector
             
-            @numBins 20
+            @bins [0..20]
             @useProbability yes
             @limits {y: [0, 1]}
             
-        numBins: (numBins) ->
-            if numBins?
-                @_numBins = numBins
-                @ticks {x: [numBins + 1]}
+        bins: (bins) ->
+            if bins?
+                @_bins = bins
+                @ticks {x: bins}
                 @declareDirty()
                 this
             else
-                @_numBins
+                @_bins
         
         useProbability: (useProbability) ->
             if useProbability?
@@ -304,11 +304,9 @@ define ['utils', 'd3'], (utils, d3) ->
             {x, y} = @scales()
             
             histogram = d3.layout.histogram()
-            histogram.bins x.ticks @numBins()
+            histogram.bins @bins() if @bins()?
             histogram.frequency not @useProbability()
             data = histogram values
-            
-            console.log data
             
             rects = @canvas.selectAll("rect.bar").data data
             describe rects.enter().append("rect"),
@@ -317,6 +315,8 @@ define ['utils', 'd3'], (utils, d3) ->
                 y: (d) -> y d.y
                 width: (d) -> x(d.x + d.dx) - x(d.x)
                 height: (d) -> y(0) - y(d.y)
+                fill: "steelblue"
+                "shape-rendering": "crispEdge"
             
             rects.exit().remove()
 

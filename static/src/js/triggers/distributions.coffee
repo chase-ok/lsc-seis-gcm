@@ -22,11 +22,16 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
             if field?
                 @_field = field
                 switch field
-                    when "SNR" then @axisLabels {x: "SNR"}
-                    when "Amplitude" then @axisLabels {x: "Amplitude"}
+                    when "SNR" 
+                        @axisLabels {x: "SNR"}
+                        @bins [0..20]
+                    when "Amplitude" 
+                        @axisLabels {x: "Amplitude"}
+                        @bins [0.05*i for i in [0..20]]
                     when "Frequency"
                         @scales {x: d3.log().clamp yes}
                         @axisLabels {x: "Frequency"}
+                        @bins [Math.exp(0.2*i - 1) for i in [0..20]]
                     else
                         throw new Error("Invalid field: #{field}")
                 @declareDirty()
@@ -44,11 +49,11 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
             loadJSON url, (data) =>
                 {values} = data
                 
-                xLimit = d3.extent values
-                if @field() is "Frequency"
-                    xLimit[0] = Math.max(1e-10, xLimit[0])
-                @limits {x: xLimit}
-                
+                #xLimit = d3.extent values
+                #if @field() is "Frequency"
+                #    xLimit[0] = Math.max(1e-10, xLimit[0])
+                #@limits {x: xLimit}
+                @limits @bins()
                 @plot values
 
     return {TriggerDistributionPlot}
