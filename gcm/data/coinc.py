@@ -15,10 +15,10 @@ NULL = -1
 
 def get_coinc_dtype(group):
     num_channels = len(group.channels)
-    return make_dtype(times=((num_channels,), np.float32),
-                      freqs=((num_channels,), np.float32),
-                      snrs=((num_channels,), np.float32),
-                      channel_ids=((num_channels,), np.int32),
+    return make_dtype(times=(np.float32, (num_channels,)),
+                      freqs=(np.float32, (num_channels,)),
+                      snrs=(np.float32, (num_channels,)),
+                      channel_ids=(np.int32, (num_channels,)),
                       length=np.uint16)
 
 def get_coinc_table(group):
