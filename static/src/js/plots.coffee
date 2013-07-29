@@ -311,9 +311,9 @@ define ['utils', 'd3'], (utils, d3) ->
             rects = @canvas.selectAll("rect.bar").data data
             describe rects.enter().append("rect"),
                 class: "bar"
-                x: (d) -> Math.ceil x(d.x) + 1
+                x: (d) -> Math.floor x(d.x)
                 y: (d) -> y d.y
-                width: (d) -> Math.floor x(d.x + d.dx) - x(d.x) - 1
+                width: (d) -> Math.ceil(x(d.x + d.dx) - x(d.x))
                 height: (d) -> y(0) - y(d.y)
                 fill: "steelblue"
                 "shape-rendering": "crispEdge"

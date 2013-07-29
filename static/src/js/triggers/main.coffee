@@ -12,9 +12,14 @@ define ['utils',
     $ ->
         tabs = $('#tabs').tabs()
         
-        distPlot = new dist.TriggerDistributionPlot "#distributions"
-        distPlot.field "SNR"
-        distPlot.load()
+        snrPlot = new dist.TriggerDistributionPlot("#snrs").field "SNR"
+        snrPlot.load()
+        
+        freqPlot = new dist.TriggerDistributionPlot("#freqs").field "Frequency"
+        freqPlot.load()
+        
+        amplPlot = new dist.TriggerDistributionPlot("#ampls").field "Amplitude"
+        amplPlot.load()
     
     #console.log 'hello world!'
     #startTime = utils.definitions.time_min

@@ -24,7 +24,7 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                 switch field
                     when "SNR" 
                         @axisLabels {x: "SNR"}
-                        @bins [0..50]
+                        @bins [0..30]
                     when "Amplitude" 
                         @axisLabels {x: "Amplitude"}
                         @bins [1.0/100*i for i in [0..100]].concat

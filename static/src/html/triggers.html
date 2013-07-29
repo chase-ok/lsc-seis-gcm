@@ -20,7 +20,9 @@
     <div id="tabs">
         <ul>
             <li><a href="#tab-0">Info</a></li>
-            <li><a href="#tab-1">Distributions</a></li>
+            <li><a href="#tab-1">SNRs</a></li>
+            <li><a href="#tab-2">Frequencies</a></li>
+            <li><a href="#tab-3">Amplitudes</a></li>
         </ul>
         <div id="tab-0">
             <p><emph>IFO</emph>: {{channel['ifo']}}</p>
@@ -32,7 +34,13 @@
             <p><emph>Duration</emph>:  {{int((time_max-time_min)/3600.0)}} hr</p>
         </div>
         <div id="tab-1">
-            <svg id="distributions" width="800" height="650"></svg>
+            <svg id="snrs" width="800" height="650"></svg>
+        </div>
+        <div id="tab-2">
+            <svg id="freqs" width="800" height="650"></svg>
+        </div>
+        <div id="tab-3">
+            <svg id="ampls" width="800" height="650"></svg>
         </div>
     </div>
     <!--<svg id="triggers" width="1400" height="650"></svg>
