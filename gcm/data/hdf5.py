@@ -11,6 +11,9 @@ from collections import namedtuple
 import time
 import os
 import inspect
+import bisect
+
+# TODO: switch to contextlib!
 
 LOCK_DIR = "/tmp/chase.kernan/"
 LOCK_WRITE_TIMEOUT = 10.0
@@ -423,6 +426,12 @@ class GenericTable(object):
         def iterrows(self):
             for i in range(len(self)):
                 yield self._row_class(*self.dataset[i])
+
+        def bisect_left(self, column, value):
+            return bisect.bisect_left(self.dataset[column], hi=len(self))
+
+        def bisect_right(self, column, value):
+            return bisect.bisect_right(self.dataset[column], hi=len(self))
 
         def __getitem__(self, key):
             if isinstance(key, slice):

@@ -18,7 +18,7 @@ def get_coinc_dtype(group):
     return make_dtype(times=(num_channels, np.float32),
                       freqs=(num_channels, np.float32),
                       snrs=(num_channels, np.float32),
-                      channel_ids=(num_channels, np.int32)
+                      channel_ids=(num_channels, np.int32),
                       length=np.uint16)
 
 def get_coinc_table(group):
@@ -28,7 +28,7 @@ def get_coinc_table(group):
                              initial_size=2**10)
 
 def open_coincs(group, **kwargs):
-    return hdf5.open_table(make_coinc_h5_path(group), 
+    return hdf5.open_table(make_coinc_h5_path(group),
                            get_coinc_table(group),
                            **kwargs)
 
@@ -47,7 +47,7 @@ def find_coincidences(group, window=0.1):
             times = dict((c, triggers[0].time_min) for c in channels)
 
             while times:
-                times_sorted = sorted(times.iteritems(), 
+                times_sorted = sorted(times.iteritems(),
                                       key=lambda item: item[1])
 
                 if rows[channels[0]] % 100 == 0:
@@ -64,7 +64,7 @@ def find_coincidences(group, window=0.1):
                     else:
                         break
 
-                if len(linked_channels) > 1
+                if len(linked_channels) > 1:
                     times = NULL*np.ones(num_channels, np.float32)
                     freqs = NULL*np.ones(num_channels, np.float32)
                     snrs = NULL*np.ones(num_channels, np.float32)
