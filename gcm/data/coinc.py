@@ -65,21 +65,21 @@ def find_coincidences(group, window=0.1):
                         break
 
                 if len(linked_channels) > 1:
-                    times = NULL*np.ones(num_channels, np.float32)
-                    freqs = NULL*np.ones(num_channels, np.float32)
-                    snrs = NULL*np.ones(num_channels, np.float32)
-                    channel_ids = NULL*np.ones(num_channels, np.int32)
+                    link_times = NULL*np.ones(num_channels, np.float32)
+                    link_freqs = NULL*np.ones(num_channels, np.float32)
+                    link_snrs = NULL*np.ones(num_channels, np.float32)
+                    link_channel_ids = NULL*np.ones(num_channels, np.int32)
                     for i, channel in enumerate(linked_channels):
                         trigger = triggers[channel][rows[channel]]
-                        times[i] = trigger.time_min
-                        freqs[i] = trigger.freq
-                        snrs[i] = trigger.snr
-                        channel_ids[i] = channel.id
+                        link_times[i] = trigger.time_min
+                        link_freqs[i] = trigger.freq
+                        link_snrs[i] = trigger.snr
+                        link_channel_ids[i] = channel.id
 
-                    coincs.append_dict(times=times,
-                                       freqs=freqs,
-                                       snrs=snrs,
-                                       channel_ids=channel_ids,
+                    coincs.append_dict(times=link_times,
+                                       freqs=link_freqs,
+                                       snrs=link_snrs,
+                                       channel_ids=link_channel_ids,
                                        length=len(linked_channels))
 
                 for channel in linked_channels:
