@@ -75,5 +75,8 @@ def convert_numpy_dict(d):
         elif isinstance(value, dict):
             converted[key] =  convert_numpy_dict(value)
         else:
-            converted[key] = np.asscalar(value)
+            if value.size == 1:
+                converted[key] = np.asscalar(value)
+            else:
+                converted[key] = value.tolist()
     return converted
