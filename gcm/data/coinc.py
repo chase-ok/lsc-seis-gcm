@@ -88,12 +88,12 @@ def _calculate_coinc(output_table, base_table, trigger_table, chain_len, window,
         
         if trigger_start == trigger_end: continue
         
-        matches = trigger_table.dataset[trigger_start:trigger_end+1]
+        matches = trigger_table.dataset[trigger_start:trigger_end]
         block = np.empty(matches.size, dtype=coinc_dtype)
         block['dt'] = matches['time_min'] - base[time_attr]
         block['time'] = average(matches['time_min'], base[time_attr])
         block['snr'] = average(matches['snr'], base['snr'])
         block['freq'] = average(matches['freq'], base['freq'])
-        block['trigger_id'] = np.arange(trigger_start, trigger_end + 1)
+        block['trigger_id'] = np.arange(trigger_start, trigger_end)
         block['prev_coinc_id'] = row
         output_table.append_array(block)
