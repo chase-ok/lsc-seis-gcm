@@ -35,7 +35,7 @@ define ['utils',
             y: [0.1, 100]
             z: [1, 200]
             
-        scroller.scrollTo startTime
+        scroller.scrollTo utils.definitions.time_min
         scroller.autoRefresh yes
         scroller.keyScroll yes
         
