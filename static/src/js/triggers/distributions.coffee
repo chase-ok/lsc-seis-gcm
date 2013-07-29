@@ -27,10 +27,9 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                         @bins [0..30]
                     when "Amplitude" 
                         @axisLabels {x: "Amplitude"}
-                        @bins [i/100.0 for i in [0..100]]
+                        @bins (i/100.0 for i in [0..100])
                     when "Frequency"
-                        @bins [Math.exp(0.2*i - 1) for i in [0..20]].concat [50]
-                        console.log @bins()
+                        @bins (Math.exp(0.05*i - 1) for i in [0..100])
                         @scales {x: d3.scale.log().clamp yes}
                         @axisLabels {x: "Frequency"}
                     else
