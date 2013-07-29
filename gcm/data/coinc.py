@@ -3,6 +3,7 @@ from gcm.data import make_data_path, make_dtype, hdf5, triggers as tr
 from gcm import utils
 import numpy as np
 from itertools import combinations, permutations
+import bisect
 from os.path import join
 
 COINC_DIR = "coincidences/"
@@ -10,179 +11,100 @@ COINC_DIR = "coincidences/"
 def make_coinc_h5_path(group):
     return make_data_path(join(COINC_DIR, "{0.name}.h5".format(group)))
 
+NULL = -1
 
-coinc_dtype = make_dtype(dt=np.float32,
-                         time=np.float32,
-                         freq=np.float32,
-                         snr=np.float32,
-                         trigger1_id=np.int32,
-                         trigger2_id=np.int32,
-                         chain_id=np.int32)
+def get_coinc_dtype(group):
+    num_channels = len(group.channels)
+    return make_dtype(times=(num_channels, np.float32),
+                      freqs=(num_channels, np.float32),
+                      snrs=(num_channels, np.float32),
+                      channel_ids=(num_channels, np.int32)
+                      length=np.uint16)
 
-def get_chain_dtype(group):
-    return make_dtype(dt=np.float32,
-                      time=np.float32,
-                      freq=np.float32,
-                      snr=np.float32,
-                      num_coinc=np.uint16,
-                      channel_ids=(len(group.channels), np.int32))
-
-def get_coinc_table(channels):
-    name = "coincidences" + "_".join(str(c.id) for c in channels)
-    return hdf5.GenericTable(name,
-                             dtype=coinc_dtype,
-                             chunk_size=2**10,
-                             initial_size=2**14)
-
-def open_coinc(group, channels, **kwargs):
-    return hdf5.open_table(make_coinc_h5_path(group), 
-                           get_coinc_table(channels),
-                           **kwargs)
-
-def get_chain_table(group):
-    name = "coincidence_chains" + "_".join(str(c.id) for c in group.channels)
-    return hdf5.GenericTable(name,
-                             dtype=get_chain_dtype(group),
+def get_coinc_table(group):
+    return hdf5.GenericTable("coincidences",
+                             dtype=get_coinc_dtype(group),
                              chunk_size=2**8,
-                             initial_size=2**12)
+                             initial_size=2**10)
 
-def open_chains(group, **kwargs):
-    return hdf5.open_table(make_coinc_h5_path(group), get_chain_table(group),
+def open_coincs(group, **kwargs):
+    return hdf5.open_table(make_coinc_h5_path(group), 
+                           get_coinc_table(group),
                            **kwargs)
 
-DEFAULT_WINDOW = 0.1
 
-def calculate_coinc_pairs(group, channel1, channel2, window):
-    pair = [channel1, channel2]
-    with open_coinc(group, pair, mode='w', reset=True) as coinc_table:
-        with tr.open_clusters(channel1, mode='r') as trigger_table1:
-            with tr.open_clusters(channel2, mode='r') as trigger_table2:
-                _calculate_coinc(coinc_table, trigger_table1, trigger_table2,
-                                 window)
+def find_coincidences(group, window=0.1):
+    channels = group.channels
+    num_channels = len(channels)
+    assert num_channels > 1
 
-def calculate_coinc_group(group, window=DEFAULT_WINDOW):
-    assert len(group.channels) >= 2
-    
-    # pairs for base
-    for channel1, channel2 in permutations(group.channels, 2):
-        print channel1, channel2
-        calculate_coinc_pairs(group, channel1, channel2, window)
-    
-    for chain_len in range(3, len(group.channels)):
-        for channels in combinations(group.channels, chain_len):
-            print channels
-            append_coinc_chain(group, list(channels[:-1]), channels[-1], window)
+    with open_coincs(group, mode='w') as coincs:
+        triggers, contexts = _open_all_triggers(channels)
+        try:
+
+            rows = dict((c, 0) for c in channels)
+            ends = dict((c, len(triggers[c])) for c in channels)
+            times = dict((c, triggers[0].time_min) for c in channels)
+
+            while times:
+                times_sorted = sorted(times.iteritems(), 
+                                      key=lambda item: item[1])
+
+                if rows[channels[0]] % 100 == 0:
+                    print rows, times, len(coincs)
+
+                starting_channel, starting_time = times_sorted[0]
+                linked_channels = [starting_channel]
+
+                window_end = starting_time + window
+                for match_channel, match_time in times_sorted[1:]:
+                    if match_time < window_end:
+                        linked_channels.append(match_channel)
+                        window_end = match_time + window
+                    else:
+                        break
+
+                if len(linked_channels) > 1
+                    times = NULL*np.ones(num_channels, np.float32)
+                    freqs = NULL*np.ones(num_channels, np.float32)
+                    snrs = NULL*np.ones(num_channels, np.float32)
+                    channel_ids = NULL*np.ones(num_channels, np.int32)
+                    for i, channel in enumerate(linked_channels):
+                        trigger = triggers[channel][rows[channel]]
+                        times[i] = trigger.time_min
+                        freqs[i] = trigger.freq
+                        snrs[i] = trigger.snr
+                        channel_ids[i] = channel.id
+
+                    coincs.append_dict(times=times,
+                                       freqs=freqs,
+                                       snrs=snrs,
+                                       channel_ids=channel_ids,
+                                       length=len(linked_channels))
+
+                for channel in linked_channels:
+                    rows[channel] += 1
+                    if rows[channel] < ends[channel]:
+                        times[channel] = triggers[rows[channel]].time_min
+                    else:
+                        del times[channel]
+
+        finally:
+            _close_all_triggers(contexts)
 
 
-def _calculate_coinc(output_table, trigger_table1, trigger_table2, window):
-    average = lambda match, base: base*0.5 + match*0.5
-    
-    trigger_times = trigger_table2.columns.time_min
-    
-    trigger_start = 0
-    trigger_end = 0
-    for row, base in enumerate(trigger_table1.iterdict()):
-        if row % 10000 == 0: print row, len(trigger_table1)
-        
-        start_time = base['time_min']
-        end_time = base['time_min'] + window
-        
-        for trigger_start in xrange(trigger_start, len(trigger_table2)):
-            if trigger_times[trigger_start] >= start_time:
-                break
-        
-        for trigger_end in xrange(trigger_end, len(trigger_table2)):
-            if trigger_times[trigger_end] > end_time:
-                break    
-        
-        if trigger_start == trigger_end: continue
-        
-        matches = trigger_table.dataset[trigger_start:trigger_end]
-        block = np.empty(matches.size, dtype=coinc_dtype)
-        block['dt'] = matches['time_min'] - base['time_min']
-        block['time'] = average(matches['time_min'], base['time_min'])
-        block['snr'] = average(matches['snr'], base['snr'])
-        block['freq'] = average(matches['freq'], base['freq'])
-        block['trigger1_id'] = row
-        block['trigger2_id'] = np.arange(trigger_start, trigger_end)
-        block['chain_id'] = -1
-        output_table.append_array(block)
+# TODO: this is a poor context management implementation
+# maybe use contextlib instead?
 
-def _find_chains(group, window=DEFAULT_WINDOW):
-    channels = set(group.channels)
-    
-    # open the pair tables
-    tables = {}
+def _open_all_triggers(channels):
+    triggers = {}
     contexts = []
-    try:
-        for pair in permutations(channels, 2):
-            context = open_coinc(group, pair, mode='w')
-            tables[pair] = context.__enter__()
-            contexts.append(context)
-        
-        chain_id = 0
-        
-        for channel in channels:
-            chains = []
-            
-            for next_channel in group:
-                if channel is next_channel: continue
-                coincs = tables[channel, next_channel]
-                
-                row = 0
-                while row < len(coincs):
-                    coinc = coincs[row]
-                    if coinc.chain_id != -1:
-                        row += 1
-                        continue
-                    
-                    # otherwise, we're starting a chain
-                    end_time = coinc.time + window
-                    for end in range(row+1, len(coincs)):
-                        if coincs[end].time > end_time:
-                            break
-                    
-                    base_coincs = coincs.dataset[row:end]
-                    coincs.columns.chain_id[row:end] = chain_id
-                    
-                    chain = {'dt': np.mean(base_coincs['dt']),
-                             'time': base_coincs[0]['time'],
-                             'freq': np.mean(base_coincs['freq']),
-                             'snr': np.max(base_coincs['snr']),
-                             'num_coinc': base_coincs.size,
-                             'id': chain_id}
-                    chains.append(chain)
-                    chain_id += 1
-            
-            # start looking for chains of length 3, 4, 5...
-            
-            for chain in chains:
-                chain_table.append(chain)
-            
-            
-            
-            
-            
-        for pair in permutations(group.channels, 2):
-            for coinc in tables[pair]:
-                if coinc.chain_id is not -1: continue
-                
-                
-        
-    finally:
-        for context in contexts:
-            context.__exit__()
+    for channel in channels:
+        context = tr.open_clusters(channel, mode='r')
+        tables[channel] = context.__enter__()
+        contexts.append(context)
+    return triggers, contexts
 
-def _find_links(channel, id, coinc, tables_to_check):
-    dt = starting_coinc['dt']
-    time = starting_coinc['time']
-    freq = starting_coinc['freq']
-    snr = starting_coinc['snr']
-    num_triggers = 1
-    channel_ids = set([channel.id])
-    
-    for table in tables_to_check:
-        
-    
-    
-    
+def _close_all_triggers(contexts):
+    for context in contexts:
+        context.__exit__(None, None, None)
