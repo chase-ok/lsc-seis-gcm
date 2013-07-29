@@ -5,6 +5,7 @@ import numpy as np
 from itertools import combinations, permutations
 import bisect
 from os.path import join
+from math import ceil
 
 COINC_DIR = "coincidences/"
 
@@ -50,6 +51,14 @@ def find_coincidences(group, window=0.1):
     num_channels = len(channels)
     assert num_channels > 1
 
+    channel_order = dict((channel, i) for i, channel in enumerate(channels))
+    def compare_times(item1, item2, epsilon=1e-6):
+        time_diff = item1[1] - item2[1]
+        if abs(time_diff) < epsilon:
+            return channel_order[item1[0]] - channel_order[item2[0]]
+        else:
+            return -1 if time_diff < 0 else 1
+
     with open_coincs(group, mode='w', reset=True) as coincs:
         triggers, contexts = _open_all_triggers(channels)
         try:
@@ -60,7 +69,7 @@ def find_coincidences(group, window=0.1):
 
             while times:
                 times_sorted = sorted(times.iteritems(),
-                                      key=lambda item: item[1])
+                                      cmp=compare_times)
 
                 starting_channel, starting_time = times_sorted[0]
                 linked_channels = [starting_channel]
@@ -101,7 +110,6 @@ def find_coincidences(group, window=0.1):
 
         finally:
             _close_all_triggers(contexts)
-
 
 # TODO: this is a poor context management implementation
 # maybe use contextlib instead?
