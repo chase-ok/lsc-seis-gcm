@@ -15,7 +15,7 @@ NULL = -1
 
 def get_coinc_dtype(group):
     num_channels = len(group.channels)
-    return make_dtype(times=(np.float32, (num_channels,)),
+    return make_dtype(times=(np.float64, (num_channels,)),
                       freqs=(np.float32, (num_channels,)),
                       snrs=(np.float32, (num_channels,)),
                       channel_ids=(np.int32, (num_channels,)),
@@ -50,7 +50,7 @@ def find_coincidences(group, window=0.1):
     num_channels = len(channels)
     assert num_channels > 1
 
-    with open_coincs(group, mode='w') as coincs:
+    with open_coincs(group, mode='w', reset=True) as coincs:
         triggers, contexts = _open_all_triggers(channels)
         try:
 
@@ -74,7 +74,7 @@ def find_coincidences(group, window=0.1):
                         break
 
                 if len(linked_channels) > 1:
-                    link_times = NULL*np.ones(num_channels, np.float32)
+                    link_times = NULL*np.ones(num_channels, np.float64)
                     link_freqs = NULL*np.ones(num_channels, np.float32)
                     link_snrs = NULL*np.ones(num_channels, np.float32)
                     link_channel_ids = NULL*np.ones(num_channels, np.int32)

@@ -11,7 +11,7 @@ def make_trigger_h5_path(channel):
     name = "{0.ifo}-{0.subsystem}-{0.name}.h5".format(channel)
     return make_data_path(join(TRIGGER_DIR, name))
 
-
+# TODO: change time to float64
 trigger_dtype = make_dtype(time=np.float32,
                            time_min=np.float64,
                            time_max=np.float64,
