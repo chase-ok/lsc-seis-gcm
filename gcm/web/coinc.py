@@ -15,7 +15,7 @@ def get_group(group_id):
     return {'root': WEB_ROOT}
 
 @bottle.get('/coinc/group/<group_id:int>/all')
-@succeed_or_fail
+#@succeed_or_fail
 def get_all_coinc(group_id):
     group = chn.get_group(group_id)
     coincs = coinc.coincs_to_list(group)
