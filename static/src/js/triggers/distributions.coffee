@@ -24,10 +24,10 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                 switch field
                     when "SNR" 
                         @axisLabels {x: "SNR"}
-                        @bins [0..20].concat [30]
+                        @bins [0..100]
                     when "Amplitude" 
                         @axisLabels {x: "Amplitude"}
-                        @bins [0.05*i for i in [0..20]].concat [2]
+                        @bins [1.0/100*i for i in [0..100]].concat
                     when "Frequency"
                         @scales {x: d3.log().clamp yes}
                         @axisLabels {x: "Frequency"}

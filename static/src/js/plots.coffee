@@ -166,7 +166,6 @@ define ['utils', 'd3'], (utils, d3) ->
             
         _prepareAxes: ->
             axes = @_makeAxes()
-            console.log axes
             (describe @canvas.append("g"),
                 class: "x axis"
                 transform: "translate(0, #{@canvasSize.y})"
@@ -312,9 +311,9 @@ define ['utils', 'd3'], (utils, d3) ->
             rects = @canvas.selectAll("rect.bar").data data
             describe rects.enter().append("rect"),
                 class: "bar"
-                x: (d) -> x(d.x)
+                x: (d) -> Math.round x(d.x) + 1
                 y: (d) -> y d.y
-                width: (d) -> x(d.x + d.dx) - x(d.x)
+                width: (d) -> Math.round x(d.x + d.dx) - x(d.x) - 1
                 height: (d) -> y(0) - y(d.y)
                 fill: "steelblue"
                 "shape-rendering": "crispEdge"
