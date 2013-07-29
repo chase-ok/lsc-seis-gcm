@@ -29,11 +29,12 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                         @axisLabels {x: "Amplitude"}
                         @bins [1.0/100*i for i in [0..100]].concat
                     when "Frequency"
+                        @bins [Math.exp(0.2*i - 1) for i in [0..20]].concat [50]
                         @scales {x: d3.scale.log().clamp yes}
                         @axisLabels {x: "Frequency"}
-                        @bins [Math.exp(0.2*i - 1) for i in [0..20]].concat [50]
                     else
                         throw new Error("Invalid field: #{field}")
+                @limits {x: d3.extent @bins()}
                 @declareDirty()
                 this
             else
@@ -53,7 +54,6 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                 #if @field() is "Frequency"
                 #    xLimit[0] = Math.max(1e-10, xLimit[0])
                 #@limits {x: xLimit}
-                @limits {x: d3.extent @bins()}
                 @plot values
 
     return {TriggerDistributionPlot}
