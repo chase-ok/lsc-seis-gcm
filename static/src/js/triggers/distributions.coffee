@@ -29,7 +29,7 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                         @axisLabels {x: "Amplitude"}
                         @bins [1.0/100*i for i in [0..100]].concat
                     when "Frequency"
-                        @scales {x: d3.log().clamp yes}
+                        @scales {x: d3.scale.log().clamp yes}
                         @axisLabels {x: "Frequency"}
                         @bins [Math.exp(0.2*i - 1) for i in [0..20]].concat [50]
                     else
