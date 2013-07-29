@@ -166,6 +166,7 @@ define ['utils', 'd3'], (utils, d3) ->
             
         _prepareAxes: ->
             axes = @_makeAxes()
+            console.log axes
             (describe @canvas.append("g"),
                 class: "x axis"
                 transform: "translate(0, #{@canvasSize.y})"
