@@ -3,7 +3,7 @@ define ['utils', 'd3'], (utils, d3) ->
     _triggerCount = 0
     
     class Chunk
-        constructor: (@startTime, @endTime) ->
+        constructor: (@channel, @startTime, @endTime) ->
             @accessedTime = 0
             @triggers = []
             @loaded = no
@@ -12,7 +12,7 @@ define ['utils', 'd3'], (utils, d3) ->
             @accessedTime = new Date().getTime()
             return if @loaded
             
-            url = "#{defs.webRoot}/triggers/channel/#{defs.channel.id}/" + 
+            url = "#{defs.webRoot}/triggers/channel/#{@channel.id}/" + 
                   "#{@startTime}-#{@endTime}?limit=#{limit}"
             loadJSON url, (data) =>
                 @triggers = data.triggers
@@ -21,7 +21,7 @@ define ['utils', 'd3'], (utils, d3) ->
                 @loaded = yes  
         
     class TriggerStore
-        constructor: (@timeChunk=30, @maxChunks=50)->
+        constructor: (@channel, @timeChunk=30, @maxChunks=50)->
             @chunks = {}
             @_garbageCollecting = new IntervalFunc @garbageCollect, 10000
         
@@ -36,7 +36,8 @@ define ['utils', 'd3'], (utils, d3) ->
         indicateWindow: (startTime, endTime, buffer=2) ->
             for start in @_getChunkStarts startTime, endTime, buffer
                 if not @chunks[start]?
-                    @chunks[start] = new Chunk(start, start + @timeChunk)
+                    end = start + @timeChunk
+                    @chunks[start] = new Chunk(@channel, start, end)
                 @chunks[start].load()
         
         getWindow: (startTime, endTime, buffer=1) ->

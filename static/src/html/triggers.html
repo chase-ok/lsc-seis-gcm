@@ -23,6 +23,7 @@
             <li><a href="#tab-1">SNRs</a></li>
             <li><a href="#tab-2">Frequencies</a></li>
             <li><a href="#tab-3">Amplitudes</a></li>
+            <li><a href="#tab-4">Clusters</a></li>
         </ul>
         <div id="tab-0">
             <p><emph>IFO</emph>: {{channel['ifo']}}</p>
@@ -42,9 +43,11 @@
         <div id="tab-3">
             <svg id="ampls" width="800" height="650"></svg>
         </div>
+        <div id="tab-4">
+            <svg id="clusters" width="800" height="650"></svg>
+            <p>Click on the SNR density plot below to scroll to that time in the glitch series. Arrow keys will move the glitch series more slowly.</p>
+            <svg id="densities" width="800" height="250"></svg>
+        </div>
     </div>
-    <!--<svg id="triggers" width="1400" height="650"></svg>
-    <p>Click on the SNR density plot below to scroll to that time in the glitch series. Arrow keys will move the glitch series more slowly.</p>
-    <svg id="densities" width="1400" height="250"></svg>-->
   </body>
 </html>

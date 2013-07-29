@@ -4,7 +4,7 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
     toDate = (seconds) -> new Date(seconds*1000)
     
     class TriggerDistributionPlot extends plots.Histogram
-        constructor: (rootSelector) ->
+        constructor: (rootSelector, @channel) ->
             super rootSelector
             
             @field "SNR"
@@ -45,7 +45,7 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                 when "SNR" then "snr"
                 when "Amplitude" then "amplitude"
                 when "Frequency" then "freq"
-            url = "#{defs.webRoot}/triggers/channel/#{defs.channel.id}/" + 
+            url = "#{defs.webRoot}/triggers/channel/#{@channel.id}/" + 
                   "field/#{field}?clustered=#{@clustered()}"
             loadJSON url, (data) =>
                 {values} = data

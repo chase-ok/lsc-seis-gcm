@@ -12,37 +12,33 @@ define ['utils',
     $ ->
         tabs = $('#tabs').tabs()
         
-        snrPlot = new dist.TriggerDistributionPlot("#snrs").field "SNR"
+        snrPlot = new dist.TriggerDistributionPlot("#snrs", channel).field "SNR"
         snrPlot.load()
         
-        freqPlot = new dist.TriggerDistributionPlot("#freqs").field "Frequency"
+        freqPlot = new dist.TriggerDistributionPlot("#freqs", channel).field "Frequency"
         freqPlot.load()
         
-        amplPlot = new dist.TriggerDistributionPlot("#ampls").field "Amplitude"
+        amplPlot = new dist.TriggerDistributionPlot("#ampls", channel).field "Amplitude"
         amplPlot.load()
     
-    #console.log 'hello world!'
-    #startTime = utils.definitions.time_min
-    #
-    #$ ->
-        #store = new store.TriggerStore()
-        #store.garbageCollecting yes
-        #store.indicateWindow startTime, startTime + 30
-        #
-        #scroller = new scroller.TriggerScroller store, "#triggers"
-        #scroller.windowSize 120
-        #scroller.scales
-            #y: d3.scale.log().clamp yes
-            #z: d3.scale.log().clamp yes
-        #scroller.title "Triggers"
-        #scroller.limits
-            #y: [0.1, 100]
-            #z: [1, 200]
-            #
-        #scroller.scrollTo startTime
-        #scroller.autoRefresh yes
-        #scroller.keyScroll yes
-        #
-        #densityPlot = new densities.DensityPlot "#densities"
-        #densityPlot.scroller scroller
-        #densityPlot.load()
+        
+        store = new store.TriggerStore channel
+        store.garbageCollecting yes
+        store.indicateWindow utils.definitions.time_min
+        
+        scroller = new scroller.TriggerScroller store, "#clusters"
+        scroller.windowSize 120
+        scroller.scales
+            y: d3.scale.log().clamp yes
+            z: d3.scale.log().clamp yes
+        scroller.limits
+            y: [0.1, 100]
+            z: [1, 200]
+            
+        scroller.scrollTo startTime
+        scroller.autoRefresh yes
+        scroller.keyScroll yes
+        
+        densityPlot = new densities.DensityPlot "#densities", channel
+        densityPlot.scroller scroller
+        densityPlot.load()

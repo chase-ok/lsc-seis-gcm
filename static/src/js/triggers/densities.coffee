@@ -4,7 +4,7 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
     toDate = (seconds) -> new Date(seconds*1000)
     
     class DensityPlot extends plots.ZColorPlot
-        constructor: (rootSelector) ->
+        constructor: (rootSelector, @channel) ->
             super rootSelector
             
             @_scroller = null
@@ -29,7 +29,7 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                 @_scroller
                 
         load: ->
-            url = "#{defs.webRoot}/triggers/channel/#{defs.channel.id}/" + 
+            url = "#{defs.webRoot}/triggers/channel/#{@channel.id}/" + 
                   "densities"
             loadJSON url, (data) =>
                 {times, frequencies, densities} = data
