@@ -298,7 +298,7 @@ define ['utils', 'd3'], (utils, d3) ->
                 @declareDirty()
                 this
             else
-                @_useProbabilities
+                @_useProbability
         
         plot: (values) ->
             {x, y} = @scales()
