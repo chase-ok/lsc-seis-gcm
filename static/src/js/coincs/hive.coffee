@@ -50,7 +50,7 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
 
 
         load: ->
-            url = "#{defs.webRoot}/coincs/group/#{@group.id}/all"
+            url = "#{defs.webRoot}/coinc/group/#{@group.id}/all"
             loadJSON url, (data) =>
                 {coincs} = data
                 @_draw coincs
