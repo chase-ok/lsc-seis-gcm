@@ -140,7 +140,7 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                             angle: radians chainPosition (link.chainPosition + 1)
                             radius: channelRadius(link.endChannelId) + time(link.time)
 
-            path.on "mouseover", link ->
+            path.on "mouseover", (link) ->
                 describe linkGroup.selectAll("path"),
                     "stroke-opacity": (match) ->
                         if match.coincId is link.coincId then 1.0 else 0.05
