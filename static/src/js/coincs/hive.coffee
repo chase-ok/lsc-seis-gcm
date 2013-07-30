@@ -133,7 +133,11 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
 
             @_snrHistogram = new plots.Histogram "g.snr-histogram"
             @_snrHistogram.bins [5..25]
-            @_snrHistogram.limits {y: [0, 0.5]}
+            @_snrHistogram.limits
+                x: [5, 25]
+                y: [0, 0.5]
+            @_snrHistogram.labels
+                x: "Max SNR"
 
             @_currentInfoY += height
 
