@@ -326,8 +326,8 @@ define ['utils', 'd3', 'jquery'], (utils, d3, $) ->
             histogram.frequency not @useProbability()
             data = histogram values
 
-            console.log $(@rootSelector + ".canvas")
-            @canvas = @select ".canvas" # TODO: use this everwhere!
+            # TODO! use this everywhere
+            @canvas = d3.select $(@rootSelector + ">.canvas")[0]
             console.log @canvas
 
             rects = @canvas.selectAll("rect").data data
