@@ -85,9 +85,9 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
             spacing = 5
             size = {x: 50, y: 20}
 
-            legend = describe info.append("g").selectAll(".legend")
-                                  .data(d3.zip([0...@_numChannels], @_channels))
-                                  .enter().append("g"),
+            legend = describe @_info.append("g").selectAll(".legend")
+                                    .data(d3.zip([0...@_numChannels], @_channels))
+                                    .enter().append("g"),
                 class: "legend"
                 transform: (d) ->
                     "translate(0, #{d[0]*(size.y + spacing)})"
