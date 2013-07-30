@@ -12,6 +12,8 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                           'chainPosition', 'channelPosition']
             super rootSelector, margin, dimensions
             
+            @_loaded = no
+
             @_channels = @group.channels
             @_channelIds = (c.id for c in @_channels)
             @_numChannels = @_channels.length
@@ -66,16 +68,17 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
             url = "#{defs.webRoot}/coinc/group/#{@group.id}/all"
             loadJSON url, (data) =>
                 {@coincs} = data
+                @_loaded = yes
                 @_draw()
 
         declareDirty: ->
             super()
-            @_draw() if @coincs?
+            @_draw() if @_loaded
 
         prepare: ->
             return unless super()
             @_prepareInfo()
-            #@_prepareLegend()
+            @_prepareLegend()
 
         _prepareInfo: ->
             @_info = describe @canvas.append("g"),
@@ -92,22 +95,22 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                 transform: (d) ->
                     "translate(0, #{d[0]*(size.y + spacing)})"
 
-            # {channelColor} = @maps()
-            # describe legend.append("rect"),
-            #     x: 0
-            #     y: 0
-            #     width: size.x
-            #     height: size.y
-            #     stroke: "none"
-            #     fill: (d) -> channelColor d[1]
+            {channelColor} = @maps()
+            describe legend.append("rect"),
+                x: 0
+                y: 0
+                width: size.x
+                height: size.y
+                stroke: "none"
+                fill: (d) -> channelColor d[1]
 
-            # describe legend.append("text")
-            #                .text((d) -> d[1].subsystem + ":" + d[1].name),
-            #     x: 0
-            #     y: 2
-            #     "text-anchor": "middle"
-            #     "font-size": "#{size.y - 2*2}"
-            #     fill: "white"
+            describe legend.append("text")
+                           .text((d) -> d[1].subsystem + ":" + d[1].name),
+                x: 0
+                y: 2
+                "text-anchor": "middle"
+                "font-size": "#{size.y - 2*2}"
+                fill: "white"
 
 
         _draw: ->
