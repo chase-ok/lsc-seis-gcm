@@ -202,11 +202,12 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
         _prepareLinkInfo: ->
             height = 250
 
-            htmlCanvas = describe @_info.append("foreignObject"),
+            obj = describe @_info.append("foreignObject"),
                 x: 0
                 y: @_currentInfoY
                 width: @_infoSize.x
                 height: height
+            htmlCanvas = obj.append('html')
 
             @_writeInfo = (lines) =>
                 ps = htmlCanvas.selectAll("p").data(lines)
