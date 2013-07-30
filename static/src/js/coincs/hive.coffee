@@ -87,7 +87,7 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
 
         _prepareLegend: ->
             spacing = 5
-            size = {x: 50, y: 20}
+            size = {x: @_infoSize.x, y: 20}
 
             legend = describe @_info.append("g").selectAll(".legend")
                                     .data(d3.zip([0...@_numChannels], @_channels))
@@ -111,7 +111,7 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                 y: 2
                 "text-anchor": "middle"
                 "font-size": "#{size.y - 2*2}"
-                fill: "white"
+                #fill: "white"
 
 
         _draw: ->
