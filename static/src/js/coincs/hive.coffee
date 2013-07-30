@@ -158,8 +158,8 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                 snr: snrExtent
 
             @prepare()
-            @_drawLinks()
-            @_drawBars()
+            #@_drawLinks()
+            #@_drawBars()
             
             @_drawing = no
 
