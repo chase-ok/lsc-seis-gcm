@@ -37,7 +37,7 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                 time:
                     d3.scale.linear().range([0, @_barSize.y]).clamp(yes)
                 snr:
-                    d3.scale.linear().range([1.0, 6.0])
+                    d3.scale.log().range([1.0, 6.0])
                 snrRatio: 
                     d3.scale.linear()
                             .domain([0.5, 1.5])
@@ -67,6 +67,48 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
             loadJSON url, (data) =>
                 {@coincs} = data
                 @_draw()
+
+        declareDirty: ->
+            super()
+            @_draw() if @coincs?
+
+        prepare: ->
+            return unless super()
+            @_prepareInfo()
+            @_prepareLegend()
+
+        _prepareInfo: ->
+            @_info = describe @canvas.append("g"),
+                transform: "translate(#{@canvasSize.x + 10}, 0)"
+
+        _prepareLegend: ->
+            spacing = 5
+            size = {x: 50, y: 20}
+
+            legend = describe info.append("g").selectAll(".legend")
+                                  .data(d3.zip([0...@_numChannels], @_channels))
+                                  .enter().append("g"),
+                class: "legend"
+                transform: (d) ->
+                    "translate(0, #{d[0]*(size.y + spacing})"
+
+            {channelColor} = maps()
+            describe legend.append("rect"),
+                x: 0
+                y: 0
+                width: size.x
+                height: size.y
+                stroke: "none"
+                fill: (d) -> channelColor d[1]
+
+            describe legend.append("text")
+                           .text((d) -> d[1].subsystem + ":" + d[1].name),
+                x: 0
+                y: 2
+                "text-anchor": "middle"
+                "font-size": "#{size.y - 2*2}"
+                fill: "white"
+
 
         _draw: ->
             snrExtent = d3.extent (Math.min(c.snrs...) for c in @coincs)
