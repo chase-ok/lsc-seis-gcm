@@ -36,6 +36,10 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
 
             @snrBaseThreshold 0
             @snrRange [0, 1/0]
+            @snrRatioColors
+                good: d3.rgb 0, 255, 0 # green
+                neutral: d3.rgb 100, 100, 100 # grey
+                bad: d3.rgb 255, 0, 0 # red
 
             @scales
                 time:
@@ -78,6 +82,14 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
             else
                 @_snrRange
 
+        snrRatioColors: (colors) ->
+            if colors?
+                @_snrRatioColors = colors
+                @declareDirty()
+                this
+            else
+                @_snrRatioColors
+
         load: ->
             url = "#{defs.webRoot}/coinc/group/#{@group.id}/all"
             loadJSON url, (data) =>
@@ -88,6 +100,22 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
         declareDirty: ->
             super()
             @_draw() if @_loaded and not @_drawing
+
+        maps: ->
+            maps = super()
+
+            {good, neutral, bad} = @snrRatioColors()
+            goodInterp = d3.interpolateRgb neutral, good
+            badInterp = d3.interpolateRgb neutral, bad
+            ratioMap = maps.snrRatio
+            maps.snrRatio = (ratio) ->
+                mapped = ratioMap ratio
+                if mapped > 0
+                    badInterp mapped 
+                else
+                    goodInterp -mapped
+
+            maps
 
         prepare: ->
             return unless super()
@@ -252,8 +280,7 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                                      .enter().append("path"),
                 class: "link"
                 fill: "none"
-                stroke: (link) -> 
-                    if snrRatio(link.snrRatio) > 0 then "red" else "green"
+                stroke: (link) -> snrRatio link.snrRatio
                 "stroke-width": (link) -> snr link.snr
                 "stroke-opacity": 0.5
                 d: (link) ->
