@@ -322,10 +322,10 @@ define ['utils', 'd3'], (utils, d3) ->
             histogram.bins @bins() if @bins()?
             histogram.frequency not @useProbability()
             data = histogram values
-            
-            rects = @canvas.selectAll("rect.bar").data data
+            console.log data
+            rects = @canvas.selectAll("rect.histogram-bar").data data
             describe rects.enter().append("rect"),
-                class: "bar"
+                class: "histogram-bar"
                 x: (d) -> Math.floor x(d.x)
                 y: (d) -> y d.y
                 width: (d) -> Math.ceil(x(d.x + d.dx) - x(d.x))
