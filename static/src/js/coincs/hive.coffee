@@ -150,6 +150,7 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                 [xExtent, _] = @_snrBrush.extent()
                 @_snrBrush.extent [xExtent, yExtent]
                 @_snrBrush @_snrHistogram.canvas
+                console.log @_snrBrush.extent()
 
             @_currentInfoY += height
 
