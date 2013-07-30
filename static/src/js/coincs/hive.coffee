@@ -9,29 +9,33 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                 right: 10
                 bottom: 10
             dimensions = ['time', 'snr', 'snrRatio', 'channelColor',
-                          'chainPosition', 'channelRadius']
+                          'chainPosition', 'channelPosition']
             super rootSelector, margin, dimensions
             
             @_channels = @group.channels
             @_channelIds = (c.id for c in @_channels)
             @_numChannels = @_channels.length
 
-            @radius =
-                outer: Math.min(@canvasSize.x, @canvasSize.y)/2
-                inner: 70
+            @_infoSize =
+                x: 100
+                y: @canvasSize.y
 
-            @_radiusChunk = (@radius.outer - @radius.inner)/@_numChannels
-            @_spokeWidth = 10
+            @_plotSize = 
+                x: @canvasSize.x - @_infoSize.x
+                y: @canvasSize.y
 
-            @center =
-                x: @canvasSize.x/2
-                y: @canvasSize.y/2
+            @_barSpacing =
+                x: @_plotWidth/(@_numChannels - 1)
+                y: 5
+            @_barSize = 
+                x: 10
+                y: (@canvasSize.y - @_barSpacing.y*(@_numChannels+1))/@_numChannels
 
             @snrThreshold 0
 
             @scales
                 time:
-                    d3.scale.linear().range([0, @_radiusChunk]).clamp(yes)
+                    d3.scale.linear().range([0, @_barSize.y]).clamp(yes)
                 snr:
                     d3.scale.linear().range([1.0, 6.0])
                 snrRatio: 
@@ -44,11 +48,11 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                 chainPosition: 
                     d3.scale.ordinal()
                             .domain([0...@_numChannels])
-                            .range(340*i/(@_numChannels-1) - 80 for i in [0...@_numChannels])
-                channelRadius:
+                            .range(@_barSpacing.x*i for i in [0...@_numChannels])
+                channelPosition:
                     d3.scale.ordinal()
                             .domain(@_channelIds)
-                            .range(@radius.inner + i*@_radiusChunk for i in [0...@_numChannels])
+                            .range((i+1)*@_barSpacing.y + i*@_barSize.y for i in [0...@_numChannels])
 
         snrThreshold: (threshold) ->
             if threshold?
@@ -61,10 +65,10 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
         load: ->
             url = "#{defs.webRoot}/coinc/group/#{@group.id}/all"
             loadJSON url, (data) =>
-                {coincs} = data
-                @_draw coincs
+                {@coincs} = data
+                @_draw()
 
-        _draw: (coincs) ->
+        _draw: ->
             snrExtent = d3.extent (Math.min(c.snrs...) for c in coincs)
             snrExtent[0] = Math.max @snrThreshold(), snrExtent[0]
             # coincs best be sorted by time
@@ -74,38 +78,38 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                 snr: snrExtent
 
             @prepare()
-            @_drawLinks coincs
-            @_drawSpokes()
+            @_drawLinks()
+            @_drawBars()
 
-        _drawSpokes: ->
-            {channelColor, chainPosition, channelRadius} = @maps()
+        _drawBars: ->
+            {channelColor, chainPosition, channelPosition} = @maps()
 
-            spokes = describe @canvas.selectAll(".spoke")
-                                     .data([0...@_numChannels])
-                                     .enter().append("g"),
-                class: "spoke"
-                transform: (spoke) => "translate(#{@center.x}, #{@center.y}) " +
-                                      "rotate(#{chainPosition spoke})" 
+            bars = describe @canvas.selectAll(".bar")
+                                   .data([0...@_numChannels])
+                                   .enter().append("g"),
+                class: "bar"
+                transform: (bar) -> "translate(#{chainPosition bar}, 0)"
                                       
 
-            describe spokes.selectAll("rect")
-                           .data(@_channels)
-                           .enter().append("rect"),
-                x: (channel) -> channelRadius channel.id
-                y: -@_spokeWidth/2
-                width: @_radiusChunk
-                height: @_spokeWidth
+            describe bars.selectAll("rect")
+                         .data(@_channels)
+                         .enter().append("rect"),
+                x: @_barSize.x/2
+                y: (channel) -> channelPosition channel.id
+                width: @_barSize.x
+                height: @_barSize.y
                 stroke: "none"
                 fill: (channel) -> channelColor channel.id
 
-        _drawLinks: (coincs) ->
-            linkGroup = describe @canvas.append("g"),
-                transform: "translate(#{@center.x}, #{@center.y})"
+            # TODO: bars.on(mouseover)
+
+        _drawLinks: ->
+            linkGroup = describe @canvas.append("g")
             
             links = []
             threshold = @snrThreshold()
-            for i in [0...coincs.length]
-                coinc = coincs[i]
+            for i in [0...@coincs.length]
+                coinc = @coincs[i]
                 continue if coinc.snrs[0] < threshold
 
                 for pos in [0...coinc.length-1]
@@ -119,7 +123,9 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                         endChannelId: coinc.channel_ids[pos+1]
             
             {time, snr, snrRatio, channelColor, chainPosition, 
-             channelRadius} = @maps()
+             channelPosition} = @maps()
+
+            line = d3.svg.line().interpolate('cardinal').tension(0.5)
 
             path = describe linkGroup.selectAll("path.link")
                                      .data(links)
@@ -132,13 +138,11 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                     snr link.snr
                 "stroke-opacity": 0.5
                 d: (link) ->
-                    makeHiveLink
-                        start:
-                            angle: radians chainPosition link.chainPosition
-                            radius: channelRadius(link.startChannelId) + time(link.time)
-                        end:
-                            angle: radians chainPosition (link.chainPosition + 1)
-                            radius: channelRadius(link.endChannelId) + time(link.time)
+                    x0 = chainPosition link.chainPosition
+                    y0 = channelPosition(link.startChannelId) + time(link.time)
+                    x1 = chainPosition (link.chainPosition + 1)
+                    y1 = channelPosition(link.endChannelId) + time(link.time)
+                    line [[x0, y0], [x1, y1]]
 
             path.on "mouseover", (link) ->
                 describe linkGroup.selectAll("path"),
@@ -152,15 +156,5 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                 describe linkGroup.selectAll("path"),
                     "stroke-opacity":  0.5
                     "stroke-width": (link) -> snr link.snr
-
-
-    makeHiveLink = (link) ->
-        # from bost.ocks.org/mike/hive/
-        a1 = link.start.angle + (link.end.angle - link.start.angle)/3
-        a2 = link.end.angle - (link.end.angle - link.start.angle)/3
-        return "M" + Math.cos(link.start.angle) * link.start.radius + "," + Math.sin(link.start.angle) * link.start.radius +
-               "C" + Math.cos(a1) * link.start.radius + "," + Math.sin(a1) * link.start.radius +
-               " " + Math.cos(a2) * link.end.radius + "," + Math.sin(a2) * link.end.radius + 
-               " " + Math.cos(link.end.angle) * link.end.radius + "," + Math.sin(link.end.angle) * link.end.radius
-
+    
     return {HivePlot}
