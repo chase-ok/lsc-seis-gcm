@@ -323,10 +323,8 @@ define ['utils', 'd3'], (utils, d3) ->
             histogram.frequency not @useProbability()
             data = histogram values
             
-            @canvas.selectAll("rect.histogram-bar").data(data).each(-> console.log this)
             rects = @canvas.selectAll("rect.histogram-bar").data data
-            console.log rects
-            describe rects.enter().append("rect"),
+            describe rects.append("rect"),
                 class: "histogram-bar"
                 x: (d) -> Math.floor x(d.x)
                 y: (d) -> y d.y
