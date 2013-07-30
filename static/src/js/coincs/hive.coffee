@@ -20,11 +20,11 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
             @_numChannels = @_channels.length
 
             @_infoSize =
-                x: 150
+                x: 200
                 y: @canvasSize.y
 
             @_plotSize = 
-                x: @canvasSize.x - @_infoSize.x
+                x: @canvasSize.x - @_infoSize.x - 15
                 y: @canvasSize.y
 
             @_barSpacing =
@@ -87,7 +87,7 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
 
         _prepareLegend: ->
             spacing = 5
-            size = {x: @_infoSize.x, y: 16}
+            size = {x: @_infoSize.x, y: 20}
 
             legend = describe @_info.append("g").selectAll(".legend")
                                     .data(d3.zip([0...@_numChannels], @_channels))
@@ -106,8 +106,8 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                 fill: (d) -> channelColor d[1].id
 
             describe legend.append("text")
-                           .text((d) -> d[1].subsystem + ":" + d[1].name),
-                x: 0
+                           .text((d) -> d[1].name),
+                x: 3
                 y: size.y - 4
                 "text-anchor": "start"
                 "font-size": "#{size.y - 2*4}"
