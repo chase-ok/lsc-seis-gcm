@@ -203,8 +203,7 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
             height = 250
 
             textGroup = describe @_info.append("g"),
-                x: 0
-                y: @_currentInfoY
+                transform: "translate(0, #{@_currentInfoY})"
                 width: @_infoSize.x
                 height: height
 
@@ -289,6 +288,7 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                         chainPosition: pos
                         time: coinc.times[pos]
                         snr: coinc.snrs[0],
+                        freq: coinc.freqs[pos]
                         snrRatio: coinc.snrs[pos+1]/coinc.snrs[pos]
                         startChannelId: coinc.channel_ids[pos]
                         endChannelId: coinc.channel_ids[pos+1]
@@ -319,8 +319,19 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
             mouseOverSelect = @_mouseOver (link, match) ->
                 link.coincId is match.coincId
             path.on "mouseover", (link) =>
+                format = (time, formatString) ->
+                    date = new Date time*1000
+                    d3.time.format.utc(formatString) date
+                coinc = @coincs[link.coincId]
+
                 @_writeInfo [
-                    "Time: #{link.time}"
+                    "Time: #{format link.time, '%Y-%m-%d %H:%M:%S.%L'}",
+                    "SNR: #{link.snr}",
+                    "Frequency: #{link.freq}",
+                    "",
+                    "All Times: #{(format t, "%S.%L" for t in coinc.times)}",
+                    "All SNRs: #{coinc.snrs}",
+                    "All Frequencies: #{coinc.freqs}",
                 ]
                 mouseOverSelect link
 
