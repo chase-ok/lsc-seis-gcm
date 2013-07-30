@@ -107,7 +107,7 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
             {good, neutral, bad} = @snrRatioColors()
             goodInterp = d3.interpolateRgb neutral, good
             badInterp = d3.interpolateRgb neutral, bad
-            
+
             (ratio) ->
                 mapped = ratioMap ratio
                 if mapped > 0
@@ -197,6 +197,24 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                 @snrRange [x0, x1]
 
             @_currentInfoY += height
+
+        _prepareLinkInfo: ->
+            height = 250
+
+            htmlCanvas = describe @_info.append("foreignObject"),
+                x: 0
+                y: @_currentInfoY
+                width: @_infoSize.x
+                height: height
+
+            @_writeInfo = (lines) =>
+                ps = htmlCanvas.selectAll("p").data(lines)
+                describe ps.enter().append("p"),
+                    xmlns: "http://www.w3.org/1999/xhtml"
+                ps.text (line) -> line
+                ps.exit().remove()
+
+            @_currentInfoY += height + 10
 
         _draw: ->
             @_drawing = yes
@@ -290,10 +308,17 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                             y: chainPosition (link.chainPosition + 1)
                             x: channelPosition(link.endChannelId) + time(link.time)
 
-            path.on "mouseover", @_mouseOver (link, match) -> 
+            mouseOverSelect = @_mouseOver (link, match) ->
                 link.coincId is match.coincId
+            path.on "mouseover", (link) ->
+                @_writeInfo [
+                    "Time: #{link.time}"
+                ]
+                mouseOverSelect link
 
-            path.on "mouseout", @_mouseOut()
+            path.on "mouseout", =>
+                @_writeInfo []
+                @_mouseOut()
 
         _mouseOver: (matches) ->
             {snr} = @maps()
