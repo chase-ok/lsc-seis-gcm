@@ -44,7 +44,7 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                 chainPosition: 
                     d3.scale.ordinal()
                             .domain([0...@_numChannels])
-                            .range(340*Math.sqrt(i/(@_numChannels-1)) - 80 for i in [0...@_numChannels])
+                            .range(340*i/(@_numChannels-1) - 80 for i in [0...@_numChannels])
                 channelRadius:
                     d3.scale.ordinal()
                             .domain(@_channelIds)
