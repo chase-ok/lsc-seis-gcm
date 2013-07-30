@@ -155,8 +155,8 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
 
         _mouseOver: (matches) ->
             {snr} = @maps()
-            (data) ->
-                describe @canvas.selectAll("path"),
+            (data) =>
+                describe @canvas.selectAll("path.link"),
                     "stroke-opacity": (link) ->
                         if matches data, link then 1.0 else 0.05
                     "stroke-width": (link) ->
@@ -165,8 +165,8 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
 
         _mouseOut: ->
             {snr} = @maps()
-            ->
-                describe linkGroup.selectAll("path"),
+            =>
+                describe @canvas.selectAll("path.link"),
                     "stroke-opacity":  0.5
                     "stroke-width": (link) -> snr link.snr
 
