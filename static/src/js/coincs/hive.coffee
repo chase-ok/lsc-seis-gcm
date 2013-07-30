@@ -27,14 +27,16 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                 x: @canvasSize.x/2
                 y: @canvasSize.y/2
 
+            @snrThreshold 0
+
             @scales
                 time:
                     d3.scale.linear().range([0, @_radiusChunk]).clamp(yes)
                 snr:
                     d3.scale.linear().range([1.0, 4.0])
                 snrRatio: 
-                    d3.scale.log()
-                            .domain([0.8e-1, 0.2e1])
+                    d3.scale.linear()
+                            .domain([0.5, 1.5])
                             .range([-1, 1])
                             .clamp(yes)
                 channelColor: 
@@ -42,12 +44,19 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                 chainPosition: 
                     d3.scale.ordinal()
                             .domain([0...@_numChannels])
-                            .range(i*340/(@_numChannels-1) - 80 for i in [0...@_numChannels])
+                            .range(340*Math.sqrt(i/(@_numChannels-1)) - 80 for i in [0...@_numChannels])
                 channelRadius:
                     d3.scale.ordinal()
                             .domain(@_channelIds)
                             .range(@radius.inner + i*@_radiusChunk for i in [0...@_numChannels])
 
+        snrThreshold: (threshold) ->
+            if threshold?
+                @_snrThreshold = threshold
+                @declareDirty()
+                this
+            else
+                @_snrThreshold
 
         load: ->
             url = "#{defs.webRoot}/coinc/group/#{@group.id}/all"
@@ -92,7 +101,10 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                 transform: "translate(#{@center.x}, #{@center.y})"
             
             links = []
+            threshold = @snrThreshold()
             for coinc in coincs
+                continue if coinc.snrs[0] < threshold
+
                 for i in [0...coinc.length-1]
                     links.push
                         chainPosition: i
