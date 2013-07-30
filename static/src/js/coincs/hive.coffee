@@ -107,7 +107,7 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
             {good, neutral, bad} = @snrRatioColors()
             goodInterp = d3.interpolateRgb neutral, good
             badInterp = d3.interpolateRgb neutral, bad
-            ratioMap = maps.snrRatio
+            
             (ratio) ->
                 mapped = ratioMap ratio
                 if mapped > 0
