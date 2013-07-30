@@ -34,6 +34,7 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                 x: 10
                 y: @canvasSize.y/@_numChannels - @_barSpacing.y
 
+            @snrBaseThreshold 0
             @snrRange [0, 1/0]
 
             @scales
@@ -56,6 +57,14 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                     d3.scale.ordinal()
                             .domain(@_channelIds)
                             .range(i*(@_barSpacing.y + @_barSize.y) for i in [0...@_numChannels])
+
+        snrBaseThreshold: (threshold) ->
+            if threshold?
+                @_snrBaseThreshold = threshold
+                @declareDirty()
+                this
+            else
+                @_snrBaseThreshold
 
         snrRange: (range) ->
             if range?
@@ -136,9 +145,9 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                 width: @_infoSize.x
 
             @_snrHistogram = new plots.Histogram "g.snr-histogram"
-            @_snrHistogram.bins [5..25]
+            @_snrHistogram.bins [(@snrBaseThreshold|0)..25]
             @_snrHistogram.limits
-                x: [5, 25]
+                x: [@snrBaseThreshold(), 25]
                 y: [0, 0.5]
             @_snrHistogram.axisLabels
                 x: "Max SNR"
@@ -166,7 +175,15 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
         _draw: ->
             @_drawing = yes
 
-            snrs = (Math.max(c.snrs...) for c in @coincs)
+            threshold = @snrBaseThreshold()
+            unfiltered = @coincs
+            @coincs = []
+            snrs = []
+            for coinc in unfiltered
+                snr = Math.max coinc.snrs...
+                if snr >= threshold
+                    @coincs.push coinc
+                    snrs.push snr
 
             # coincs best be sorted by time
             @limits
