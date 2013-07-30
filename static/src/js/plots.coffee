@@ -2,31 +2,31 @@ define ['utils', 'd3'], (utils, d3) ->
     {mash, describe, mergeObj} = utils
     
     _clipCount = 0
-    class BasicPlot
-        constructor: (@rootSelector="body", @dimensions=["x", "y"]) ->
+
+    defaultMargin =
+        top: 40
+        right: 70
+        bottom: 50
+        left: 60
+
+    class SvgPlot
+        constructor: (@rootSelector="body", @margin=defaultMargin, 
+                      @dimensions=['x', 'y']) ->
             @root = d3.select @rootSelector
             
             @size = 
                 x: @root.attr "width"
                 y: @root.attr "height"
-            @margin = 
-                top: 40
-                right: 70
-                bottom: 50
-                left: 60
             @canvasSize = 
                 x: @size.x - @margin.left - @margin.right
                 y: @size.y - @margin.top - @margin.bottom
 
             @_scales = mash ([dim, d3.scale.linear()] for dim in @dimensions)
-            @_axisLabels = mash ([dim, dim] for dim in @dimensions)
             @_title = ""
-            @_ticks = mash ([dim, null] for dim in @dimensions)
             @_prepared = no
-            @_showGrid = yes
-    
+
         select: (selector) -> d3.select "#{@rootSelector} #{selector}"
-        
+
         scales: (scales, 
                  ranges={x: [0, @canvasSize.x], y: [@canvasSize.y, 0]}) ->
             if scales?
@@ -37,16 +37,6 @@ define ['utils', 'd3'], (utils, d3) ->
                 for dim, range of ranges
                     @_scales[dim].range range
                 @_scales
-            
-        axisLabels: (labels) ->
-            if labels?
-                mergeObj @_axisLabels, labels
-                if @_prepared
-                    for dim, label of @_axisLabels
-                        @select(".#{dim}.axis-label").text label
-                this
-            else
-                @_axisLabels
             
         title: (title) ->
             if title?
@@ -64,23 +54,7 @@ define ['utils', 'd3'], (utils, d3) ->
                 this
             else
                 mash ([dim, @_scales[dim].domain()] for dim in @dimensions)
-        
-        ticks: (ticks) ->
-            if ticks?
-                mergeObj @_ticks, ticks
-                @declareDirty()
-                this
-            else
-                @_ticks
-            
-        showGrid: (showGrid) ->
-            if showGrid?
-                @_showGrid = showGrid
-                @declareDirty()
-                this
-            else
-                @_showGrid
-        
+
         maps: ->
             mash ([dim, @_scales[dim].copy()] for dim in @dimensions)
         
@@ -91,16 +65,13 @@ define ['utils', 'd3'], (utils, d3) ->
             @prepare()
             
         prepare: ->
-            return if @_prepared
+            return no if @_prepared
     
             @_prepareCanvas()
             @_prepareCanvasClipPath()
-            @_prepareGrid()
-            @_prepareAxes()
-            @_prepareAxisLabels()
             @_prepareTitle()
             
-            @_prepared = yes
+            return @_prepared = yes
         
         declareDirty: ->
             # TODO: Make this wait a while to catch "all of the dirty" at once
@@ -120,6 +91,60 @@ define ['utils', 'd3'], (utils, d3) ->
                 y: 0
                 width: @canvasSize.x
                 height: @canvasSize.y
+
+        _prepareTitle: ->
+            fontHeight = 20
+            
+            describe @canvas.append("text").text(@_title),
+                x: @canvasSize.x/2
+                y: -@margin.top + fontHeight*1.1
+                "text-anchor": "middle"
+                "font-size": "#{fontHeight}"
+                class: "title axis-label"
+
+
+    class BasicPlot extends SvgPlot
+        constructor: (rootSelector="body") ->
+            super rootSelector 
+
+            @_axisLabels = mash ([dim, dim] for dim in @dimensions)
+            @_ticks = mash ([dim, null] for dim in @dimensions)
+            @_showGrid = yes
+    
+        select: (selector) -> d3.select "#{@rootSelector} #{selector}"
+            
+        axisLabels: (labels) ->
+            if labels?
+                mergeObj @_axisLabels, labels
+                if @_prepared
+                    for dim, label of @_axisLabels
+                        @select(".#{dim}.axis-label").text label
+                this
+            else
+                @_axisLabels
+        
+        ticks: (ticks) ->
+            if ticks?
+                mergeObj @_ticks, ticks
+                @declareDirty()
+                this
+            else
+                @_ticks
+            
+        showGrid: (showGrid) ->
+            if showGrid?
+                @_showGrid = showGrid
+                @declareDirty()
+                this
+            else
+                @_showGrid
+        
+        prepare: ->
+            return unless super()
+
+            @_prepareGrid()
+            @_prepareAxes()
+            @_prepareAxisLabels()
         
         _prepareGrid: ->
             return unless @_showGrid
@@ -153,16 +178,6 @@ define ['utils', 'd3'], (utils, d3) ->
                 "text-anchor": "middle"
                 "font-size": "#{fontHeight}"
                 class: "y axis-label"
-                
-        _prepareTitle: ->
-            fontHeight = 20
-            
-            describe @canvas.append("text").text(@_title),
-                x: @canvasSize.x/2
-                y: -@margin.top + fontHeight*1.1
-                "text-anchor": "middle"
-                "font-size": "#{fontHeight}"
-                class: "title axis-label"
             
         _prepareAxes: ->
             axes = @_makeAxes()
