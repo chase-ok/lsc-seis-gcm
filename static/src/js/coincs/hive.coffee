@@ -4,7 +4,7 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
     class HivePlot extends plots.SvgPlot
         constructor: (rootSelector, @group) ->
             margin = 
-                left: 10
+                left: 30
                 top: 30
                 right: 10
                 bottom: 10
@@ -94,7 +94,7 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
             describe bars.selectAll("rect")
                          .data(@_channels)
                          .enter().append("rect"),
-                x: @_barSize.x/2
+                x: -@_barSize.x/2
                 y: (channel) -> channelPosition channel.id
                 width: @_barSize.x
                 height: @_barSize.y
@@ -125,7 +125,7 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
             {time, snr, snrRatio, channelColor, chainPosition, 
              channelPosition} = @maps()
 
-            line = d3.svg.line().interpolate('cardinal').tension(0.5)
+            line = d3.svg.line().interpolate('cardinal-open').tension(0.5)
 
             path = describe linkGroup.selectAll("path.link")
                                      .data(links)
