@@ -89,9 +89,9 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                 for channel in @_channels
                     data.push [pos, channel]
 
-            bars = describe barGroups.selectAll("rect.hive-bar")
-                                     .data(data)
-                                     .enter().append("rect"),
+            bars = describe @canvas.selectAll("rect.hive-bar")
+                                   .data(data)
+                                   .enter().append("rect"),
                 class: "hive-bar"
                 x: (bar) => chainPosition(bar[0]) - @_barSize.x/2
                 y: (bar) -> channelPosition bar[1].id
