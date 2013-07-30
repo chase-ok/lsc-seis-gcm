@@ -316,6 +316,8 @@ define ['utils', 'd3'], (utils, d3) ->
                 @_useProbability
         
         plot: (values) ->
+            @prepare()
+
             {x, y} = @scales()
             
             histogram = d3.layout.histogram()
@@ -333,6 +335,6 @@ define ['utils', 'd3'], (utils, d3) ->
                 fill: "steelblue"
                 "shape-rendering": "crispEdge"
             
-            rects.exit().remove()
+            #rects.exit().remove()
 
     return {SvgPlot, BasicPlot, ZColorPlot, Histogram}
