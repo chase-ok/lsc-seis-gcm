@@ -162,14 +162,12 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
             @_drawing = yes
 
             snrs = (Math.max(c.snrs...) for c in @coincs)
-            snrExtent = d3.extent snrs
-            snrExtent[0] = Math.max @snrThreshold(), snrExtent[0]
-
+            
             # coincs best be sorted by time
             @limits
                 time: [@coincs[0].times[0], 
                        Math.max(@coincs[@coincs.length-1].times...)]
-                snr: snrExtent
+                snr: d3.extent snrs
 
             @prepare()
             @_drawLinks()
