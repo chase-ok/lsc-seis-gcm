@@ -101,21 +101,19 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
             super()
             @_draw() if @_loaded and not @_drawing
 
-        maps: ->
-            maps = super()
+        _getSnrRatioMap: ->
+            {snrRatio: ratioMap} = @maps()
 
             {good, neutral, bad} = @snrRatioColors()
             goodInterp = d3.interpolateRgb neutral, good
             badInterp = d3.interpolateRgb neutral, bad
             ratioMap = maps.snrRatio
-            maps.snrRatio = (ratio) ->
+            (ratio) ->
                 mapped = ratioMap ratio
                 if mapped > 0
                     badInterp mapped 
                 else
                     goodInterp -mapped
-
-            maps
 
         prepare: ->
             return unless super()
@@ -269,8 +267,8 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                         startChannelId: coinc.channel_ids[pos]
                         endChannelId: coinc.channel_ids[pos+1]
             
-            {time, snr, snrRatio, channelColor, chainPosition, 
-             channelPosition} = @maps()
+            {time, snr, channelColor, chainPosition, channelPosition} = @maps()
+            snrRatio = @_getSnrRatioMap()
 
             # NOTE! We need to flip x and y for diag to be horizontal!
             line = d3.svg.diagonal().projection (d) -> [d.y, d.x]
