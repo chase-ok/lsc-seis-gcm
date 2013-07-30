@@ -1,5 +1,5 @@
 define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
-    {definitions: defs, describe, loadJSON} = utils
+    {definitions: defs, describe, loadJSON, radians} = utils
     
     class HivePlot extends plots.SvgPlot
         constructor: (rootSelector, @group) ->
@@ -88,6 +88,49 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                 fill: (channel) -> channelColor channel.id
 
         _drawLinks: (coincs) ->
-            console.log coincs.length
+            linkGroup = describe @canvas.append("g"),
+                transform: "translate(#{@center.x}, #{@center.y}"
+            
+            links = []
+            for coinc in coincs
+                for i in [0...coinc.length-1]
+                    links.push
+                        chainPosition: i
+                        time: coinc.times[i]
+                        snr: coinc.snrs[0],
+                        snrRatio: coinc.snrs[i+1]/coinc.snrs[i]
+                        startChannelId: coinc.channel_ids[i]
+                        endChannelId: coinc.channel_ids[i+1]
+            
+            {time, snr, snrRatio, channelColor, chainPosition, 
+             channelRadius} = @maps()
+
+            describe linkGroup.selectAll("path.link")
+                              .data(links)
+                              .enter().append("path"),
+                class: "link"
+                fill: "none"
+                stroke: (link) -> 
+                    if snrRatio(link.snrRatio) > 0 then "red" else "green"
+                "stroke-width": (link) ->
+                    snr link.snr
+                "stroke-opacity": 0.3
+                d: (link) ->
+                    makeHiveLink
+                        start:
+                            angle: radians chainPosition link.chainPosition
+                            radius: channelRadius link.startChannelId
+                        end:
+                            angle: radians chainPosition (link.chainPosition + 1)
+                            radius: channelRadius link.endChannelId
+
+
+    makeHiveLink = (link) ->
+        a1 = link.start.angle + (link.end.angle - link.start.angle)/3
+        a2 = link.end.angle - (link.end.angle - link.start.angle)/3
+        return "M" + Math.cos(link.start.angle) * link.start.radius + "," + Math.sin(link.start.angle) * link.start.radius
+             + "C" + Math.cos(a1) * link.start.radius + "," + Math.sin(a1) * link.start.radius
+             + " " + Math.cos(a2) * link.end.radius + "," + Math.sin(a2) * link.end.radius
+             + " " + Math.cos(link.end.angle) * link.end.radius + "," + Math.sin(link.end.angle) * link.end.radius
 
     return {HivePlot}
