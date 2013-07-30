@@ -327,6 +327,8 @@ define ['utils', 'd3'], (utils, d3) ->
             data = histogram values
 
             @canvas = @select ".canvas" # TODO: use this everwhere!
+            console.log @canvas
+            
             rects = @canvas.selectAll("rect").data data
             describe rects.enter().append("rect"),
                 class: "histogram-bar"
