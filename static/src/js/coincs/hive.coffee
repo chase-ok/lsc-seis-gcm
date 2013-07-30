@@ -81,11 +81,11 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                            .data(@_channels)
                            .enter().append("rect"),
                 x: (channel) -> channelRadius channel.id
-                y: @_spokeWidth/2
+                y: -@_spokeWidth/2
                 width: @_radiusChunk
                 height: @_spokeWidth
                 stroke: "none"
-                fill: (channel) -> channelColor channel
+                fill: (channel) -> channelColor channel.id
 
         _drawLinks: (coincs) ->
             console.log coincs.length
