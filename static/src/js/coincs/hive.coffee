@@ -25,7 +25,7 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                 y: @canvasSize.y
 
             @_barSpacing =
-                x: @_plotWidth/(@_numChannels - 1)
+                x: @_plotSize.x/(@_numChannels - 1)
                 y: 5
             @_barSize = 
                 x: 10
@@ -84,10 +84,10 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
         _drawBars: ->
             {channelColor, chainPosition, channelPosition} = @maps()
 
-            bars = describe @canvas.selectAll(".bar")
+            bars = describe @canvas.selectAll(".hive-bar")
                                    .data([0...@_numChannels])
                                    .enter().append("g"),
-                class: "bar"
+                class: "hive-bar"
                 transform: (bar) -> "translate(#{chainPosition bar}, 0)"
                                       
 
