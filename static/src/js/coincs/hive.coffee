@@ -136,7 +136,7 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
             @_snrHistogram.limits
                 x: [5, 25]
                 y: [0, 0.5]
-            @_snrHistogram.labels
+            @_snrHistogram.axisLabels
                 x: "Max SNR"
 
             @_currentInfoY += height
