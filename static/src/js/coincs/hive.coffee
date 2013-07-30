@@ -142,7 +142,14 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
             @_snrBrush = d3.svg.brush()
             @_snrBrush.x @_snrHistogram.scales().x
             @_snrBrush.y @_snrHistogram.scales().y
-            @_snrBrush.clamp [no, yes]
+            @_snrBrush.clamp [yes, yes]
+
+            # Force x-brushing only
+            yExtent = @_snrBrush.limits().y
+            @_snrBrush.on "brush", =>
+                [xExtent, _] = @_snrBrush.extent()
+                @_snrBrush.extent [xExtent, yExtent]
+                @_snrBrush @_snrHistogram.canvas
 
             @_currentInfoY += height
 
