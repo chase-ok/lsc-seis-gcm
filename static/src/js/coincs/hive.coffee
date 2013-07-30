@@ -108,9 +108,9 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
             describe legend.append("text")
                            .text((d) -> d[1].name),
                 x: 3
-                y: size.y - 4
+                y: size.y - 5
                 "text-anchor": "start"
-                "font-size": "#{size.y - 2*4}"
+                "font-size": "#{size.y - 8}"
                 "font-weight": "bold"
                 fill: "white"
 
