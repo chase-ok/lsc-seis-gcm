@@ -318,7 +318,7 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                 mouseOverSelect link
 
             path.on "mouseout", =>
-                @_writeInfo []
+                #@_writeInfo []
                 @_mouseOut()
 
         _mouseOver: (matches) ->
