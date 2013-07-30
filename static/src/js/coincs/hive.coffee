@@ -212,14 +212,14 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
             spacing = 5
             @_writeInfo = (lines) =>
                 texts = describe textGroup.selectAll("text").data(lines)
-                                          .enter().append("text"),
+
+                describe texts.enter().append("text"),
                     x: 3
                     y: (_, i) -> (i + 1)*textHeight + i*spacing
                     "text-anchor": "start"
                     "font-size": textHeight
                     "font-weight": "bold"
                 texts.text (line) -> line
-                
                 texts.exit().remove()
 
             @_currentInfoY += height + 10
