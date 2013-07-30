@@ -32,7 +32,7 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                 y: 5
             @_barSize = 
                 x: 10
-                y: (@canvasSize.y - @_barSpacing.y*(@_numChannels+1))/@_numChannels
+                y: @canvasSize.y/@_numChannels - @_barSpacing.y
 
             @snrThreshold 0
 
@@ -55,7 +55,7 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                 channelPosition:
                     d3.scale.ordinal()
                             .domain(@_channelIds)
-                            .range((i+1)*@_barSpacing.y + i*@_barSize.y for i in [0...@_numChannels])
+                            .range(i*(@_barSpacing.y + @_barSize.y) for i in [0...@_numChannels])
 
         snrThreshold: (threshold) ->
             if threshold?
@@ -113,6 +113,10 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                 "font-size": "#{size.y - 8}"
                 "font-weight": "bold"
                 fill: "white"
+
+            legend.on "mouseover", @_mouseOver (d, link) =>
+                d[1].id in @coincs[link.coincId].channel_ids
+            legend.on "mouseout", @_mouseOut()
 
 
         _draw: ->
