@@ -144,7 +144,8 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
         _draw: ->
             @_drawing = yes
 
-            snrs = (Math.min(c.snrs...) for c in @coincs)
+            snrs = (Math.max(c.snrs...) for c in @coincs)
+            console.log snrs
             @_snrHistogram.plot snrs
 
             snrExtent = d3.extent snrs
