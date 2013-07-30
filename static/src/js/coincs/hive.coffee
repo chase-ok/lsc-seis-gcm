@@ -172,9 +172,9 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
             
             @_snrHistogram.plot snrs
             @_snrBrush @_snrHistogram.canvas
-            @_snrBrush.on "brush", (d) =>
-                console.log d
-                console.log @_snrBrush
+            #@_snrBrush.on "brush", (d) =>
+            #    console.log d
+            #    console.log @_snrBrush
 
             @_drawing = no
 
