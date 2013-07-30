@@ -335,4 +335,4 @@ define ['utils', 'd3'], (utils, d3) ->
             
             rects.exit().remove()
 
-    return {BasicPlot, ZColorPlot, Histogram}
+    return {SvgPlot, BasicPlot, ZColorPlot, Histogram}
