@@ -104,8 +104,8 @@ define ['utils', 'd3'], (utils, d3) ->
 
 
     class BasicPlot extends SvgPlot
-        constructor: (rootSelector="body") ->
-            super rootSelector 
+        constructor: (rootSelector="body", dimensionns=['x', 'y']) ->
+            super rootSelector, null, dimensions
 
             @_axisLabels = mash ([dim, dim] for dim in @dimensions)
             @_ticks = mash ([dim, null] for dim in @dimensions)
