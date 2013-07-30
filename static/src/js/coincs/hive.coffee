@@ -287,6 +287,7 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                         coincId: i
                         chainPosition: pos
                         time: coinc.times[pos]
+                        dt: coinc.times[pos+1] - coinc.times[pos]
                         snr: coinc.snrs[0],
                         freq: coinc.freqs[pos]
                         snrRatio: coinc.snrs[pos+1]/coinc.snrs[pos]
@@ -307,6 +308,8 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                 stroke: (link) -> snrRatio link.snrRatio
                 "stroke-width": (link) -> snr link.snr
                 "stroke-opacity": 0.5
+                "stroke-dasharray": (link) ->
+                    if link.dt < 1e-5 then "3, 3" else "none"
                 d: (link) ->
                     line
                         source:
