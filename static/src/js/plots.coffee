@@ -330,7 +330,7 @@ define ['utils', 'd3', 'jquery'], (utils, d3, $) ->
             @canvas = d3.select(@rootSelector + ">.canvas")
             console.log @canvas
 
-            rects = @canvas.selectAll("rect").data data
+            rects = @canvas.selectAll("rect.histogram-bar").data data
             describe rects.enter().append("rect"),
                 class: "histogram-bar"
                 x: (d) -> Math.floor x(d.x)
