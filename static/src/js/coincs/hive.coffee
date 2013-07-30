@@ -20,7 +20,7 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
             @_numChannels = @_channels.length
 
             @_infoSize =
-                x: 100
+                x: 150
                 y: @canvasSize.y
 
             @_plotSize = 
@@ -108,8 +108,8 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
             describe legend.append("text")
                            .text((d) -> d[1].subsystem + ":" + d[1].name),
                 x: 0
-                y: 4
-                "text-anchor": "left"
+                y: size.y - 4
+                "text-anchor": "start"
                 "font-size": "#{size.y - 2*4}"
                 fill: "white"
 
