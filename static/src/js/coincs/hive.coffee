@@ -334,7 +334,7 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                     "",
                     "All Times: #{(timeFormat t, "%S.%L" for t in coinc.times)}",
                     "All SNRs: #{coinc.snrs.map snrFormat}",
-                    "All Frequencies: #{coinc.freqs.mpa freqFormat}",
+                    "All Frequencies: #{coinc.freqs.map freqFormat}",
                 ]
                 mouseOverSelect link
 
