@@ -2,7 +2,7 @@ define ['utils', 'd3', 'jquery'], (utils, d3, $) ->
     {mash, describe, mergeObj} = utils
     
     _clipCount = 0
-
+    
     defaultMargin =
         top: 40
         right: 70

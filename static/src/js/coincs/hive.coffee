@@ -139,6 +139,8 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
             @_snrHistogram.axisLabels
                 x: "Max SNR"
 
+            @_snrBrush = d3.svg.brush().x @_snrHistogram.scales().x
+
             @_currentInfoY += height
 
         _draw: ->
@@ -158,8 +160,13 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
             @_drawLinks()
             @_drawBars()
             
-            @_drawing = no
             @_snrHistogram.plot snrs
+            @_snrBrush @_snrHistogram.canvas
+            @_snrBrush.on "brush", (d) =>
+                console.log d
+                console.log @_snrBrush
+
+            @_drawing = no
 
         _drawBars: ->
             {channelColor, chainPosition, channelPosition} = @maps()
