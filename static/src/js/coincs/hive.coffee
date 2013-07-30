@@ -87,7 +87,7 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
 
         _prepareLegend: ->
             spacing = 5
-            size = {x: @_infoSize.x, y: 20}
+            size = {x: @_infoSize.x, y: 16}
 
             legend = describe @_info.append("g").selectAll(".legend")
                                     .data(d3.zip([0...@_numChannels], @_channels))
@@ -103,7 +103,7 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                 width: size.x
                 height: size.y
                 stroke: "none"
-                fill: (d) -> channelColor d[1]
+                fill: (d) -> channelColor d[1].id
 
             describe legend.append("text")
                            .text((d) -> d[1].subsystem + ":" + d[1].name),
