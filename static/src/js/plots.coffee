@@ -325,16 +325,26 @@ define ['utils', 'd3'], (utils, d3) ->
             histogram.frequency not @useProbability()
             data = histogram values
             
-            rects = @canvas.selectAll("rect").data data
-            describe rects.enter().append("rect"),
-                class: "histogram-bar"
-                x: (d) -> Math.floor x(d.x)
-                y: (d) -> y d.y
-                width: (d) -> Math.ceil(x(d.x + d.dx) - x(d.x))
-                height: (d) -> y(0) - y(d.y)
-                fill: "steelblue"
-                "shape-rendering": "crispEdge"
+            for d in data
+                describe @canvas.append("rect"),
+                    class: "histogram-bar"
+                    x: Math.floor x(d.x)
+                    y: y d.y
+                    width: Math.ceil(x(d.x + d.dx) - x(d.x))
+                    height: y(0) - y(d.y)
+                    fill: "steelblue"
+                    "shape-rendering": "crispEdge"
+
+            # rects = @canvas.selectAll("rect").data data
+            # describe rects.enter().append("rect"),
+            #     class: "histogram-bar"
+            #     x: (d) -> Math.floor x(d.x)
+            #     y: (d) -> y d.y
+            #     width: (d) -> Math.ceil(x(d.x + d.dx) - x(d.x))
+            #     height: (d) -> y(0) - y(d.y)
+            #     fill: "steelblue"
+            #     "shape-rendering": "crispEdge"
             
-            rects.exit().remove()
+            # rects.exit().remove()
 
     return {SvgPlot, BasicPlot, ZColorPlot, Histogram}
