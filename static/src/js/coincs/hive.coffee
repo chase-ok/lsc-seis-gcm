@@ -202,18 +202,25 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
         _prepareLinkInfo: ->
             height = 250
 
-            obj = describe @_info.append("foreignObject"),
+            textGroup = describe @_info.append("g"),
                 x: 0
                 y: @_currentInfoY
                 width: @_infoSize.x
                 height: height
-            htmlCanvas = obj.append('html')
 
+            textHeight = 12
+            spacing = 5
             @_writeInfo = (lines) =>
-                ps = describe htmlCanvas.selectAll("p").data(lines)
-                                        .enter().append("p")
-                ps.text (line) -> line
-                ps.exit().remove()
+                texts = describe textGroup.selectAll("text").data(lines)
+                                          .enter().append("text"),
+                    x: 3
+                    y: (_, i) -> (i + 1)*textHeight + i*spacing
+                    "text-anchor": "start"
+                    "font-size": textHeight
+                    "font-weight": "bold"
+                texts.text (line) -> line
+                
+                texts.exit().remove()
 
             @_currentInfoY += height + 10
 
