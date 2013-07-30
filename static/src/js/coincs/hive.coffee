@@ -90,7 +90,7 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                                   .enter().append("g"),
                 class: "legend"
                 transform: (d) ->
-                    "translate(0, #{d[0]*(size.y + spacing})"
+                    "translate(0, #{d[0]*(size.y + spacing)})"
 
             {channelColor} = maps()
             describe legend.append("rect"),
