@@ -309,7 +309,7 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                 "stroke-width": (link) -> snr link.snr
                 "stroke-opacity": 0.5
                 "stroke-dasharray": (link) ->
-                    if link.dt < 1e-5 then "15, 1" else "none"
+                    if link.dt < 1e-5 then "15, 3" else "none"
                 d: (link) ->
                     line
                         source:
