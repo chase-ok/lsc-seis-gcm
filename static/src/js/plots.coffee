@@ -326,6 +326,7 @@ define ['utils', 'd3'], (utils, d3) ->
             data = histogram values
             
             for d in data
+                console.log d
                 describe @canvas.append("rect"),
                     class: "histogram-bar"
                     x: Math.floor x(d.x)
