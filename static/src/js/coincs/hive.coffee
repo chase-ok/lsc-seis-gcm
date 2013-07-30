@@ -13,6 +13,7 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
             super rootSelector, margin, dimensions
             
             @_loaded = no
+            @_drawing = no
 
             @_channels = @group.channels
             @_channelIds = (c.id for c in @_channels)
@@ -73,12 +74,12 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
 
         declareDirty: ->
             super()
-            @_draw() if @_loaded
+            @_draw() if @_loaded and not @_drawing
 
         prepare: ->
             return unless super()
-            #@_prepareInfo()
-            #@_prepareLegend()
+            @_prepareInfo()
+            @_prepareLegend()
 
         _prepareInfo: ->
             @_info = describe @canvas.append("g"),
@@ -95,25 +96,27 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                 transform: (d) ->
                     "translate(0, #{d[0]*(size.y + spacing)})"
 
-            # {channelColor} = @maps()
-            # describe legend.append("rect"),
-            #     x: 0
-            #     y: 0
-            #     width: size.x
-            #     height: size.y
-            #     stroke: "none"
-            #     fill: (d) -> channelColor d[1]
+            {channelColor} = @maps()
+            describe legend.append("rect"),
+                x: 0
+                y: 0
+                width: size.x
+                height: size.y
+                stroke: "none"
+                fill: (d) -> channelColor d[1]
 
-            # describe legend.append("text")
-            #                .text((d) -> d[1].subsystem + ":" + d[1].name),
-            #     x: 0
-            #     y: 2
-            #     "text-anchor": "middle"
-            #     "font-size": "#{size.y - 2*2}"
-            #     fill: "white"
+            describe legend.append("text")
+                           .text((d) -> d[1].subsystem + ":" + d[1].name),
+                x: 0
+                y: 2
+                "text-anchor": "middle"
+                "font-size": "#{size.y - 2*2}"
+                fill: "white"
 
 
         _draw: ->
+            @_drawing = yes
+
             snrExtent = d3.extent (Math.min(c.snrs...) for c in @coincs)
             snrExtent[0] = Math.max @snrThreshold(), snrExtent[0]
             # coincs best be sorted by time
@@ -125,6 +128,8 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
             @prepare()
             @_drawLinks()
             @_drawBars()
+
+            @_drawing = no
 
         _drawBars: ->
             {channelColor, chainPosition, channelPosition} = @maps()
