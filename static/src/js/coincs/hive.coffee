@@ -105,13 +105,13 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                 stroke: "none"
                 fill: (d) -> channelColor d[1]
 
-            describe legend.append("text")
-                           .text((d) -> d[1].subsystem + ":" + d[1].name),
-                x: 0
-                y: 2
-                "text-anchor": "middle"
-                "font-size": "#{size.y - 2*2}"
-                #fill: "white"
+            # describe legend.append("text")
+            #                .text((d) -> d[1].subsystem + ":" + d[1].name),
+            #     x: 0
+            #     y: 2
+            #     "text-anchor": "middle"
+            #     "font-size": "#{size.y - 2*2}"
+            #     #fill: "white"
 
 
         _draw: ->
