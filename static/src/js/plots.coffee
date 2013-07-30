@@ -1,4 +1,4 @@
-define ['utils', 'd3'], (utils, d3) ->
+define ['utils', 'd3', 'jquery'], (utils, d3, $) ->
     {mash, describe, mergeObj} = utils
     
     _clipCount = 0
@@ -326,9 +326,10 @@ define ['utils', 'd3'], (utils, d3) ->
             histogram.frequency not @useProbability()
             data = histogram values
 
+            console.log $(@rootSelector + ".canvas")
             @canvas = @select ".canvas" # TODO: use this everwhere!
             console.log @canvas
-            
+
             rects = @canvas.selectAll("rect").data data
             describe rects.enter().append("rect"),
                 class: "histogram-bar"
