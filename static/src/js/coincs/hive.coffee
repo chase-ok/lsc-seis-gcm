@@ -92,7 +92,7 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                 transform: (d) ->
                     "translate(0, #{d[0]*(size.y + spacing)})"
 
-            {channelColor} = maps()
+            {channelColor} = @maps()
             describe legend.append("rect"),
                 x: 0
                 y: 0
