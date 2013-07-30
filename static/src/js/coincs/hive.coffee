@@ -89,7 +89,7 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
 
         _drawLinks: (coincs) ->
             linkGroup = describe @canvas.append("g"),
-                transform: "translate(#{@center.x}, #{@center.y}"
+                transform: "translate(#{@center.x}, #{@center.y})"
             
             links = []
             for coinc in coincs
@@ -110,7 +110,6 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                               .enter().append("path"),
                 class: "link"
                 fill: "none"
-                transform: "translate(#{@center.x}, #{@center.y}"
                 stroke: (link) -> 
                     if snrRatio(link.snrRatio) > 0 then "red" else "green"
                 "stroke-width": (link) ->
