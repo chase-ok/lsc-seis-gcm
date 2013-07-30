@@ -310,7 +310,7 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
 
             mouseOverSelect = @_mouseOver (link, match) ->
                 link.coincId is match.coincId
-            path.on "mouseover", (link) ->
+            path.on "mouseover", (link) =>
                 @_writeInfo [
                     "Time: #{link.time}"
                 ]
