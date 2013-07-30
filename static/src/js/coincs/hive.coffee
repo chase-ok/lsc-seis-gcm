@@ -110,6 +110,7 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                               .enter().append("path"),
                 class: "link"
                 fill: "none"
+                transform: "translate(#{@center.x}, #{@center.y}"
                 stroke: (link) -> 
                     if snrRatio(link.snrRatio) > 0 then "red" else "green"
                 "stroke-width": (link) ->
@@ -119,10 +120,10 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                     makeHiveLink
                         start:
                             angle: radians chainPosition link.chainPosition
-                            radius: channelRadius link.startChannelId
+                            radius: channelRadius(link.startChannelId) + time(link.time)
                         end:
                             angle: radians chainPosition (link.chainPosition + 1)
-                            radius: channelRadius link.endChannelId
+                            radius: channelRadius(link.endChannelId) + time(link.time)
 
 
     makeHiveLink = (link) ->
