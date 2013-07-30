@@ -140,11 +140,11 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                 d: (link) ->
                     line
                         source:
-                            y: chainPosition link.chainPosition
-                            x: channelPosition(link.startChannelId) + time(link.time)
+                            x: chainPosition link.chainPosition
+                            y: channelPosition(link.startChannelId) + time(link.time)
                         target:
-                            y: chainPosition (link.chainPosition + 1)
-                            x: channelPosition(link.endChannelId) + time(link.time)
+                            x: chainPosition (link.chainPosition + 1)
+                            y: channelPosition(link.endChannelId) + time(link.time)
 
             path.on "mouseover", (link) ->
                 describe linkGroup.selectAll("path"),
