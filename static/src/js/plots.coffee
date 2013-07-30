@@ -327,7 +327,7 @@ define ['utils', 'd3', 'jquery'], (utils, d3, $) ->
             data = histogram values
 
             # TODO! use this everywhere
-            @canvas = d3.select $(@rootSelector + ">.canvas")[0]
+            @canvas = d3.select(@rootSelector + ">.canvas")
             console.log @canvas
 
             rects = @canvas.selectAll("rect").data data
