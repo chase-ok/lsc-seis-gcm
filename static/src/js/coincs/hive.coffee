@@ -108,9 +108,9 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                 fill: (d) -> channelColor d[1].id
 
             describe legend.append("text")
-                           .text((d) -> d[1].name),
+                           .text((d) -> d[1].subsystem + ":" + d[1].name),
                 x: 3
-                y: size.y - 4
+                y: size.y - 5
                 "text-anchor": "start"
                 "font-size": "#{size.y - 8}"
                 "font-weight": "bold"
