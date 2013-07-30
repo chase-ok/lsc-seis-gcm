@@ -42,13 +42,13 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                 chainPosition: 
                     d3.scale.ordinal()
                             .domain([0...@_numChannels])
-                            .range(i*360/@_numChannels - 90
-                                   for i in[0...@_numChannels])
+                            .range((i*360/@_numChannels - 90
+                                    for i in[0...@_numChannels]))
                 channelRadius:
                     d3.scale.ordinal()
                             .domain(@_channelIds)
-                            .range(@radius.inner + i*@_radiusChunk
-                                   for i in [0...@_numChannels])
+                            .range((@radius.inner + i*@_radiusChunk
+                                    for i in [0...@_numChannels]))
 
 
         load: ->
