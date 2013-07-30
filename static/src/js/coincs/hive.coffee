@@ -126,11 +126,12 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
 
 
     makeHiveLink = (link) ->
+        # from bost.ocks.org/mike/hive/
         a1 = link.start.angle + (link.end.angle - link.start.angle)/3
         a2 = link.end.angle - (link.end.angle - link.start.angle)/3
-        return "M" + Math.cos(link.start.angle) * link.start.radius + "," + Math.sin(link.start.angle) * link.start.radius
-             + "C" + Math.cos(a1) * link.start.radius + "," + Math.sin(a1) * link.start.radius
-             + " " + Math.cos(a2) * link.end.radius + "," + Math.sin(a2) * link.end.radius
-             + " " + Math.cos(link.end.angle) * link.end.radius + "," + Math.sin(link.end.angle) * link.end.radius
+        return "M" + Math.cos(link.start.angle) * link.start.radius + "," + Math.sin(link.start.angle) * link.start.radius +
+               "C" + Math.cos(a1) * link.start.radius + "," + Math.sin(a1) * link.start.radius +
+               " " + Math.cos(a2) * link.end.radius + "," + Math.sin(a2) * link.end.radius + 
+               " " + Math.cos(link.end.angle) * link.end.radius + "," + Math.sin(link.end.angle) * link.end.radius
 
     return {HivePlot}
