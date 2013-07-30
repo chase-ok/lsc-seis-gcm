@@ -319,19 +319,22 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
             mouseOverSelect = @_mouseOver (link, match) ->
                 link.coincId is match.coincId
             path.on "mouseover", (link) =>
-                format = (time, formatString) ->
+                timeFormat = (time, formatString) ->
                     date = new Date time*1000
                     d3.time.format.utc(formatString) date
+                snrFormat = (snr) -> d3.format("%f.1") snr
+                freqFormat = (freq) -> d3.format("%f.3") freq
+
                 coinc = @coincs[link.coincId]
 
                 @_writeInfo [
-                    "Time: #{format link.time, '%Y-%m-%d %H:%M:%S.%L'}",
-                    "SNR: #{link.snr}",
-                    "Frequency: #{link.freq}",
+                    "Time: #{timeFormat link.time, '%Y-%m-%d %H:%M:%S.%L'}",
+                    "SNR: #{snrFormat link.snr}",
+                    "Frequency: #{freqFormat link.freq}",
                     "",
-                    "All Times: #{(format t, "%S.%L" for t in coinc.times)}",
-                    "All SNRs: #{coinc.snrs}",
-                    "All Frequencies: #{coinc.freqs}",
+                    "All Times: #{(timeFormat t, "%S.%L" for t in coinc.times)}",
+                    "All SNRs: #{coinc.snrs.map snrFormat}",
+                    "All Frequencies: #{coinc.freqs.mpa freqFormat}",
                 ]
                 mouseOverSelect link
 
