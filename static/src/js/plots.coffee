@@ -326,9 +326,7 @@ define ['utils', 'd3'], (utils, d3) ->
             rects = @canvas.selectAll("rect.histogrambar").data data
             describe rects.enter().append("rect"),
                 class: "histogrambar"
-                x: (d) -> 
-                    console.log d
-                    Math.floor x(d.x)
+                x: (d) -> Math.floor x(d.x)
                 y: (d) -> y d.y
                 width: (d) -> Math.ceil(x(d.x + d.dx) - x(d.x))
                 height: (d) -> y(0) - y(d.y)
