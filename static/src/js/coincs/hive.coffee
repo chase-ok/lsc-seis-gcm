@@ -84,24 +84,27 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
         _drawBars: ->
             {channelColor, chainPosition, channelPosition} = @maps()
 
-            bars = describe @canvas.selectAll(".hive-bar")
-                                   .data([0...@_numChannels])
-                                   .enter().append("g"),
+            barGroups = describe @canvas.selectAll(".hive-bar")
+                                        .data([0...@_numChannels])
+                                        .enter().append("g"),
                 class: "hive-bar"
                 transform: (bar) -> "translate(#{chainPosition bar}, 0)"
                                       
 
-            describe bars.selectAll("rect")
-                         .data(@_channels)
-                         .enter().append("rect"),
+            bars = describe barGroups.selectAll("rect")
+                                     .data((pos) -> ([pos, c] for c in @_channels))
+                                     .enter().append("rect"),
                 x: -@_barSize.x/2
-                y: (channel) -> channelPosition channel.id
+                y: (bar) -> channelPosition bar[1].id
                 width: @_barSize.x
                 height: @_barSize.y
                 stroke: "none"
-                fill: (channel) -> channelColor channel.id
+                fill: (bar) -> channelColor bar[1].id
 
-            # TODO: bars.on(mouseover)
+            bars.on "mouseover", @_mouseOver (bar, link) =>
+                @coincs[link.coincId].channel_ids[bar[0]] is bar[1].id
+
+            bars.on "mouseout", @_mouseOut()
 
         _drawLinks: ->
             linkGroup = describe @canvas.append("g")
@@ -146,15 +149,24 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                             y: chainPosition (link.chainPosition + 1)
                             x: channelPosition(link.endChannelId) + time(link.time)
 
-            path.on "mouseover", (link) ->
-                describe linkGroup.selectAll("path"),
-                    "stroke-opacity": (match) ->
-                        if match.coincId is link.coincId then 1.0 else 0.05
-                    "stroke-width": (match) ->
-                        base = snr match.snr
-                        if match.coincId is link.coincId then 2*base else base/2
+            path.on "mouseover", @_mouseOver (link, match) -> 
+                link.coincId is match.coincId
 
-            path.on "mouseout", ->
+            path.on "mouseout", @_mouseOut()
+
+        _mouseOver: (matches) ->
+            {snr} = @maps()
+            (data) ->
+                describe @canvas.selectAll("path"),
+                    "stroke-opacity": (link) ->
+                        if matches data, link then 1.0 else 0.05
+                    "stroke-width": (link) ->
+                        base = snr link.snr
+                        if matches data, link then 2*base else base/2
+
+        _mouseOut: ->
+            {snr} = @maps()
+            ->
                 describe linkGroup.selectAll("path"),
                     "stroke-opacity":  0.5
                     "stroke-width": (link) -> snr link.snr
