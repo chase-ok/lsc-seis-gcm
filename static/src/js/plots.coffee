@@ -80,6 +80,7 @@ define ['utils', 'd3'], (utils, d3) ->
         
         _prepareCanvas: ->
             @canvas = describe @root.append("g"),
+                class: "canvas"
                 transform: "translate(#{@margin.left}, #{@margin.top})"
             @svgDefs = @canvas.append("defs")
         
@@ -325,6 +326,7 @@ define ['utils', 'd3'], (utils, d3) ->
             histogram.frequency not @useProbability()
             data = histogram values
 
+            @canvas = @select ".canvas" # TODO: use this everwhere!
             rects = @canvas.selectAll("rect").data data
             describe rects.enter().append("rect"),
                 class: "histogram-bar"

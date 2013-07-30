@@ -139,8 +139,6 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
             @_snrHistogram.axisLabels
                 x: "Max SNR"
 
-            @_snrHistogram.plot [5, 5, 6, 7, 8, 9, 5, 10, 15]
-
             @_currentInfoY += height
 
         _draw: ->
@@ -160,8 +158,8 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                 snr: snrExtent
 
             @prepare()
-            #@_drawLinks()
-            #@_drawBars()
+            @_drawLinks()
+            @_drawBars()
             
             @_drawing = no
 
