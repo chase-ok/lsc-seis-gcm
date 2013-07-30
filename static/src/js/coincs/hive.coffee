@@ -18,7 +18,7 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
 
             @radius =
                 outer: Math.min(@canvasSize.x, @canvasSize.y)/2
-                inner: 80
+                inner: 70
 
             @_radiusChunk = (@radius.outer - @radius.inner)/@_numChannels
             @_spokeWidth = 10
@@ -33,7 +33,7 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                 time:
                     d3.scale.linear().range([0, @_radiusChunk]).clamp(yes)
                 snr:
-                    d3.scale.linear().range([1.0, 4.0])
+                    d3.scale.linear().range([2.0, 8.0])
                 snrRatio: 
                     d3.scale.linear()
                             .domain([0.5, 1.5])
@@ -126,7 +126,7 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                     if snrRatio(link.snrRatio) > 0 then "red" else "green"
                 "stroke-width": (link) ->
                     snr link.snr
-                "stroke-opacity": 0.3
+                "stroke-opacity": 0.5
                 d: (link) ->
                     makeHiveLink
                         start:
