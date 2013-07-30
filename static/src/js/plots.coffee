@@ -326,6 +326,8 @@ define ['utils', 'd3'], (utils, d3) ->
             data = histogram values
 
             rectGroup = @canvas.append("g")
+            console.log rectGroup
+            console.log @canvas
             for d in data
                 describe rectGroup.append("rect"),
                     class: "histogram-bar"
