@@ -33,7 +33,7 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                 time:
                     d3.scale.linear().range([0, @_radiusChunk]).clamp(yes)
                 snr:
-                    d3.scale.linear().range([2.0, 8.0])
+                    d3.scale.linear().range([1.0, 6.0])
                 snrRatio: 
                     d3.scale.linear()
                             .domain([0.5, 1.5])
@@ -65,11 +65,13 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                 @_draw coincs
 
         _draw: (coincs) ->
+            snrExtent = d3.extent (Math.min(c.snrs...) for c in coincs)
+            snrExtent[0] = Math.max @snrThreshold(), snrExtent[0]
             # coincs best be sorted by time
             @limits
                 time: [coincs[0].times[0], 
                        Math.max(coincs[coincs.length-1].times...)]
-                snr: d3.extent (Math.min(c.snrs...) for c in coincs)
+                snr: snrExtent
 
             @prepare()
             @_drawLinks coincs
@@ -102,24 +104,26 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
             
             links = []
             threshold = @snrThreshold()
-            for coinc in coincs
+            for i in [0...coincs.length]
+                coinc = coincs[i]
                 continue if coinc.snrs[0] < threshold
 
-                for i in [0...coinc.length-1]
+                for pos in [0...coinc.length-1]
                     links.push
-                        chainPosition: i
-                        time: coinc.times[i]
+                        coincId: i
+                        chainPosition: pos
+                        time: coinc.times[pos]
                         snr: coinc.snrs[0],
-                        snrRatio: coinc.snrs[i+1]/coinc.snrs[i]
-                        startChannelId: coinc.channel_ids[i]
-                        endChannelId: coinc.channel_ids[i+1]
+                        snrRatio: coinc.snrs[pos+1]/coinc.snrs[pos]
+                        startChannelId: coinc.channel_ids[pos]
+                        endChannelId: coinc.channel_ids[pos+1]
             
             {time, snr, snrRatio, channelColor, chainPosition, 
              channelRadius} = @maps()
 
-            describe linkGroup.selectAll("path.link")
-                              .data(links)
-                              .enter().append("path"),
+            path = describe linkGroup.selectAll("path.link")
+                                     .data(links)
+                                     .enter().append("path"),
                 class: "link"
                 fill: "none"
                 stroke: (link) -> 
@@ -135,6 +139,19 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                         end:
                             angle: radians chainPosition (link.chainPosition + 1)
                             radius: channelRadius(link.endChannelId) + time(link.time)
+
+            path.on "mouseover", link ->
+                describe linkGroup.selectAll("path"),
+                    "stroke-opacity": (match) ->
+                        if match.coincId is link.coincId then 1.0 else 0.05
+                    "stroke-width": (match) ->
+                        base = snr match.snr
+                        if match.coincId is link.coincId then 2*base else base/2
+
+            path.on "mouseout", ->
+                describe linkGroup.selectAll("path"),
+                    "stroke-opacity":  0.5
+                    "stroke-width": (link) -> snr link.snr
 
 
     makeHiveLink = (link) ->
