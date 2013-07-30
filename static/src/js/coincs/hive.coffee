@@ -4,7 +4,7 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
     class HivePlot extends plots.SvgPlot
         constructor: (rootSelector, @group) ->
             margin = 
-                left: 30
+                left: 10
                 top: 30
                 right: 10
                 bottom: 10
@@ -83,7 +83,7 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
 
         _prepareInfo: ->
             @_info = describe @canvas.append("g"),
-                transform: "translate(#{@canvasSize.x - @_infoSize.x + 10}, 0)"
+                transform: "translate(#{@canvasSize.x - @_infoSize.x}, 0)"
 
         _prepareLegend: ->
             spacing = 5
