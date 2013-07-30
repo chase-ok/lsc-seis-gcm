@@ -210,9 +210,8 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
             htmlCanvas = obj.append('html')
 
             @_writeInfo = (lines) =>
-                ps = htmlCanvas.selectAll("p").data(lines)
-                describe ps.enter().append("p"),
-                    xmlns: "http://www.w3.org/1999/xhtml"
+                ps = describe htmlCanvas.selectAll("p").data(lines)
+                                        .enter().append("p")
                 ps.text (line) -> line
                 ps.exit().remove()
 
