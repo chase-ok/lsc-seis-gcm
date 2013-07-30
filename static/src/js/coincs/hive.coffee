@@ -20,7 +20,7 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
             @_numChannels = @_channels.length
 
             @_infoSize =
-                x: 200
+                x: 350
                 y: @canvasSize.y
 
             @_plotSize = 
@@ -80,21 +80,23 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
             return unless super()
             @_prepareInfo()
             @_prepareLegend()
+            @_prepareSnrHistogram()
 
         _prepareInfo: ->
             @_info = describe @canvas.append("g"),
                 transform: "translate(#{@canvasSize.x - @_infoSize.x}, 0)"
+            @_currentInfoY = 0
 
         _prepareLegend: ->
             spacing = 5
-            size = {x: @_infoSize.x, y: 18}
+            size = {x: @_infoSize.x, y: 20}
 
             legend = describe @_info.append("g").selectAll(".legend")
                                     .data(d3.zip([0...@_numChannels], @_channels))
                                     .enter().append("g"),
                 class: "legend"
-                transform: (d) ->
-                    "translate(0, #{d[0]*(size.y + spacing)})"
+                transform: (d) =>
+                    "translate(0, #{@_currentInfoY + d[0]*(size.y + spacing)})"
 
             {channelColor} = @maps()
             describe legend.append("rect"),
@@ -108,7 +110,7 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
             describe legend.append("text")
                            .text((d) -> d[1].name),
                 x: 3
-                y: size.y - 5
+                y: size.y - 4
                 "text-anchor": "start"
                 "font-size": "#{size.y - 8}"
                 "font-weight": "bold"
@@ -118,12 +120,32 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                 d[1].id in @coincs[link.coincId].channel_ids
             legend.on "mouseout", @_mouseOut()
 
+            @_currentInfoY += @_numChannels*(size.y + spacing) + 10
+
+        _prepareSnrHistogram: ->
+            height = 250
+
+            group = describe @_info.append("g"),
+                class: "snr-histogram"
+                transform: "translate(0, #{@_currentInfoY})"
+                height: height
+                width: @_infoSize.x
+
+            @_snrHistogram = new plots.histogram "g.snr-histogram"
+            @_snrHistogram.bins [5..25]
+            @_snrHistogram.limits {y: [0, 0.5]}
+
+            @_currentInfoY += height
 
         _draw: ->
             @_drawing = yes
 
-            snrExtent = d3.extent (Math.min(c.snrs...) for c in @coincs)
+            snrs = (Math.min(c.snrs...) for c in @coincs)
+            @_snrHistogram.plot snrs
+
+            snrExtent = d3.extent snrs
             snrExtent[0] = Math.max @snrThreshold(), snrExtent[0]
+
             # coincs best be sorted by time
             @limits
                 time: [@coincs[0].times[0], 
@@ -133,7 +155,7 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
             @prepare()
             @_drawLinks()
             @_drawBars()
-
+            
             @_drawing = no
 
         _drawBars: ->
