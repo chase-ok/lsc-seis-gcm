@@ -125,7 +125,8 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
             {time, snr, snrRatio, channelColor, chainPosition, 
              channelPosition} = @maps()
 
-            line = d3.svg.diagonal()
+            # NOTE! We need to flip x and y for diag to be horizontal!
+            line = d3.svg.diagonal().projection (d) -> [d.y, d.x]
 
             path = describe linkGroup.selectAll("path.link")
                                      .data(links)
@@ -139,11 +140,11 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                 d: (link) ->
                     line
                         source:
-                            x: chainPosition link.chainPosition
-                            y: channelPosition(link.startChannelId) + time(link.time)
+                            y: chainPosition link.chainPosition
+                            x: channelPosition(link.startChannelId) + time(link.time)
                         target:
-                            x: chainPosition (link.chainPosition + 1)
-                            y: channelPosition(link.endChannelId) + time(link.time)
+                            y: chainPosition (link.chainPosition + 1)
+                            x: channelPosition(link.endChannelId) + time(link.time)
 
             path.on "mouseover", (link) ->
                 describe linkGroup.selectAll("path"),
