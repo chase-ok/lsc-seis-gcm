@@ -73,7 +73,7 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
             snrExtent[0] = Math.max @snrThreshold(), snrExtent[0]
             # coincs best be sorted by time
             @limits
-                time: [coincs[0].times[0], 
+                time: [@coincs[0].times[0], 
                        Math.max(@coincs[@coincs.length-1].times...)]
                 snr: snrExtent
 
