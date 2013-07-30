@@ -322,8 +322,8 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                 timeFormat = (time, formatString) ->
                     date = new Date time*1000
                     d3.time.format.utc(formatString) date
-                snrFormat = (snr) -> d3.format("%f.1") snr
-                freqFormat = (freq) -> d3.format("%f.3") freq
+                snrFormat = (snr) -> d3.format("f.1") snr
+                freqFormat = (freq) -> d3.format("f.3") freq
 
                 coinc = @coincs[link.coincId]
 
