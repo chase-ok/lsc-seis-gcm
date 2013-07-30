@@ -131,7 +131,7 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                 height: height
                 width: @_infoSize.x
 
-            @_snrHistogram = new plots.histogram "g.snr-histogram"
+            @_snrHistogram = new plots.Histogram "g.snr-histogram"
             @_snrHistogram.bins [5..25]
             @_snrHistogram.limits {y: [0, 0.5]}
 
