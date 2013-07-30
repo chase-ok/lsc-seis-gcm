@@ -80,7 +80,7 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
             describe spokes.selectAll("rect")
                            .data(@_channels)
                            .enter().append("rect"),
-                x: (channel) -> channelRadius channel
+                x: (channel) -> channelRadius channel.id
                 y: @_spokeWidth/2
                 width: @_radiusChunk
                 height: @_spokeWidth
