@@ -139,7 +139,9 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
             @_snrHistogram.axisLabels
                 x: "Max SNR"
 
-            @_snrBrush = d3.svg.brush().x @_snrHistogram.scales().x
+            @_snrBrush = d3.svg.brush()
+            @_snrBrush.x @_snrHistogram.scales().x
+            @_snrBrush.y @_snrHistogram.scales().y
 
             @_currentInfoY += height
 
