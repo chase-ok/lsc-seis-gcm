@@ -73,8 +73,9 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                                      .data([0...@_numChannels])
                                      .enter().append("g"),
                 class: "spoke"
-                transform: (spoke) => "rotate(#{chainPosition spoke}) " + 
-                                      "translate(#{@center.x}, #{@center.y})"
+                transform: (spoke) => "translate(#{@center.x}, #{@center.y}) " +
+                                      "rotate(#{chainPosition spoke})" 
+                                      
 
             describe spokes.selectAll("rect")
                            .data(@_channels)
