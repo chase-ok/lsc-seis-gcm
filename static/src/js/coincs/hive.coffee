@@ -75,7 +75,7 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
         prepare: ->
             return unless super()
             @_prepareInfo()
-            @_prepareLegend()
+            #@_prepareLegend()
 
         _prepareInfo: ->
             @_info = describe @canvas.append("g"),
