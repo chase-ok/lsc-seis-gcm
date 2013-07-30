@@ -34,7 +34,7 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                 x: 10
                 y: @canvasSize.y/@_numChannels - @_barSpacing.y
 
-            @snrThreshold 0
+            @snrRange [0, 1/0]
 
             @scales
                 time:
@@ -57,13 +57,16 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                             .domain(@_channelIds)
                             .range(i*(@_barSpacing.y + @_barSize.y) for i in [0...@_numChannels])
 
-        snrThreshold: (threshold) ->
-            if threshold?
-                @_snrThreshold = threshold
-                @declareDirty()
+        snrRange: (range) ->
+            if range?
+                @_snrRange = range
+                if @coincs?
+                    [min, max] = range
+                    describe @canvas.selectAll("path.link"),
+                        display: (link) -> min <= link.snr <= max
                 this
             else
-                @_snrThreshold
+                @_snrRange
 
         load: ->
             url = "#{defs.webRoot}/coinc/group/#{@group.id}/all"
@@ -151,6 +154,8 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                 @_snrBrush.extent [[x0, y0], [x1, y1]]
                 @_snrBrush @_snrHistogram.canvas
 
+                @snrRange [x0, x1]
+
             @_currentInfoY += height
 
         _draw: ->
@@ -172,9 +177,6 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
             
             @_snrHistogram.plot snrs
             @_snrBrush @_snrHistogram.canvas
-            #@_snrBrush.on "brush", (d) =>
-            #    console.log d
-            #    console.log @_snrBrush
 
             @_drawing = no
 
@@ -206,10 +208,8 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
             linkGroup = describe @canvas.append("g")
             
             links = []
-            threshold = @snrThreshold()
             for i in [0...@coincs.length]
                 coinc = @coincs[i]
-                continue if coinc.snrs[0] < threshold
 
                 for pos in [0...coinc.length-1]
                     links.push
