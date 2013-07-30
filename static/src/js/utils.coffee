@@ -70,5 +70,8 @@ define ['d3'], (d3) ->
                 setTimeout (-> loadJSON(url, onData, numRetries-1)), 10
             else
                 onData json.data
+
+    degrees: (radians) -> radians/Math.PI*180
+    radians: (degrees) -> Math.PI/180*degrees
     
     IntervalFunc: IntervalFunc

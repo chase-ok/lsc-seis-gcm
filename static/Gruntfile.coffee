@@ -69,6 +69,7 @@ module.exports = (grunt) ->
         requirejs:
             channels: makeRequireJSTask "channels/main"
             triggers: makeRequireJSTask "triggers/main"
+            coincs: makeRequireJSTask "coincs/main"
     
     for contrib in ['coffee', 'requirejs', 'concat', 'copy', 'watch', 'clean']
         grunt.loadNpmTasks "grunt-contrib-#{contrib}"

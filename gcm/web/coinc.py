@@ -12,7 +12,9 @@ def get_group(group_id):
     except:
         bottle.abort(404, "No coincidences for {0}".format(group))
     
-    return {'root': WEB_ROOT}
+    group_dict = group._asdict()
+    group_dict['channels'] = [c._asdict() for c in group.channels]
+    return {'root': WEB_ROOT, 'group': group_dict}
 
 @bottle.get('/coinc/group/<group_id:int>/all')
 @succeed_or_fail
