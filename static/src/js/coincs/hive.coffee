@@ -18,7 +18,7 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
 
             @radius =
                 outer: Math.min(@canvasSize.x, @canvasSize.y)/2
-                inner: 50
+                inner: 80
 
             @_radiusChunk = (@radius.outer - @radius.inner)/@_numChannels
             @_spokeWidth = 10
@@ -42,7 +42,7 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                 chainPosition: 
                     d3.scale.ordinal()
                             .domain([0...@_numChannels])
-                            .range(i*360/@_numChannels - 90 for i in [0...@_numChannels])
+                            .range(i*340/(@_numChannels-1) - 80 for i in [0...@_numChannels])
                 channelRadius:
                     d3.scale.ordinal()
                             .domain(@_channelIds)
@@ -63,8 +63,8 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                 snr: d3.extent (Math.min(c.snrs...) for c in coincs)
 
             @prepare()
-            @_drawSpokes()
             @_drawLinks coincs
+            @_drawSpokes()
 
         _drawSpokes: ->
             {channelColor, chainPosition, channelRadius} = @maps()
