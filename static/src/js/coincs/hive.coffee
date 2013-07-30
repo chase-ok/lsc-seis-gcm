@@ -125,7 +125,7 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
             {time, snr, snrRatio, channelColor, chainPosition, 
              channelPosition} = @maps()
 
-            line = d3.svg.line().interpolate('cardinal-open').tension(0.5)
+            line = d3.svg.diagonal()
 
             path = describe linkGroup.selectAll("path.link")
                                      .data(links)
@@ -134,15 +134,16 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                 fill: "none"
                 stroke: (link) -> 
                     if snrRatio(link.snrRatio) > 0 then "red" else "green"
-                "stroke-width": (link) ->
-                    snr link.snr
+                "stroke-width": (link) -> snr link.snr
                 "stroke-opacity": 0.5
                 d: (link) ->
-                    x0 = chainPosition link.chainPosition
-                    y0 = channelPosition(link.startChannelId) + time(link.time)
-                    x1 = chainPosition (link.chainPosition + 1)
-                    y1 = channelPosition(link.endChannelId) + time(link.time)
-                    line [[x0, y0], [x1, y1]]
+                    line
+                        source:
+                            x: chainPosition link.chainPosition
+                            y: channelPosition(link.startChannelId) + time(link.time)
+                        target:
+                            x: chainPosition (link.chainPosition + 1)
+                            y: channelPosition(link.endChannelId) + time(link.time)
 
             path.on "mouseover", (link) ->
                 describe linkGroup.selectAll("path"),
