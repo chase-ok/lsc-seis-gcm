@@ -120,6 +120,7 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
             @_prepareInfo()
             @_prepareLegend()
             @_prepareSnrHistogram()
+            @_prepareLinkInfo()
 
         _prepareInfo: ->
             @_info = describe @canvas.append("g"),
