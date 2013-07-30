@@ -145,7 +145,7 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
             @_snrBrush.clamp [yes, yes]
 
             # Force x-brushing only
-            yExtent = @_snrBrush.limits().y
+            yExtent = @_snrHistogram.limits().y
             @_snrBrush.on "brush", =>
                 [xExtent, _] = @_snrBrush.extent()
                 @_snrBrush.extent [xExtent, yExtent]
