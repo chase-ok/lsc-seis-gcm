@@ -17,8 +17,8 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
             @_numChannels = @_channels.length
 
             @radius =
-                outer = Math.min(@canvasSize.x, @canvasSize.y)/2
-                inner = 50
+                outer: Math.min(@canvasSize.x, @canvasSize.y)/2
+                inner: 50
 
             @_radiusChunk = (@radius.outer - @radius.inner)/@_numChannels
             @_spokeWidth = 10
