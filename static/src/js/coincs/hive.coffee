@@ -63,7 +63,8 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                 if @coincs?
                     [min, max] = range
                     describe @canvas.selectAll("path.link"),
-                        display: (link) -> min <= link.snr <= max
+                        display: (link) -> 
+                            if min <= link.snr <= max then "true" else "none"
                 this
             else
                 @_snrRange
@@ -154,6 +155,10 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                 @_snrBrush.extent [[x0, y0], [x1, y1]]
                 @_snrBrush @_snrHistogram.canvas
 
+            @_snrBrush.on "brushend", =>
+                [[x0, _], [x1, _]] = @_snrBrush.extent()
+                if Math.abs(x1 - @_snrHistogram.limits().x[1]) < 1
+                    x1 = 1/0
                 @snrRange [x0, x1]
 
             @_currentInfoY += height
@@ -162,7 +167,7 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
             @_drawing = yes
 
             snrs = (Math.max(c.snrs...) for c in @coincs)
-            
+
             # coincs best be sorted by time
             @limits
                 time: [@coincs[0].times[0], 
