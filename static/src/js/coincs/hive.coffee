@@ -145,12 +145,11 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
             @_snrBrush.clamp [yes, yes]
 
             # Force x-brushing only
-            yExtent = @_snrHistogram.limits().y
+            [y0, y1] = @_snrHistogram.limits().y
             @_snrBrush.on "brush", =>
-                [xExtent, _] = @_snrBrush.extent()
-                @_snrBrush.extent [xExtent, yExtent]
+                [[x0, _], [x1, _]] = @_snrBrush.extent()
+                @_snrBrush.extent [[x0, y0], [x1, y1]]
                 @_snrBrush @_snrHistogram.canvas
-                console.log @_snrBrush.extent()
 
             @_currentInfoY += height
 
