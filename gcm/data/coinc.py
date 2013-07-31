@@ -64,6 +64,8 @@ def find_coincidences(group, window=0.05):
     with open_coincs(group, mode='w', reset=True) as coincs:
         triggers, contexts = _open_all_triggers(channels)
         try:
+            # in case of no triggers...
+            channels = [c for c in channels if len(triggers[c]) > 0]
 
             rows = dict((c, 0) for c in channels)
             ends = dict((c, len(triggers[c])) for c in channels)
