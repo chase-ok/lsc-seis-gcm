@@ -4,8 +4,8 @@ from gcm.coinc import find_coincidences
 
 def add_etmy_channels():
     from gcm.data import channels as chn
-    channels = [chn.add_channel("H1", "HPI-ETMY", "BLND_L4C_Y_IN1_DQ"),
-                chn.add_channel("H1", "HPI-ETMY", "SENSCOR_Y_FIR_IN1_DQ"),
+    channels = [chn.add_channel("H1", "HPI-ETMY", "SENSCOR_Y_FIR_IN1_DQ"),
+                chn.add_channel("H1", "HPI-ETMY", "BLND_L4C_Y_IN1_DQ"),
                 chn.add_channel("H1", "ISI-ETMY", "ST1_BLND_Y_L4C_CUR_IN1_DQ"),
                 chn.add_channel("H1", "ISI-ETMY", "ST1_BLND_Y_T240_CUR_IN1_DQ"),
                 chn.add_channel("H1", "ISI-ETMY", "ST2_BLND_Y_GS13_CUR_IN1_DQ"),
