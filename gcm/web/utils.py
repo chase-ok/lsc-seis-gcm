@@ -70,7 +70,7 @@ def get_bool_query(name, default=False):
 def convert_numpy_dict(d):
     converted = {}
     for key, value in d.iteritems():
-        if isinstance(value, (basestring, int, float)):
+        if isinstance(value, (basestring, int, float, long)):
             converted[key] = value
         elif isinstance(value, dict):
             converted[key] =  convert_numpy_dict(value)
