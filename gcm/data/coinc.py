@@ -20,7 +20,8 @@ def get_coinc_dtype(group):
                       freqs=(np.float32, (num_channels,)),
                       snrs=(np.float32, (num_channels,)),
                       channel_ids=(np.int32, (num_channels,)),
-                      length=np.uint16)
+                      length=np.uint16,
+                      id=np.uint32)
 
 def get_coinc_table(group):
     return hdf5.GenericTable("coincidences",
@@ -42,6 +43,7 @@ def coincs_to_list(group):
             coinc['freqs'] = coinc['freqs'][:length]
             coinc['snrs'] = coinc['snrs'][:length]
             coinc['channel_ids'] = coinc['channel_ids'][:length]
+            coinc['id'] = coinc['id']
             coincs.append(coinc)
     return coincs
 
@@ -67,6 +69,7 @@ def find_coincidences(group, window=0.05):
             ends = dict((c, len(triggers[c])) for c in channels)
             times = dict((c, triggers[c][0].time_min) for c in channels)
 
+            coinc_id = 0
             while times:
                 times_sorted = sorted(times.iteritems(),
                                       cmp=compare_times)
@@ -98,7 +101,9 @@ def find_coincidences(group, window=0.05):
                                        freqs=link_freqs,
                                        snrs=link_snrs,
                                        channel_ids=link_channel_ids,
-                                       length=len(linked_channels))
+                                       length=len(linked_channels),
+                                       id=coinc_id)
+                    coinc_id += 1
 
                 for channel in linked_channels:
                     row = rows[channel] + 1

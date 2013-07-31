@@ -68,7 +68,7 @@ class TriggerSource(object):
 class Omicron(TriggerSource):
     
     def sync_channel(self, group, channel):
-        with tr.open_triggers(channel, 'w') as table:
+        with tr.open_triggers(channel, mode='w') as table:
             latest = table[-1].time_min if len(table) > 0 else 0
             
             for file in self._get_files(group, channel):
