@@ -8,6 +8,6 @@ define ['utils',
     
     $ ->
         hivePlot = new hive.HivePlot "#hive", group
-        hivePlot.snrBaseThreshold 10
+        hivePlot.snrBaseThreshold 8
         hivePlot.title group.name
         hivePlot.load()
