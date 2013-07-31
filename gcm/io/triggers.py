@@ -96,10 +96,10 @@ class Omicron(TriggerSource):
 class _ScottXmlTriggers(Omicron):
     
     def _get_files(self, group, channel):
-        base = "/home/scott.dossa/omicron/xml_triggers"
+        base = "/home/scott.dossa/omicron/triggers"
     
-        #ifo, chamber = group.name.split("-")
-        all_channels = base #join(base, ifo, chamber)
+        ifo, chamber = group.name.split("-")
+        all_channels = join(base, ifo, chamber)
         channel_dir = join(all_channels, 
                            "{0.ifo}:{0.subsystem}_{0.name}".format(channel))
         
