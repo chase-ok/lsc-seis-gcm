@@ -104,7 +104,7 @@ def open_clusters(channel, **kwargs):
     return hdf5.open_table(make_trigger_h5_path(channel), clusters_table,
                            **kwargs)
 
-def cluster_triggers(channel, num_passes=3):
+def cluster_triggers(channel, num_passes=2):
     assert num_passes >= 1
     
     # first round
@@ -116,7 +116,7 @@ def cluster_triggers(channel, num_passes=3):
         clusters = _do_clustering(clusters)
     
     print "appending"
-    with open_clusters(channel, mode='w') as table:
+    with open_clusters(channel, mode='w', reset=True) as table:
         for cluster in clusters:
             table.append_dict(**cluster)
             
