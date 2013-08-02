@@ -445,4 +445,4 @@ define ['utils', 'd3', 'jquery'], (utils, d3, $) ->
 
                 circles.exit().remove()
 
-    return {SvgPlot, BasicPlot, ZColorPlot, Histogram}
+    return {SvgPlot, BasicPlot, ZColorPlot, Histogram, ScatterPlot}
