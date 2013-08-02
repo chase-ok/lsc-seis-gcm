@@ -38,9 +38,15 @@ define ['utils',
                     for random in datum.rand
                         timeOffset.push [datum.window, getValue random]
 
+                yLimits = d3.extent (x[1] for x in actual).concat(x[1] for x in timeOffset)
+                if yLimits[0] is yLimits[1]
+                    yLimits[1] += 1.0
+                else
+                    yLimits[1] *= 1.1
+
                 scatter.limits
                     x: d3.extent (x.window for x in data)
-                    y: d3.extent (x[1] for x in actual).concat(x[1] for x in timeOffset)
+                    y: yLimits
 
                 scatter.plot
                     "Actual": actual
