@@ -429,8 +429,10 @@ define ['utils', 'd3', 'jquery'], (utils, d3, $) ->
         plot: (groups) ->
             @prepare()
 
-            merged = ([group, point] for group, points of groups
-                                     for point in points)
+            merged = []
+            for group, points of groups
+                for point in points
+                    merged.push {group, point}
 
             {x, y, color, size} = @scales()
 
@@ -443,11 +445,11 @@ define ['utils', 'd3', 'jquery'], (utils, d3, $) ->
                 "clip-path": "url(##{@canvasClipId})"
 
             describe circles.transition.duration(500),
-                cx: (d) -> x d[1][0]
-                cy: (d) -> y d[1][1]
-                r: (d) -> size d[0]
+                cx: (d) -> x d.point[0]
+                cy: (d) -> y d.point[1]
+                r: (d) -> size d.group
                 stroke: "none"
-                fill: (d) -> color d[0]
+                fill: (d) -> color d.group
 
             circles.exit().remove()
 
