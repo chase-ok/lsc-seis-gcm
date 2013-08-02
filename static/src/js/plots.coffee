@@ -353,7 +353,7 @@ define ['utils', 'd3', 'jquery'], (utils, d3, $) ->
             @showLegend no
             @groups ['default']
 
-        showLegend: property(this, (show) ->
+        showLegend: property (show) =>
             @declareDirty()
             show)
 
