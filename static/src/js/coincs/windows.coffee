@@ -35,6 +35,10 @@ define ['utils',
                     for random in datum.rand
                         timeOffset.push [datum.window, getValue random]
 
+                scatter.limits
+                    x: d3.extent (x.window for x in data)
+                    y: d3.extent (x[1] for x in actual).concat(x[1] for x in timeOffset)
+
                 scatter.plot
                     "Actual": actual
                     "Time Offset": timeOffset
