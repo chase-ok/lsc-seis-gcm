@@ -100,8 +100,8 @@ def analyze_coincidences(group, coincs):
             pair_index += 1
 
     def describe_dist(dist):
-        return {'mean': dist.mean(), 
-                'median': np.median(dist), 
+        return {'mean': dist.mean(),
+                'median': np.median(dist),
                 'std': dist.std(),
                 'max': dist.max(),
                 'min': dist.min()}
@@ -111,7 +111,7 @@ def analyze_coincidences(group, coincs):
 
     def describe_correl(pairs):
         return {'pearsonr': pearsonr(pairs[:, 0], pairs[:, 1]),
-                'spearmanr': spearmanr(pairs)}
+                'spearmanr': spearmanr(pairs[:, 0], pairs[:, 1])}
 
     return {'n': len(coincs), 
             'lengths': describe_dist(lengths),
