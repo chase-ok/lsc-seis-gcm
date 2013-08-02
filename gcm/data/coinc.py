@@ -165,9 +165,8 @@ def _find_coincidences(group, append_func, window, time_offsets=None):
                     break
 
             if len(linked_channels) > 1:
-                linked_triggers = [triggers[channel][rows[channel]] 
-                                   for channel in linked_channels]
-                append_func(dict(times=[t.time_min for t in linked_triggers],
+                linked_triggers = [triggers[c][rows[c]] for c in linked_channels]
+                append_func(dict(times=[times[c] for c in linked_channels],
                                  freqs=[t.freq for t in linked_triggers],
                                  snrs=[t.snr for t in linked_triggers],
                                  amplitudes=[t.amplitude for t in linked_triggers],
