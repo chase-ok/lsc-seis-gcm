@@ -426,12 +426,14 @@ define ['utils', 'd3', 'jquery'], (utils, d3, $) ->
                 "font-weight": "bold"
                 fill: "white"
         
-        plot: (groups) ->
+        plot: (dataGroups) ->
             @prepare()
 
+            # need ordering for animation!
             merged = []
-            for group, points of groups
-                for point in points
+            for group in @groups()
+                continue unless group in dataGroups
+                for point in dataGroups[group]
                     merged.push {group, point}
 
             {x, y, color, size} = @scales()
