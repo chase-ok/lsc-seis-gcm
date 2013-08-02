@@ -96,7 +96,7 @@ def analyze_coincidences(group, coincs):
             t2 = t1 + 1
             dts[pair_index] = coinc['times'][t2] - coinc['times'][t1]
             freqs[pair_index, :] = coinc['freqs'][t1], coinc['freqs'][t2]
-            snrs[pair_index, :] = coinc['snrs'][t1],, coinc['snrs'][t2]
+            snrs[pair_index, :] = coinc['snrs'][t1], coinc['snrs'][t2]
             pair_index += 1
 
     def describe_dist(dist):
