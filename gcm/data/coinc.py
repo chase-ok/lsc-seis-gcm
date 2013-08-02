@@ -64,8 +64,8 @@ def find_coincidences(group, window=0.05):
                                snrs=to_array(coinc['snrs'], np.float32),
                                amplitudes=to_array(coinc['amplitudes'], np.float64),
                                channel_ids=to_array(coinc['channel_ids'], np.int32),
-                               length=coinc.length,
-                               id=coinc.id)
+                               length=coinc['length'],
+                               id=coinc['id'])
 
         _find_coincidences(group, append, window)
 
