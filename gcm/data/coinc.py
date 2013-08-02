@@ -103,8 +103,8 @@ def analyze_coincidences(group, coincs):
         return {'mean': dist.mean(),
                 'median': np.median(dist),
                 'std': dist.std(),
-                'max': dist.max(),
-                'min': dist.min()}
+                'max': float(dist.max()),
+                'min': float(dist.min())}
 
     def describe_diff_dist(pairs):
         return describe_dist(np.abs(pairs[:, 0] - pairs[:, 1]))
@@ -128,6 +128,8 @@ def scan_windows(group, windows, num_rand=10, output_dir='data/coinc/'):
 
     data = []
     for window in windows:
+        print group.name, window
+        
         actual = get_coincidences_with_offsets(group, window, None)
 
         rand_coincs = []
