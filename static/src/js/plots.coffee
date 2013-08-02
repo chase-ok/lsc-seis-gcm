@@ -354,22 +354,21 @@ define ['utils', 'd3', 'jquery'], (utils, d3, $) ->
             @groups ['default']
 
         showLegend: property (show) ->
-            console.log this
             @declareDirty()
             show
 
-        groups: property (groups) =>
+        groups: property (groups) ->
             @scales().color.domain(groups)
             @scales().size.domain(groups).range(5 for group in groups)
             @declareDirty()
             groups
 
         sizes: property
-            get: => 
+            get: -> 
                 range = @scales().size.range()
                 groups = @groups()
                 mash ([groups[i], range[i]] for i in [0...groups.length])
-            set: (sizes) =>
+            set: (sizes) ->
                 range = @scales().size.range()
                 for i in [0...@groups().length]
                     size = sizes[groups[i]]
@@ -378,11 +377,11 @@ define ['utils', 'd3', 'jquery'], (utils, d3, $) ->
                 @declareDirty()
 
         colors: property
-            get: => 
+            get: -> 
                 range = @scales().color.range()
                 groups = @groups()
                 mash ([groups[i], range[i]] for i in [0...groups.length])
-            set: (colors) =>
+            set: (colors) ->
                 range = @scales().color.range()
                 for i in [0...@groups().length]
                     color = colors[groups[i]]

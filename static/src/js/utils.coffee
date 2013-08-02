@@ -90,7 +90,7 @@ define ['d3'], (d3) ->
         (value) ->
             if value?
                 oldValue = setter.call this, value, oldValue
-                obj
+                this
             else
                 getter.call this, oldValue
 
