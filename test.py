@@ -29,7 +29,7 @@ def test_coinc(window=0.05):
     from random import random
 
     g0 = chn.get_group(0)
-    coincs = g0.get_coincidences_with_offsets(g0, window, None)
+    coincs = co.get_coincidences_with_offsets(g0, window, None)
     rand_offsets =  dict((c, random()*100.0) for c in g0.channels)
     rand_coincs = co.get_coincidences_with_offsets(g0, window, rand_offsets)
     return co.analyze_coincidences(coincs), co.analyze_coincidences(g0, rand_coincs)
