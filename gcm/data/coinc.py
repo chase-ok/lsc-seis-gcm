@@ -103,7 +103,7 @@ def analyze_coincidences(group, coincs, without_exact=False):
             
             dts[index] = dt
             freqs[index] = freq
-            snrs[index] = index
+            snrs[index] = snr
             index += 1
 
     if without_exact:
