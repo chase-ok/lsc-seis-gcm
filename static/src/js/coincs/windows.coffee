@@ -32,7 +32,7 @@ define ['utils',
                 timeOffset = []
                 for datum in data
                     actual.push [datum.window, getValue datum.actual]
-                    for random in data.rand
+                    for random in datum.rand
                         timeOffset.push [datum.window, getValue random]
 
                 scatter.plot
