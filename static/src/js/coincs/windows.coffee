@@ -70,6 +70,7 @@ define ['utils',
                 fields = []
                 for field in baseFields
                     fields.push field.concat [false]
+                    field[0] += " Without Exact"
                     fields.push field.concat [true]
                 plotField fields[0]...
 
