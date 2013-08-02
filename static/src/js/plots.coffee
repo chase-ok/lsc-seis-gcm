@@ -440,7 +440,7 @@ define ['utils', 'd3', 'jquery'], (utils, d3, $) ->
                     class: "scatter-point"
                     "clip-path": "url(##{@canvasClipId})"
 
-                describe circles.transition().duration(500),
+                describe circles,
                     cx: (d) -> x d[0]
                     cy: (d) -> y d[1]
                     r: size group
