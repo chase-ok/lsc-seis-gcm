@@ -144,7 +144,7 @@ def analyze_coincidences(group, coincs):
                     'triggers': num_triggers},
             'rates': {'overall_coincs': overall_coinc_rate,
                       'overall_triggers': overall_trigger_rate,
-                      'coincs': coincs_rates,
+                      'coincs': coinc_rates,
                       'triggers': trigger_rates},
             'lengths': describe_dist(lengths),
             'dts': describe_dist(dts),
