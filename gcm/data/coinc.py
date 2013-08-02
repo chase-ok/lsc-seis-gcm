@@ -122,6 +122,28 @@ def analyze_coincidences(group, coincs):
             'snrs': {'diffs': describe_diff_dist(snrs),
                      'correl': describe_correl(snrs)}}
 
+def scan_windows(group, windows, num_rand=10, output_dir='data/coinc/'):
+    import json
+    from random import random
+
+    data = []
+    for window in windows:
+        actual = get_coincidences_with_offsets(group, window, None)
+
+        rand_coincs = []
+        for _ in range(num_rand):
+            offsets = dict((c, random()*1000) for c in groups.channels)
+            rand_coincs.append(get_coincidences_with_offsets(group, window, offsets))
+        
+        data.append({'window': window, 
+                     'actual': analyze_coincidences(actual),
+                     'rand': map(analyze_coincidences, rand_coincs)})
+
+    file_name = "windows-{0.id}".format(group)
+    with open(file_name, 'wb') as f:
+        json.dump(data, f, default=str)
+
+
 def _find_coincidences(group, append_func, window, time_offsets=None):
     channels = group.channels
     num_channels = len(channels)

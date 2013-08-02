@@ -26,10 +26,4 @@ def calculate_etmy_coinc():
     
 def test_coinc(window=0.05):
     from gcm.data import channels as chn, coinc as co
-    from random import random
-
-    g0 = chn.get_group(0)
-    coincs = co.get_coincidences_with_offsets(g0, window, None)
-    rand_offsets =  dict((c, random()*100.0) for c in g0.channels)
-    rand_coincs = co.get_coincidences_with_offsets(g0, window, rand_offsets)
-    return co.analyze_coincidences(g0, coincs), co.analyze_coincidences(g0, rand_coincs)
+    co.scan_windows(chn.get_group(0), [0.05, 1.0], 2)
