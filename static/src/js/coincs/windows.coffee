@@ -8,6 +8,37 @@ define ['utils',
     
     $ ->
         scatter = new plots.ScatterPlot "#scatter"
+        scatter.title group.name
+        scatter.axisLabels
+            x: "Coincidence Window [s]"
+            y: "Field"
+        scatter.groups ["Actual", "Time Offset"]
+        scatter.sizes
+            "Actual": 6
+            "Time Offset": 3
+        scatter.colors
+            "Actual": "black"
+            "Time Offset": "#999999"
+        scatter.showLegend yes
 
         utils.loadUnwrappedJSON "/data/coinc/windows-#{group.id}.json", (data) ->
             console.log data
+
+            plotField = (name, getValue) ->
+                scatter.axisLabels
+                    y: name
+
+                actual = []
+                timeOffset = []
+                for datum in data
+                    actual.push [datum.window, getValue datum.actual]
+                    for random in data.rand
+                        timeOffset.push [datum.window, getValue random]
+
+                scatter.plot
+                    "Actual": actual
+                    "Time Offset": timeOffset
+
+            plotField "Number of Coincidences", (analysis) ->
+                analysis.num.overall_coincs
+
