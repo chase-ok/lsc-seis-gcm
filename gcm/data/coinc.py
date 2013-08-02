@@ -100,18 +100,25 @@ def analyze_coincidences(group, coincs):
             pair_index += 1
 
     def describe_dist(dist):
-        return {'mean': dist.mean(),
-                'median': np.median(dist),
-                'std': dist.std(),
-                'max': float(dist.max()),
-                'min': float(dist.min())}
+        if len(dist) > 0:
+            return {'mean': dist.mean(),
+                    'median': np.median(dist),
+                    'std': dist.std(),
+                    'max': float(dist.max()),
+                    'min': float(dist.min())}
+        else:
+            return dict((prop, 0) 
+                        for prop in ['mean', 'median', 'std', 'max', 'min'])
 
     def describe_diff_dist(pairs):
         return describe_dist(np.abs(pairs[:, 0] - pairs[:, 1]))
 
     def describe_correl(pairs):
-        return {'pearsonr': pearsonr(pairs[:, 0], pairs[:, 1]),
-                'spearmanr': spearmanr(pairs[:, 0], pairs[:, 1])}
+        if len(pairs > 0):
+            return {'pearsonr': pearsonr(pairs[:, 0], pairs[:, 1]),
+                    'spearmanr': spearmanr(pairs[:, 0], pairs[:, 1])}
+        else:
+            return dict((prop, (0, 0)) for prop in ['pearsonr', 'spearmanr'])
 
     return {'n': len(coincs), 
             'lengths': describe_dist(lengths),
@@ -129,7 +136,7 @@ def scan_windows(group, windows, num_rand=10, output_dir='data/coinc/'):
     data = []
     for window in windows:
         print group.name, window
-        
+
         actual = get_coincidences_with_offsets(group, window, None)
 
         rand_coincs = []
@@ -171,7 +178,8 @@ def _find_coincidences(group, append_func, window, time_offsets=None):
 
         if time_offsets:
             for channel, offset in time_offsets.iteritems():
-                times[channel] += offset
+                if channel in channels:
+                    times[channel] += offset
 
         coinc_id = 0
         while times:
