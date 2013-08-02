@@ -27,4 +27,4 @@ def server_static(filepath):
 def server_data(filepath): 
     return static_file(filepath, root=DATA_ROOT)
 
-run(server="wsgi", debug=True)
+run(server="cgi", debug=True)
