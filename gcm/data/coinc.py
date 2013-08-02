@@ -69,6 +69,11 @@ def find_coincidences(group, window=0.05):
 
         _find_coincidences(group, append, window)
 
+def get_coincidences_with_offsets(group, window, time_offsets):
+    coincs = []
+    _find_coincidences(group, coincs.append, window, time_offsets)
+    return coincs
+
 def _find_coincidences(group, append_func, window, time_offsets=None):
     channels = group.channels
     num_channels = len(channels)

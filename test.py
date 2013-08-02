@@ -1,6 +1,4 @@
 
-from gcm.io import root
-from gcm.coinc import find_coincidences
 
 def add_etmy_channels():
     from gcm.data import channels as chn
@@ -28,4 +26,8 @@ def calculate_etmy_coinc():
     
 def test_coinc():
     from gcm.data import channels as chn, coinc
-    coinc.find_coincidences(chn.get_group(0))
+    from random import random
+
+    g0 = chn.get_group(0)
+    offsets = dict((c, random()*100.0) for c in g0.channels)
+    return coinc.get_coincidences_with_offsets(g0, 0.05, offsets)
