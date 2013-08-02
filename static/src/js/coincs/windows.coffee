@@ -37,7 +37,7 @@ define ['utils',
 
                 # silly me in including a window size of 1000...
                 scatter.limits
-                    x: d3.extent (x.window for x in data if x.window <= 100)
+                    x: d3.extent (x.window for x in data when x.window <= 100)
                     y: d3.extent (x[1] for x in actual).concat(x[1] for x in timeOffset)
 
                 scatter.plot
