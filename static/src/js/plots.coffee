@@ -370,7 +370,8 @@ define ['utils', 'd3', 'jquery'], (utils, d3, $) ->
                 mash ([groups[i], range[i]] for i in [0...groups.length])
             set: (sizes) ->
                 range = @scales().size.range()
-                for i in [0...@groups().length]
+                groups = @groups()
+                for i in [0...groups().length]
                     size = sizes[groups[i]]
                     range[i] = size if size?
                 @scales().size.range range
@@ -383,7 +384,8 @@ define ['utils', 'd3', 'jquery'], (utils, d3, $) ->
                 mash ([groups[i], range[i]] for i in [0...groups.length])
             set: (colors) ->
                 range = @scales().color.range()
-                for i in [0...@groups().length]
+                groups = @groups()
+                for i in [0...groups().length]
                     color = colors[groups[i]]
                     range[i] = color if color?
                 @scales().color.range range
