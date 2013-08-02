@@ -140,7 +140,7 @@ def scan_windows(group, windows, num_rand=10, output_dir='data/coinc/'):
                      'actual': analyze(actual),
                      'rand': map(analyze, rand_coincs)})
 
-    file_name = "windows-{0.id}".format(group)
+    file_name = "windows-{0.id}.json".format(group)
     with open(join(output_dir, file_name), 'wb') as f:
         json.dump(data, f, default=str)
 
