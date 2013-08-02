@@ -74,7 +74,7 @@ def get_coincidences_with_offsets(group, window, time_offsets):
     _find_coincidences(group, coincs.append, window, time_offsets)
     return coincs
 
-def analyze_coincidences(group, coincs):
+def analyze_coincidences(group, coincs, without_exact=False):
     from scipy.stats import pearsonr, spearmanr
 
     num_pairs = sum(c['length']-1 for c in coincs)
@@ -85,7 +85,7 @@ def analyze_coincidences(group, coincs):
     lengths = np.empty(len(coincs), dtype=np.uint8)
     channel_counts = dict((c.id, 0) for c in group.channels)
 
-    pair_index = 0
+    index = 0
     for coinc_index, coinc in enumerate(coincs):
         lengths[coinc_index] = coinc['length']
 
@@ -94,10 +94,22 @@ def analyze_coincidences(group, coincs):
 
         for t1 in range(coinc['length']-1):
             t2 = t1 + 1
-            dts[pair_index] = coinc['times'][t2] - coinc['times'][t1]
-            freqs[pair_index, :] = coinc['freqs'][t1], coinc['freqs'][t2]
-            snrs[pair_index, :] = coinc['snrs'][t1], coinc['snrs'][t2]
-            pair_index += 1
+            dt = coinc['times'][t2] - coinc['times'][t1]
+            freq = coinc['freqs'][t1], coinc['freqs'][t2]
+            snr = coinc['snrs'][t1], coinc['snrs'][t2]
+
+            if without_exact and dt < 1e-6:
+                continue
+            
+            dts[index] = dt
+            freqs[index] = freq
+            snrs[index] = index
+            index += 1
+
+    if without_exact:
+        dts.resize(index)
+        freqs.resize((index, 2))
+        snrs.resize((index, 2))
 
     def describe_dist(dist):
         if len(dist) > 0:
@@ -154,7 +166,8 @@ def analyze_coincidences(group, coincs):
             'snrs': {'diffs': describe_diff_dist(snrs),
                      'correl': describe_correl(snrs)}}
 
-def scan_windows(group, windows, num_rand=10, output_dir='data/coinc/'):
+def scan_windows(group, windows, num_rand=10, 
+                 without_exact=False, output_dir='data/coinc/'):
     import json
     from random import random
 
@@ -169,12 +182,14 @@ def scan_windows(group, windows, num_rand=10, output_dir='data/coinc/'):
             offsets = dict((c, random()*1000) for c in group.channels)
             rand_coincs.append(get_coincidences_with_offsets(group, window, offsets))
         
-        def analyze(coincs): return analyze_coincidences(group, coincs)
+        def analyze(coincs): 
+            return analyze_coincidences(group, coincs, without_exact)
         data.append({'window': window, 
                      'actual': analyze(actual),
                      'rand': map(analyze, rand_coincs)})
 
-    file_name = "windows-{0.id}.json".format(group)
+    exact_str = "-without-exact" if without_exact else ""
+    file_name = "windows-{0.id}{1}.json".format(group, exact_str)
     with open(join(output_dir, file_name), 'wb') as f:
         json.dump(data, f, default=str)
 

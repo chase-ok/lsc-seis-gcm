@@ -27,8 +27,9 @@ def calculate_etmy_coinc():
 def analyze_coinc(group_num=0):
     from gcm.data import channels as chn, coinc as co
     import numpy as np
-    windows = np.linspace(0, 1.0, 50)
-    co.scan_windows(chn.get_group(group_num), windows, 5)
+    windows = np.linspace(0, 1.0, 20)
+    co.scan_windows(chn.get_group(group_num), windows, 5, 
+                    without_exact=True)
 
 if __name__ == '__main__':
     import sys
