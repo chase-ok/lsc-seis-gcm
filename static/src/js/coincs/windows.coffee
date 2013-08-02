@@ -1,7 +1,8 @@
 define ['utils', 
         'plots',
+        'd3',
         'jquery', 'jquery-ui'], 
-(utils, plots, $, _) ->
+(utils, plots, d3, $, _) ->
     console.log "Starting"
     
     group = utils.definitions.group
@@ -52,6 +53,28 @@ define ['utils',
                     "Actual": actual
                     "Time Offset": timeOffset
 
-            plotField "Number of Coincidences", (analysis) ->
-                analysis.num.overall_coincs
+            fields = [["Number of Coincidences", (d) -> d.num.overall_coincs],
+                      ["Coincidence Rate [1/s]", (d) -> d.rates.overall_coincs],
+                      ["Coincidence Rate Ratio", (d) -> d.rates.overall_coincs/d.rates.overall_triggers],
+                      ["Mean Coincidence Length", (d) -> d.lengths.mean],
+                      ["Max Coincidence Length", (d) -> d.lengths.max],
+                      ["Mean Abs. Frequency Diff [Hz]", (d) -> d.freqs.diffs.mean],
+                      ["Frequency Spearman R", (d) -> d.freqs.correl.spearmanr[0]],
+                      ["Frequency Pearson R", (d) -> d.freqs.correl.pearsonr[0]],
+                      ["Mean Abs. SNR Diff", (d) -> d.snrs.diffs.mean],
+                      ["SNR Spearman R", (d) -> d.snrs.correl.spearmanr[0]],
+                      ["SNR Pearson R", (d) -> d.snrs.correl.pearsonr[0]],
+                      ["Mean dt [s]", (d) -> d.dts.mean],
+                      ["Median dt [s]", (d) -> d.dts.median],
+                      ["Max dt [s]", (d) -> d.dts.max]]
+
+            plotField fields[0]...
+
+            select = d3.select("body").append("select")
+            options = select.selectAll("option").data(fields).append("option")
+            options.text (d) -> d[0]
+            select.on "change", ->
+                console.log select.node()
+                plotField fields[select.node().selectedIndex]...
+
 
