@@ -89,10 +89,10 @@ define ['d3'], (d3) ->
 
         (value) ->
             if value?
-                oldValue = setter value, oldValue
+                oldValue = setter.call this, value, oldValue
                 obj
             else
-                getter oldValue
+                getter.call this, oldValue
 
     degrees: (radians) -> radians/Math.PI*180
     radians: (degrees) -> Math.PI/180*degrees

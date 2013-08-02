@@ -347,13 +347,14 @@ define ['utils', 'd3', 'jquery'], (utils, d3, $) ->
         constructor: (rootSelector="body", dimensions=['x', 'y', 'color', 'size']) ->
             super rootSelector, dimensions
             
+            @showLegend no
             @scales
                 color: d3.scale.category20()
                 size: d3.scale.ordinal()
-            @showLegend no
             @groups ['default']
 
-        showLegend: property (show) =>
+        showLegend: property (show) ->
+            console.log this
             @declareDirty()
             show
 
