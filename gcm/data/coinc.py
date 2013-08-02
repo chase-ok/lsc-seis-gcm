@@ -114,7 +114,7 @@ def analyze_coincidences(group, coincs):
         return describe_dist(np.abs(pairs[:, 0] - pairs[:, 1]))
 
     def describe_correl(pairs):
-        if len(pairs > 0):
+        if len(pairs) > 2:
             return {'pearsonr': pearsonr(pairs[:, 0], pairs[:, 1]),
                     'spearmanr': spearmanr(pairs[:, 0], pairs[:, 1])}
         else:
