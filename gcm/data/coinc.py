@@ -135,9 +135,10 @@ def scan_windows(group, windows, num_rand=10, output_dir='data/coinc/'):
             offsets = dict((c, random()*1000) for c in group.channels)
             rand_coincs.append(get_coincidences_with_offsets(group, window, offsets))
         
+        def analyze(coincs): return analyze_coincidences(group, coincs)
         data.append({'window': window, 
-                     'actual': analyze_coincidences(actual),
-                     'rand': map(analyze_coincidences, rand_coincs)})
+                     'actual': analyze(actual),
+                     'rand': map(analyze, rand_coincs)})
 
     file_name = "windows-{0.id}".format(group)
     with open(file_name, 'wb') as f:
