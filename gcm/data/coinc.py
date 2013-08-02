@@ -126,6 +126,7 @@ def analyze_coincidences(group, coincs):
     for channel in group.channels:
         with tr.open_clusters(channel, mode='r') as triggers:
             num_triggers[channel.id] = len(triggers)
+            if num_triggers[channel.id] == 0: continue
 
             time_min = min(time_min, triggers[0].time_min)
             time_max = max(time_max, triggers[0].time_max)
