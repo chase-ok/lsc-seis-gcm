@@ -78,11 +78,11 @@ def analyze_coincidences(group, coincs):
     from scipy.stats import pearsonr, spearmanr
 
     num_pairs = sum(c['length']-1 for c in coincs)
-    dts = np.array(num_pairs, np.float64)
-    freqs = np.array((num_pairs, 2), np.float32)
-    snrs = np.array((num_pairs, 2), np.float32)
+    dts = np.empty(num_pairs, np.float64)
+    freqs = np.empty((num_pairs, 2), np.float32)
+    snrs = np.empty((num_pairs, 2), np.float32)
 
-    lengths = np.array(len(coincs), dtype=np.uint8)
+    lengths = np.empty(len(coincs), dtype=np.uint8)
     channel_counts = dict((c.id, 0) for c in group.channels)
 
     pair_index = 0
