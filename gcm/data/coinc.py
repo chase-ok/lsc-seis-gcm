@@ -129,7 +129,7 @@ def analyze_coincidences(group, coincs):
             if num_triggers[channel.id] == 0: continue
 
             time_min = min(time_min, triggers[0].time_min)
-            time_max = max(time_max, triggers[0].time_max)
+            time_max = max(time_max, triggers[-1].time_max)
 
     duration = time_max - time_min
     overall_coinc_rate = len(coincs)/duration
