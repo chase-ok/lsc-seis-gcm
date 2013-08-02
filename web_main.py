@@ -24,7 +24,7 @@ def server_static(filepath):
     return static_file(filepath, root=STATIC_ROOT)
 
 @route('/data/<filepath:path>')
-def server_static(filepath): 
+def server_data(filepath): 
     return static_file(filepath, root=DATA_ROOT)
 
-run(server="cgi", debug=True)
+run(server="wscgi", debug=True)
