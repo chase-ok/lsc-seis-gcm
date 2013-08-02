@@ -74,6 +74,54 @@ def get_coincidences_with_offsets(group, window, time_offsets):
     _find_coincidences(group, coincs.append, window, time_offsets)
     return coincs
 
+def analyze_coincidences(group, coincs):
+    from scipy.stats import pearsonr, spearmanr
+
+    num_pairs = sum(c['length']-1 for c in coincs)
+    dts = np.array(num_pairs, np.float64)
+    freqs = np.array((num_pairs, 2), np.float32)
+    snrs = np.array((num_pairs, 2), np.float32)
+
+    lengths = np.array(len(coincs), dtype=np.uint8)
+    channel_counts = dict((c.id, 0) for c in group.channels)
+
+    pair_index = 0
+    for coinc_index, coinc in enumerate(coincs):
+        lengths[coinc_index] = coinc['length']
+
+        for id in coinc['channel_ids']:
+            channel_counts[id] += 1
+
+        for t1 in range(coinc['length']-1):
+            t2 = t1 + 1
+            dts[pair_index] = coinc['times'][t2] - coinc['times'][t1]
+            freqs[pair_index, :] = coinc['freqs'][t1], coinc['freqs'][t2]
+            snrs[pair_index, :] = coinc['snrs'][t1],, coinc['snrs'][t2]
+            pair_index += 1
+
+    def describe_dist(dist):
+        return {'mean': dist.mean(), 
+                'median': np.median(dist), 
+                'std': dist.std(),
+                'max': dist.max(),
+                'min': dist.min()}
+
+    def describe_diff_dist(pairs):
+        return describe_dist(np.abs(pairs[:, 0] - pairs[:, 1]))
+
+    def describe_correl(pairs):
+        return {'pearsonr': pearsonr(pairs[:, 0], pairs[:, 1]),
+                'spearmanr': spearmanr(pairs)}
+
+    return {'n': len(coincs), 
+            'lengths': describe_dist(lengths),
+            'dts': describe_dist(dts),
+            'channel_counts': channel_counts,
+            'freqs': {'diffs': describe_diff_dist(freqs),
+                      'correl': describe_correl(freqs)},
+            'snrs': {'diffs': describe_diff_dist(snrs),
+                     'correl': describe_correl(snrs)}}
+
 def _find_coincidences(group, append_func, window, time_offsets=None):
     channels = group.channels
     num_channels = len(channels)

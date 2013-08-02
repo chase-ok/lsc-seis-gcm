@@ -25,9 +25,10 @@ def calculate_etmy_coinc():
     coinc.calculate_coinc_group(group)
     
 def test_coinc():
-    from gcm.data import channels as chn, coinc
+    from gcm.data import channels as chn, coinc as co
     from random import random
 
     g0 = chn.get_group(0)
     offsets = dict((c, random()*100.0) for c in g0.channels)
-    return coinc.get_coincidences_with_offsets(g0, 0.05, offsets)
+    coincs = co.get_coincidences_with_offsets(g0, 0.05, offsets)
+    return co.analyze_coincidences(g0, coincs)
