@@ -62,7 +62,7 @@ define ['d3'], (d3) ->
         
     loadJSON: loadJSON = (url, onData, numRetries=3) ->
         return unless numRetries > 0
-        
+        url = definitions.webRoot + url
         d3.json url, (error, json) ->
             if error? or not json.success
                 console.log error if error?

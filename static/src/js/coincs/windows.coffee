@@ -7,5 +7,7 @@ define ['utils',
     group = utils.definitions.group
     
     $ ->
-        console.log "Page loaded"
         scatter = new plots.ScatterPlot "#scatter"
+
+        utils.loadJSON "/data/coincs/windows-#{group.id}.json", (data) ->
+            console.log data

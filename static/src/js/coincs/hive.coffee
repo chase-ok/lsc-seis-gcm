@@ -91,7 +91,7 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                 @_snrRatioColors
 
         load: ->
-            url = "#{defs.webRoot}/coinc/group/#{@group.id}/all"
+            url = "/coinc/group/#{@group.id}/all"
             loadJSON url, (data) =>
                 {@coincs} = data
                 @_loaded = yes

@@ -45,7 +45,7 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                 when "SNR" then "snr"
                 when "Amplitude" then "amplitude"
                 when "Frequency" then "freq"
-            url = "#{defs.webRoot}/triggers/channel/#{@channel.id}/" + 
+            url = "/triggers/channel/#{@channel.id}/" + 
                   "field/#{field}?clustered=#{@clustered()}"
             loadJSON url, (data) =>
                 {values} = data

@@ -29,7 +29,7 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
                 @_scroller
                 
         load: ->
-            url = "#{defs.webRoot}/triggers/channel/#{@channel.id}/" + 
+            url = "/triggers/channel/#{@channel.id}/" + 
                   "densities"
             loadJSON url, (data) =>
                 {times, frequencies, densities} = data
