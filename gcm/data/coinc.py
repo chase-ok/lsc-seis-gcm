@@ -132,7 +132,7 @@ def scan_windows(group, windows, num_rand=10, output_dir='data/coinc/'):
 
         rand_coincs = []
         for _ in range(num_rand):
-            offsets = dict((c, random()*1000) for c in groups.channels)
+            offsets = dict((c, random()*1000) for c in group.channels)
             rand_coincs.append(get_coincidences_with_offsets(group, window, offsets))
         
         data.append({'window': window, 
