@@ -19,6 +19,7 @@ def get_coinc_dtype(group):
     return make_dtype(times=(np.float64, (num_channels,)),
                       freqs=(np.float32, (num_channels,)),
                       snrs=(np.float32, (num_channels,)),
+                      amplitudes=(np.float64, (num_channels,)),
                       channel_ids=(np.int32, (num_channels,)),
                       length=np.uint16,
                       id=np.uint32)
@@ -43,12 +44,32 @@ def coincs_to_list(group):
             coinc['freqs'] = coinc['freqs'][:length]
             coinc['snrs'] = coinc['snrs'][:length]
             coinc['channel_ids'] = coinc['channel_ids'][:length]
+            coinc['amplitudes'] = coinc['amplitudes'][:length]
             coinc['id'] = coinc['id']
             coincs.append(coinc)
     return coincs
 
 
 def find_coincidences(group, window=0.05):
+    num_channels = len(group.channels)
+    with open_coincs(group, mode='w', reset=True) as coincs:
+        def to_array(values, dtype):
+            array = NULL*np.ones(num_channels, dtype=dtype)
+            array[:len(values)] = values
+            return array
+
+        def append(coinc): 
+            coincs.append_dict(times=to_array(coinc.times, np.float64),
+                               freqs=to_array(coinc.freqs, np.float32),
+                               snrs=to_array(coinc.snrs, np.float32),
+                               amplitudes=to_array(coinc.amplitudes, np.float64),
+                               channel_ids=to_array(coinc.channel_ids, np.int32),
+                               length=coinc.length,
+                               id=coinc.id)
+
+        _find_coincidences(group, append, window)
+
+def _find_coincidences(group, append_func, window, time_offsets=None):
     channels = group.channels
     num_channels = len(channels)
     assert num_channels > 1
@@ -61,61 +82,58 @@ def find_coincidences(group, window=0.05):
         else:
             return -1 if time_diff < 0 else 1
 
-    with open_coincs(group, mode='w', reset=True) as coincs:
-        triggers, contexts = _open_all_triggers(channels)
-        try:
-            # in case of no triggers...
-            channels = [c for c in channels if len(triggers[c]) > 0]
+    triggers, contexts = _open_all_triggers(channels)
+    try:
+        # in case of no triggers...
+        channels = [c for c in channels if len(triggers[c]) > 0]
 
-            rows = dict((c, 0) for c in channels)
-            ends = dict((c, len(triggers[c])) for c in channels)
-            times = dict((c, triggers[c][0].time_min) for c in channels)
+        rows = dict((c, 0) for c in channels)
+        ends = dict((c, len(triggers[c])) for c in channels)
+        times = dict((c, triggers[c][0].time_min) for c in channels)
 
-            coinc_id = 0
-            while times:
-                times_sorted = sorted(times.iteritems(),
-                                      cmp=compare_times)
+        if time_offsets:
+            for channel, offset in time_offsets:
+                times[channel] += offset
 
-                starting_channel, starting_time = times_sorted[0]
-                linked_channels = [starting_channel]
+        coinc_id = 0
+        while times:
+            times_sorted = sorted(times.iteritems(),
+                                  cmp=compare_times)
 
-                window_end = starting_time + window
-                for match_channel, match_time in times_sorted[1:]:
-                    if match_time < window_end:
-                        linked_channels.append(match_channel)
-                        window_end = match_time + window
-                    else:
-                        break
+            starting_channel, starting_time = times_sorted[0]
+            linked_channels = [starting_channel]
 
-                if len(linked_channels) > 1:
-                    link_times = NULL*np.ones(num_channels, np.float64)
-                    link_freqs = NULL*np.ones(num_channels, np.float32)
-                    link_snrs = NULL*np.ones(num_channels, np.float32)
-                    link_channel_ids = NULL*np.ones(num_channels, np.int32)
-                    for i, channel in enumerate(linked_channels):
-                        trigger = triggers[channel][rows[channel]]
-                        link_times[i] = trigger.time_min
-                        link_freqs[i] = trigger.freq
-                        link_snrs[i] = trigger.snr
-                        link_channel_ids[i] = channel.id
+            window_end = starting_time + window
+            for match_channel, match_time in times_sorted[1:]:
+                if match_time < window_end:
+                    linked_channels.append(match_channel)
+                    window_end = match_time + window
+                else:
+                    break
 
-                    coincs.append_dict(times=link_times,
-                                       freqs=link_freqs,
-                                       snrs=link_snrs,
-                                       channel_ids=link_channel_ids,
-                                       length=len(linked_channels),
-                                       id=coinc_id)
-                    coinc_id += 1
+            if len(linked_channels) > 1:
+                linked_triggers = [triggers[channel][rows[channel]] 
+                                   for channel in linked_channels]
+                append_func(dict(times=[t.time_min for t in linked_triggers],
+                                 freqs=[t.freq for t in linked_triggers],
+                                 snrs=[t.snr for t in linked_triggers],
+                                 amplitudes=[t.amplitude for t in linked_triggers],
+                                 channel_ids=[c.id for c in linked_channels],
+                                 length=len(linked_channels),
+                                 id=coinc_id))
+                coinc_id += 1
 
-                for channel in linked_channels:
-                    row = rows[channel] + 1
-                    rows[channel] = row
-                    if row < ends[channel]:
-                        times[channel] = triggers[channel][row].time_min
-                    else:
-                        del times[channel]
+            for channel in linked_channels:
+                row = rows[channel] + 1
+                rows[channel] = row
+                if row < ends[channel]:
+                    times[channel] = triggers[channel][row].time_min
+                    if time_offsets and channel in time_offsets:
+                        times[channel] += time_offsets[channel]
+                else:
+                    del times[channel]
 
-        finally:
+    finally:
             _close_all_triggers(contexts)
 
 # TODO: this is a poor context management implementation
