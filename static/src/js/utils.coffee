@@ -73,7 +73,7 @@ define ['d3'], (d3) ->
 
     property: (funcs) ->
         oldValue = undefined
-        
+
         if typeof funcs is 'function' or not funcs.get?
             getter = (value) -> value
         else
@@ -89,7 +89,7 @@ define ['d3'], (d3) ->
 
         (value) ->
             if value?
-                oldValue = setter value, oldValue)
+                oldValue = setter value, oldValue
                 obj
             else
                 getter oldValue
