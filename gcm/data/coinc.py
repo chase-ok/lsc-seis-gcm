@@ -120,10 +120,34 @@ def analyze_coincidences(group, coincs):
         else:
             return dict((prop, (0, 0)) for prop in ['pearsonr', 'spearmanr'])
 
-    return {'n': len(coincs), 
+    num_triggers = {}
+    time_min = float('inf')
+    time_max = 0.0
+    for channel in group.channels:
+        with tr.open_clusters(channel, mode='r') as triggers:
+            num_triggers[channel.id] = len(triggers)
+
+            time_min = min(time_min, triggers[0].time_min)
+            time_max = max(time_max, triggers[0].time_max)
+
+    duration = time_max - time_min
+    overall_coinc_rate = len(coincs)/duration
+    overall_trigger_rate = sum(num_triggers.values())/duration
+    coinc_rates = dict((c, num/duration) 
+                       for c, num in channel_counts.iteritems())
+    trigger_rates = dict((c, num/duration) 
+                         for c, num in num_triggers.iteritems())
+
+    return {'num': {'overall_coincs': len(coincs), 
+                    'overall_triggers': sum(num_triggers.values()),
+                    'coincs': channel_counts,
+                    'triggers': num_triggers},
+            'rates': {'overall_coincs': overall_coinc_rate,
+                      'overall_triggers': overall_trigger_rate,
+                      'coincs': coincs_rates,
+                      'triggers': trigger_rates},
             'lengths': describe_dist(lengths),
             'dts': describe_dist(dts),
-            'channel_counts': channel_counts,
             'freqs': {'diffs': describe_diff_dist(freqs),
                       'correl': describe_correl(freqs)},
             'snrs': {'diffs': describe_diff_dist(snrs),
