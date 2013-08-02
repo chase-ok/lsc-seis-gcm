@@ -216,7 +216,7 @@ def _find_coincidences(group, append_func, window, time_offsets=None):
 
             window_end = starting_time + window
             for match_channel, match_time in times_sorted[1:]:
-                if match_time < window_end:
+                if match_time <= window_end:
                     linked_channels.append(match_channel)
                     window_end = match_time + window
                 else:
