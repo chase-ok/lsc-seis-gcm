@@ -436,7 +436,7 @@ define ['utils', 'd3', 'jquery'], (utils, d3, $) ->
 
             for group, points of groups
                 circles = @canvas.selectAll("circle.scatter-point").data points
-                describe circles.enter().append("circle"), {}
+                describe circles.enter().append("circle"),
                 #    class: "scatter-point"
                     "clip-path": "url(##{@canvasClipId})"
 
