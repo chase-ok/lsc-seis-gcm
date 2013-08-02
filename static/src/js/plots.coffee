@@ -355,7 +355,7 @@ define ['utils', 'd3', 'jquery'], (utils, d3, $) ->
 
         showLegend: property (show) =>
             @declareDirty()
-            show)
+            show
 
         groups: property this, (groups) ->
             @scales().color.domain(groups)
