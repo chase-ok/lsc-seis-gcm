@@ -71,8 +71,9 @@ define ['d3'], (d3) ->
             else
                 onData json.data
 
-    property: (obj, funcs) ->
+    property: (funcs) ->
         oldValue = undefined
+        
         if typeof funcs is 'function' or not funcs.get?
             getter = (value) -> value
         else
@@ -88,10 +89,10 @@ define ['d3'], (d3) ->
 
         (value) ->
             if value?
-                oldValue = setter.call(obj, value, oldValue)
+                oldValue = setter value, oldValue)
                 obj
             else
-                getter.call(obj, oldValue)
+                getter oldValue
 
     degrees: (radians) -> radians/Math.PI*180
     radians: (degrees) -> Math.PI/180*degrees
