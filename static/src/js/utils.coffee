@@ -62,7 +62,6 @@ define ['d3'], (d3) ->
         
     loadJSON: loadJSON = (url, onData, numRetries=3) ->
         return unless numRetries > 0
-        console.log definitions.webRoot + url
         d3.json definitions.webRoot + url, (error, json) ->
             if error? or not json.success
                 console.log error if error?
@@ -70,6 +69,15 @@ define ['d3'], (d3) ->
                 setTimeout (-> loadJSON(url, onData, numRetries-1)), 10
             else
                 onData json.data
+
+    loadUnwrappedJSON: loadUnwrappedJSON = (url, onData, numRetries=3) ->
+        return unless numRetries > 0
+        d3.json definitions.webRoot + url, (error, json) ->
+            if error?
+                console.log error if error?
+                setTimeout (-> loadUnwrappedJSON(url, onData, numRetries-1)), 10
+            else
+                onData json
 
     property: (funcs) ->
         oldValue = undefined
