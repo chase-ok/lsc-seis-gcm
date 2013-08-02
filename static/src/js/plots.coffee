@@ -1,5 +1,5 @@
 define ['utils', 'd3', 'jquery'], (utils, d3, $) ->
-    {mash, describe, mergeObj} = utils
+    {mash, describe, mergeObj, property} = utils
     
     _clipCount = 0
     
@@ -77,6 +77,7 @@ define ['utils', 'd3', 'jquery'], (utils, d3, $) ->
             # TODO: Make this wait a while to catch "all of the dirty" at once
             @clear()
             @prepare()
+            this
         
         _prepareCanvas: ->
             @canvas = describe @root.append("g"),
@@ -240,7 +241,8 @@ define ['utils', 'd3', 'jquery'], (utils, d3, $) ->
             z: (z) -> colorInterp(1.0 - oldMaps.z(z)/height)
             
         prepare: ->
-            super()
+            return unless super()
+
             @_prepareZGradient()
             @_prepareZColorBar()
             @_prepareZAxis()
@@ -328,7 +330,6 @@ define ['utils', 'd3', 'jquery'], (utils, d3, $) ->
 
             # TODO! use this everywhere
             @canvas = d3.select(@rootSelector + ">.canvas")
-            console.log @canvas
 
             rects = @canvas.selectAll("rect.histogram-bar").data data
             describe rects.enter().append("rect"),
@@ -341,5 +342,107 @@ define ['utils', 'd3', 'jquery'], (utils, d3, $) ->
                 "shape-rendering": "crispEdge"
             
             rects.exit().remove()
+
+    class ScatterPlot extends BasicPlot
+        constructor: (rootSelector="body", dimensions=['x', 'y', 'color', 'size']) ->
+            super rootSelector, dimensions
+            
+            @scales
+                color: d3.scale.category20()
+                size: d3.scale.ordinal()
+            @showLegend no
+            @groups ['default']
+
+        showLegend: property this, (show) ->
+            @declareDirty()
+            show
+
+        groups: property this, (groups) ->
+            @scales().color.domain(groups)
+            @scales().size.domain(groups).range(5 for group in groups)
+            @declareDirty()
+            groups
+
+        sizes: property this, 
+            get: -> 
+                range = @scales().size.range()
+                groups = @groups()
+                mash ([groups[i], range[i]] for i in [0...groups.length])
+            set: (sizes) ->
+                range = @scales().size.range()
+                for i in [0...@groups().length]
+                    size = sizes[groups[i]]
+                    range[i] = size if size?
+                @scales().size.range range
+                @declareDirty()
+
+        colors: property this, 
+            get: -> 
+                range = @scales().color.range()
+                groups = @groups()
+                mash ([groups[i], range[i]] for i in [0...groups.length])
+            set: (colors) ->
+                range = @scales().color.range()
+                for i in [0...@groups().length]
+                    color = colors[groups[i]]
+                    range[i] = color if color?
+                @scales().color.range range
+                @declareDirty()
+
+        prepare: ->
+            return unless super()
+            @_prepareLegend()
+
+        _prepareLegend: ->
+            return unless @showLegend()
+
+            spacing = 5
+            size = {x: 100, y: 20}
+            groups = @groups()
+
+            legend = describe @canvas.append("g").selectAll(".legend")
+                                     .data(d3.zip([0...groups.length], groups))
+                                     .enter().append("g"),
+                class: "legend"
+                transform: (d) =>
+                    "translate(#{@canvasSize.x - size.x}, #{d[0]*(size.y + spacing)})"
+
+            {color} = @scales()
+            describe legend.append("rect"),
+                x: 0
+                y: 0
+                width: size.x
+                height: size.y
+                stroke: "none"
+                fill: (d) -> color d[1]
+
+            describe legend.append("text").text((d) -> d[1]),
+                x: 3
+                y: size.y - 5
+                "text-anchor": "start"
+                "font-size": "#{size.y - 8}"
+                "font-weight": "bold"
+                fill: "white"
+        
+        plot: (groups) ->
+            @prepare()
+
+            {x, y, color, size} = @scales()
+
+            # TODO! use this everywhere
+            @canvas = d3.select(@rootSelector + ">.canvas")
+
+            for group, points of groups
+                circles = @canvas.selectAll("circle.scatter-point").data points
+                circles.enter().append("circle").classed 'scatter-point'
+
+                describe circles.transition().duration(500),
+                    cx: (d) -> x d[0]
+                    cy: (d) -> y d[1]
+                    r: size group
+                    stroke: "none"
+                    fill: color group
+
+                circles.exit().remove()
 
     return {SvgPlot, BasicPlot, ZColorPlot, Histogram}

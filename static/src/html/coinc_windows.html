@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Coincidences [{{group['name']}}]</title>
+    <link rel="stylesheet" type="text/css" href="{{root}}/static/css/default_plot.css"/>
+    <link rel="stylesheet" type="text/clss" href="{{root}}/static/css/smoothness/smoothness-theme.css"/>
+    <script type="text/javascript">
+      var definitions = {
+          'group': {{!str(group)}},
+          'webRoot': "{{root}}"
+      };
+    </script>
+    <script type="text/javascript"> var require = { baseUrl: "{{root}}/static/js" }; </script>
+    <script type="text/javascript" src="{{root}}/static/js/lib/require.js" data-main="coincs/windows"></script>
+  </head>
+  <body>
+    <svg id="hive" width="1500" height="650"></svg>
+  </body>
+</html>

@@ -71,6 +71,28 @@ define ['d3'], (d3) ->
             else
                 onData json.data
 
+    property: (obj, funcs) ->
+        oldValue = undefined
+        if typeof funcs is 'function' or not funcs.get?
+            getter = (value) -> value
+        else
+            getter = funcs.get
+
+        if typeof funcs is 'function'
+            setter = funcs
+        else
+            if funcs.set?
+                setter = funcs.set
+            else
+                setter = -> throw new Error('property is read-only')
+
+        (value) ->
+            if value?
+                oldValue = setter.call(obj, value, oldValue)
+                obj
+            else
+                getter.call(obj, oldValue)
+
     degrees: (radians) -> radians/Math.PI*180
     radians: (degrees) -> Math.PI/180*degrees
     

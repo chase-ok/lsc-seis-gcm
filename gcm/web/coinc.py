@@ -7,14 +7,8 @@ import numpy as np
 @bottle.get('/coinc/group/<group_id:int>')
 @bottle.view('coincs.html')
 def get_group(group_id):
-    try:
-        group = chn.get_group(group_id)
-    except:
-        bottle.abort(404, "No coincidences for {0}".format(group))
-    
-    group_dict = group._asdict()
-    group_dict['channels'] = [c._asdict() for c in group.channels]
-    return {'root': WEB_ROOT, 'group': group_dict}
+    return {'root': WEB_ROOT, 'group': _get_group(group_id)}
+
 
 @bottle.get('/coinc/group/<group_id:int>/all')
 @succeed_or_fail
@@ -23,3 +17,18 @@ def get_all_coinc(group_id):
     coincs = coinc.coincs_to_list(group)
     limit = int(bottle.request.query.limit or len(coincs))
     return {'coincs': map(convert_numpy_dict, coincs[:limit])}
+
+@bottle.get('/coinc/group/<group_id:int>/windows')
+@bottle.view('coinc_windows.html')
+def get_group(group_id):
+    return {'root': WEB_ROOT, 'group': _get_group(group_id)}
+
+def _get_group(group_id):
+    try:
+        group = chn.get_group(group_id)
+    except:
+        bottle.abort(404, "No coincidences for {0}".format(group))
+    
+    group_dict = group._asdict()
+    group_dict['channels'] = [c._asdict() for c in group.channels]
+    return group_dict
