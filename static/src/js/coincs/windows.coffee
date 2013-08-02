@@ -71,7 +71,7 @@ define ['utils',
             plotField fields[0]...
 
             select = d3.select("body").append("select")
-            options = select.selectAll("option").data(fields).append("option")
+            options = select.selectAll("option").data(fields).enter().append("option")
             options.text (d) -> d[0]
             select.on "change", ->
                 console.log select.node()
