@@ -9,6 +9,8 @@ hdf5.use_locking = False
 STATIC_ROOT = '/home/chase.kernan/public_html/cgi-bin/lsc-seis-gcm/static/deploy'
 bottle.TEMPLATE_PATH.append(STATIC_ROOT + "/html/")
 
+DATA_ROOT = '/home/chase.kernan/public_html/cgi-bin/lsc-seis-gcm/data'
+
 from gcm.web import channels
 from gcm.web import triggers
 from gcm.web import coinc
@@ -21,4 +23,8 @@ def index():
 def server_static(filepath): 
     return static_file(filepath, root=STATIC_ROOT)
 
-run(server="cgi", debug=True)
+@route('/data/<filepath:path>')
+def server_static(filepath): 
+    return static_file(filepath, root=DATA_ROOT)
+
+run(server="wscgi", debug=True)
