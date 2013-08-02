@@ -97,7 +97,7 @@ def _find_coincidences(group, append_func, window, time_offsets=None):
         times = dict((c, triggers[c][0].time_min) for c in channels)
 
         if time_offsets:
-            for channel, offset in time_offsets:
+            for channel, offset in time_offsets.iteritems():
                 times[channel] += offset
 
         coinc_id = 0
