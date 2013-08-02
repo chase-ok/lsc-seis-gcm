@@ -9,5 +9,5 @@ define ['utils',
     $ ->
         scatter = new plots.ScatterPlot "#scatter"
 
-        utils.loadJSON "/data/coincs/windows-#{group.id}.json", (data) ->
+        utils.loadJSON "/data/coinc/windows-#{group.id}.json", (data) ->
             console.log data
