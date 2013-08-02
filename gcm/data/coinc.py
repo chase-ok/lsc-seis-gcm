@@ -59,11 +59,11 @@ def find_coincidences(group, window=0.05):
             return array
 
         def append(coinc): 
-            coincs.append_dict(times=to_array(coinc.times, np.float64),
-                               freqs=to_array(coinc.freqs, np.float32),
-                               snrs=to_array(coinc.snrs, np.float32),
-                               amplitudes=to_array(coinc.amplitudes, np.float64),
-                               channel_ids=to_array(coinc.channel_ids, np.int32),
+            coincs.append_dict(times=to_array(coinc['times'], np.float64),
+                               freqs=to_array(coinc['freqs'], np.float32),
+                               snrs=to_array(coinc['snrs'], np.float32),
+                               amplitudes=to_array(coinc['amplitudes'], np.float64),
+                               channel_ids=to_array(coinc['channel_ids'], np.int32),
                                length=coinc.length,
                                id=coinc.id)
 
