@@ -429,24 +429,26 @@ define ['utils', 'd3', 'jquery'], (utils, d3, $) ->
         plot: (groups) ->
             @prepare()
 
+            merged = ([group, point] for group, points of groups
+                                     for point in points)
+
             {x, y, color, size} = @scales()
 
             # TODO! use this everywhere
             @canvas = d3.select(@rootSelector + ">.canvas")
 
-            for group, points of groups
-                circles = @canvas.selectAll("circle.scatter-point").data points
-                describe circles.enter().append("circle"),
-                #    class: "scatter-point"
-                    "clip-path": "url(##{@canvasClipId})"
+            circles = @canvas.selectAll("circle.scatter-point").data merged
+            describe circles.enter().append("circle"),
+                class: "scatter-point"
+                "clip-path": "url(##{@canvasClipId})"
 
-                describe circles,
-                    cx: (d) -> x d[0]
-                    cy: (d) -> y d[1]
-                    r: size group
-                    stroke: "none"
-                    fill: color group
+            describe circles.transition.duration(500),
+                cx: (d) -> x d[1][0]
+                cy: (d) -> y d[1][1]
+                r: (d) -> size d[0]
+                stroke: "none"
+                fill: (d) -> color d[0]
 
-                circles.exit().remove()
+            circles.exit().remove()
 
     return {SvgPlot, BasicPlot, ZColorPlot, Histogram, ScatterPlot}
