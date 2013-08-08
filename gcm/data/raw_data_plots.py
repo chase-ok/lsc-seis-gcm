@@ -6,7 +6,7 @@ import numpy as np
 import os
 from glue import lal
 
-RAW_DIR = "gcm/data/raw/"
+RAW_DIR = "/home/scott.dossa/dev-seis/lsc-seis-gcm/gcm/data/raw/"
 
 
 # Creates a frame cache file for times around the coincidence arguement
@@ -36,8 +36,12 @@ def create_h5_data(coinc, group):
     channels = group.channels
     
     #temporary file, will create better file naming system soon
-    name='/home/scott.dossa/dev-seis/lsc-seis-gcm/gcm/data/raw/temp.h5'
-
+    name=RAW_DIR+str(coinc["id"])+'.h5'
+    try:
+        os.system('rm '+name)
+    except OSError:
+        pass
+        
     #open h5 file
     with hdf5.write_h5(name) as h5:
 
@@ -60,7 +64,7 @@ def create_h5_data(coinc, group):
 
             #send bandpassed data to a dataset in the h5 file.
             table = h5.create_dataset(name=str(channel[0]),
-                                       data=band_passed_data)
+                                     data=band_passed_data)
             table.attrs.start_time = start_time
             table.attrs.end_time = end_time
             table.attrs.sample_rate=int(1.0/deltaT)
