@@ -44,7 +44,7 @@ def create_h5_data(coinc, group):
 
         #for each channel, generate bandpassed data
         for channel in group.channels:
-            channel_name=channels[0][1]+':'+channels[0][2]+'_'+channels[0][3]
+            channel_name=channel[1]+':'+channel[2]+'_'+channel[3]
             f=open(RAW_DIR+file_name)
             framedata = frutils.FrameCache(lal.Cache.fromfile(f),verbose=False).fetch(channel_name, start_time, end_time)
             f.close()
@@ -59,20 +59,12 @@ def create_h5_data(coinc, group):
             times = np.arange(start_time, end_time, deltaT)
 
             #send bandpassed data to a dataset in the h5 file.
-            channel_group=h5.require_group(str(channel.id))
-            group.require_dataset(name=self.name,
-                                  shape=(self.initial_size,),
-                                  dtype=self.dtype,
-                                  chunks=(self.chunk_size,),
-                                  maxshape=(None,),
-                                  compression=self.compression,
-                                  fletcher32=True,
-                                  exact=False)
-            #table = channel_group.require_dataset(name=str(coinc['id']),
-                                  #                data=band_passed_data,
-                                   #               maxshape=(None,None),
-                                    #              shape=(1,2))
-                                                 
+            table = h5.create_dataset(name=str(channel[0]),
+                                       data=band_passed_data)
+            table.attrs.start_time = start_time
+            table.attrs.end_time = end_time
+            table.attrs.sample_rate=int(1.0/deltaT)
+               
 group = channels.get_group(2)
 coincs = coinc.get_coincidences_with_offsets(group, 0.5, None)
 coinc=coincs[0]            
