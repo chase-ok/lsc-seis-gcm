@@ -6,8 +6,9 @@ from gcm import utils
 import numpy as np
 import os
 from glue import lal
+import matplotlib.pyplot as plt
 
-group = channels.get_group(0)
+group = channels.get_group(2)
 coincs = coinc.get_coincidences_with_offsets(group, 0.5, None)
 coinc=coincs[0]
 
@@ -22,7 +23,7 @@ def import_raw_frames(coinc, group):
     if observatory =='H':
         frame_type='H1_R'
     elif observatory =='L':
-        frame_type=='R'
+        frame_type='R'
     else:
         print 'ERROR: frame type not determined'
     
@@ -44,12 +45,12 @@ def create_h5_data(coinc, group):
         data = np.array(framedata)
         deltaT=framedata.metadata.dt
         timeseries = seriesutils.fromarray(data, deltaT=framedata.metadata.dt)
-        seriesutils.bandpass(timeseries,freq-4, freq+4)
-            #band_passed_data=timeseries.data.data
-    
+        if freq>1:
+            seriesutils.bandpass(timeseries,freq-1, freq+1)
+        else:
+            seriesutils.bandpass(timeseries, 0.0001, 2)
+        band_passed_data=timeseries.data.data
+        times = np.arange(start_time, end_time, deltaT)
 
-   # with hdf5.write_h5(hdf5_name) as h5:
-   #     channel_group = h5.require_group(str(channel.id))
-
-#import_raw_frames(coinc, group)
+import_raw_frames(coinc, group)
 create_h5_data(coinc,group)
