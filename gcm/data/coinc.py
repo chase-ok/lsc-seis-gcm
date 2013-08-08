@@ -268,7 +268,8 @@ def _open_all_triggers(channels):
     triggers = {}
     contexts = []
     for channel in channels:
-        context = tr.open_clusters(channel, mode='r')
+        # temp change to 'w'
+        context = tr.open_clusters(channel, mode='w')
         triggers[channel] = context.__enter__()
         contexts.append(context)
     return triggers, contexts
