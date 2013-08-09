@@ -20,7 +20,8 @@ def get_coinc_dtype(group):
                       freqs=(np.float32, (num_channels,)),
                       snrs=(np.float32, (num_channels,)),
                       amplitudes=(np.float64, (num_channels,)),
-                      channel_ids=(np.int32, (num_channels,)),
+                      channel_ids=(np.int32, (num_channels,))
+                      freq_bands=(np.float32 (num_channels, 2)),
                       length=np.uint16,
                       id=np.uint32)
 
@@ -45,7 +46,7 @@ def coincs_to_list(group):
             coinc['snrs'] = coinc['snrs'][:length]
             coinc['channel_ids'] = coinc['channel_ids'][:length]
             coinc['amplitudes'] = coinc['amplitudes'][:length]
-            coinc['id'] = coinc['id']
+            coinc['freq_bands'] = coinc['freq_bands'][:length, :]
             coincs.append(coinc)
     return coincs
 
@@ -53,9 +54,13 @@ def coincs_to_list(group):
 def find_coincidences(group, window=0.05):
     num_channels = len(group.channels)
     with open_coincs(group, mode='w', reset=True) as coincs:
-        def to_array(values, dtype):
-            array = NULL*np.ones(num_channels, dtype=dtype)
-            array[:len(values)] = values
+        def to_array(values, dtype, two_d=False):
+            if two_d:
+                array = NULL*np.ones((num_channels, 2), dtype=dtype)
+                array[:len(values), :] = values
+            else:
+                array = NULL*np.ones(num_channels, dtype=dtype)
+                array[:len(values)] = values
             return array
 
         def append(coinc): 
@@ -64,7 +69,8 @@ def find_coincidences(group, window=0.05):
                                snrs=to_array(coinc['snrs'], np.float32),
                                amplitudes=to_array(coinc['amplitudes'], np.float64),
                                channel_ids=to_array(coinc['channel_ids'], np.int32),
-                               length=coinc['length'],
+                               length=coinc['length']
+                               freq_band=to_array(coinc['freq_band'], np.float32, True),
                                id=coinc['id'])
 
         _find_coincidences(group, append, window)
@@ -245,6 +251,7 @@ def _find_coincidences(group, append_func, window, time_offsets=None):
                                  amplitudes=[t.amplitude for t in linked_triggers],
                                  channel_ids=[c.id for c in linked_channels],
                                  length=len(linked_channels),
+                                 freq_bands=[[t.freq_min, t.freq_max] for t in linked_triggers]
                                  id=coinc_id))
                 coinc_id += 1
 
@@ -268,8 +275,7 @@ def _open_all_triggers(channels):
     triggers = {}
     contexts = []
     for channel in channels:
-        # temp change to 'w'
-        context = tr.open_clusters(channel, mode='w')
+        context = tr.open_clusters(channel, mode='r')
         triggers[channel] = context.__enter__()
         contexts.append(context)
     return triggers, contexts

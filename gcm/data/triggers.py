@@ -96,26 +96,25 @@ def compute_densities(channel):
                 densities.append_row((chunk, sums/density_time_chunk))
                 print chunk, sums
 
+cluster_dtype = trigger_dtype + make_dtype(trigger_count=np.uint32,
+                                           weighted_time=np.float64,
+                                           weighted_freq=np.float32,
+                                           snr_sum=np.float64)
+
 clusters_table = hdf5.GenericTable("clusters",
-                                    dtype=trigger_dtype,
+                                    dtype=cluster_dtype,
                                     chunk_size=2**10,
                                     initial_size=2**14)
+
 def open_clusters(channel, **kwargs):
     return hdf5.open_table(make_trigger_h5_path(channel), clusters_table,
                            **kwargs)
 
-def cluster_triggers(channel, num_passes=2):
-    assert num_passes >= 1
-    
+def cluster_triggers(channel):
     # first round
     with open_triggers(channel, mode='r') as triggers:
         clusters = _do_clustering(triggers.iterdict())
     
-    # wish we didn't actually have to tdo this
-    for _ in range(num_passes-1):
-        clusters = _do_clustering(clusters)
-    
-    print "appending"
     with open_clusters(channel, mode='w', reset=True) as table:
         for cluster in clusters:
             table.append_dict(**cluster)
@@ -134,15 +133,31 @@ def _do_clustering(source):
                 clusters.append(cluster)
                 current_clusters.pop(i)
         
-        for i, cluster in reversed(list(enumerate(current_clusters))):
-            if _triggers_touch(trigger, cluster):
-                trigger = _merge_trigger_into(trigger, cluster)
+        as_cluster = trigger # no need to copy
+        found_match = False
+        for i, match in reversed(list(enumerate(current_clusters))):
+            if _triggers_touch(as_cluster, match):
+                found_match = True
+                as_cluster = _merge_trigger_into(as_cluster, match)
                 current_clusters.pop(i)
-        current_clusters.append(trigger)
-    
+
+        if not found_match:
+            snr = trigger["snr"]
+            as_cluster["trigger_count"] = 1
+            as_cluster["weighted_time"] = snr*trigger["time"]
+            as_cluster["weighted_freq"] = snr*trigger["freq"]
+            as_cluster["snr_sum"] = snr
+
+        current_clusters.append(as_cluster)
     clusters.extend(current_clusters)
+
     print "sorting"
     clusters.sort(key=lambda cluster: cluster['time_min'])
+
+    for cluster in clusters:
+        cluster["weighted_time"] /= cluster["snr_sum"]
+        cluster["weighted_freq"] /= cluster["snr_sum"]
+
     return clusters
 
 def _triggers_touch(trigger1, trigger2):
@@ -158,16 +173,25 @@ def _ranges_overlap(range1, range2):
     return range1[0] <= range2[1] and range2[0] <= range1[1]
 
 def _merge_trigger_into(trigger, cluster):
+    trigger_snr = trigger["snr"]
+
     cluster['time_min'] = min(trigger['time_min'], cluster['time_min'])
     cluster['time_max'] = max(trigger['time_max'], cluster['time_max'])
     cluster['freq_min'] = min(trigger['freq_min'], cluster['freq_min'])
     cluster['freq_max'] = max(trigger['freq_max'], cluster['freq_max'])
-    if trigger['snr'] > cluster['snr']:
+
+    if trigger_snr > cluster['snr']:
         cluster['time'] = trigger['time']
         cluster['freq'] = trigger['freq']
-        cluster['snr'] = trigger['snr']
+        cluster['snr'] = trigger_snr
         cluster['amplitude'] = max(trigger['amplitude'], cluster['amplitude'])
         cluster['q'] = max(trigger['q'], cluster['q'])
+
+    cluster["trigger_count"] += trigger.get("trigger_count", 1)
+    cluster["weighted_time"] += trigger.get("weighted_time", snr*trigger["time"])
+    cluster["weighted_freq"] += trigger.get("weighted_freq", snr*trigger["freq"])
+    cluster["snr_sum"] += trigger.get("snr_sum", snr)
+
     return cluster
     
     
