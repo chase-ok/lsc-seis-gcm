@@ -60,7 +60,7 @@ def coincs_to_list(group):
     return coincs
 
 
-def find_coincidences(group, window=0.05):
+def find_coincidences(group, window=0.5):
     num_channels = len(group.channels)
     with open_coincs(group, mode='w', reset=True) as coincs:
         def to_array(values, dtype, two_d=False):
@@ -79,7 +79,7 @@ def find_coincidences(group, window=0.05):
                                amplitudes=to_array(coinc['amplitudes'], np.float64),
                                channel_ids=to_array(coinc['channel_ids'], np.int32),
                                length=coinc['length'],
-                               freq_bands=to_array(coinc['freq_band'], np.float32, True),
+                               freq_bands=to_array(coinc['freq_bands'], np.float32, True),
                                trigger_counts=to_array(coinc['trigger_counts'], np.uint32),
                                weighted_times=to_array(coinc['weighted_times'], np.float64),
                                trigger_freqs=to_array(coinc['weighted_freqs'], np.float32),
