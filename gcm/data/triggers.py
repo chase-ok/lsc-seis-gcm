@@ -188,9 +188,11 @@ def _merge_trigger_into(trigger, cluster):
         cluster['q'] = max(trigger['q'], cluster['q'])
 
     cluster["trigger_count"] += trigger.get("trigger_count", 1)
-    cluster["weighted_time"] += trigger.get("weighted_time", snr*trigger["time"])
-    cluster["weighted_freq"] += trigger.get("weighted_freq", snr*trigger["freq"])
-    cluster["snr_sum"] += trigger.get("snr_sum", snr)
+    cluster["weighted_time"] += trigger.get("weighted_time", 
+                                            trigger_snr*trigger["time"])
+    cluster["weighted_freq"] += trigger.get("weighted_freq", 
+                                            trigger_snr*trigger["freq"])
+    cluster["snr_sum"] += trigger.get("snr_sum", trigger_snr)
 
     return cluster
     
