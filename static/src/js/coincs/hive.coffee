@@ -210,7 +210,7 @@ define ['utils', 'plots', 'd3', 'jquery'], (utils, plots, d3, $) ->
             textHeight = 12
             spacing = 5
             @_writeInfo = (lines) =>
-                texts = describe textGroup.selectAll("text").data(lines)
+                texts = textGroup.selectAll("text").data(lines)
 
                 describe texts.enter().append("text"),
                     x: 3

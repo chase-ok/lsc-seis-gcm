@@ -82,7 +82,7 @@ def find_coincidences(group, window=0.5):
                                freq_bands=to_array(coinc['freq_bands'], np.float32, True),
                                trigger_counts=to_array(coinc['trigger_counts'], np.uint32),
                                weighted_times=to_array(coinc['weighted_times'], np.float64),
-                               trigger_freqs=to_array(coinc['weighted_freqs'], np.float32),
+                               weighted_freqs=to_array(coinc['weighted_freqs'], np.float32),
                                snr_sums=to_array(coinc['snr_sums'], np.float32),
                                time_min=coinc['time_min'], time_max=coinc['time_max'],
                                id=coinc['id'])
