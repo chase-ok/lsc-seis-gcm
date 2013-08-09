@@ -20,9 +20,14 @@ def get_coinc_dtype(group):
                       freqs=(np.float32, (num_channels,)),
                       snrs=(np.float32, (num_channels,)),
                       amplitudes=(np.float64, (num_channels,)),
-                      channel_ids=(np.int32, (num_channels,))
-                      freq_bands=(np.float32 (num_channels, 2)),
+                      channel_ids=(np.int32, (num_channels,)),
+                      trigger_counts=(np.uint32, (num_channels,)),
+                      weighted_freqs=(np.float32, (num_channels,)),
+                      weighted_times=(np.float64, (num_channels,)),
+                      snr_sums=(np.float64, (num_channels,)),
+                      freq_bands=(np.float32, (num_channels, 2)),
                       length=np.uint16,
+                      time_min=np.float64, time_max=np.float64,
                       id=np.uint32)
 
 def get_coinc_table(group):
@@ -46,6 +51,10 @@ def coincs_to_list(group):
             coinc['snrs'] = coinc['snrs'][:length]
             coinc['channel_ids'] = coinc['channel_ids'][:length]
             coinc['amplitudes'] = coinc['amplitudes'][:length]
+            coinc['trigger_counts'] = coinc['trigger_counts'][:length]
+            coinc['weighted_times'] = coinc['weighted_times'][:length]
+            coinc['weighted_freqs'] = coinc['weighted_freqs'][:length]
+            coinc['snr_sums'] = coinc['snr_sums'][:length]
             coinc['freq_bands'] = coinc['freq_bands'][:length, :]
             coincs.append(coinc)
     return coincs
@@ -70,7 +79,12 @@ def find_coincidences(group, window=0.05):
                                amplitudes=to_array(coinc['amplitudes'], np.float64),
                                channel_ids=to_array(coinc['channel_ids'], np.int32),
                                length=coinc['length']
-                               freq_band=to_array(coinc['freq_band'], np.float32, True),
+                               freq_bands=to_array(coinc['freq_band'], np.float32, True),
+                               trigger_counts=to_array(coinc['trigger_counts'], np.uint32),
+                               weighted_times=to_array(coinc['weighted_times'], np.float64),
+                               trigger_freqs=to_array(coinc['weighted_freqs'], np.float32),
+                               snr_sums=to_array(coinc['snr_sums'], np.float32),
+                               time_min=coinc['time_min'], time_max=coinc['time_max'],
                                id=coinc['id'])
 
         _find_coincidences(group, append, window)
@@ -251,7 +265,13 @@ def _find_coincidences(group, append_func, window, time_offsets=None):
                                  amplitudes=[t.amplitude for t in linked_triggers],
                                  channel_ids=[c.id for c in linked_channels],
                                  length=len(linked_channels),
-                                 freq_bands=[[t.freq_min, t.freq_max] for t in linked_triggers]
+                                 freq_bands=[[t.freq_min, t.freq_max] for t in linked_triggers],
+                                 time_min=min(t.time_min for t in linked_triggers),
+                                 time_max=max(t.time_max for t in linked_triggers),
+                                 trigger_counts=[t.trigger_count for t in linked_triggers],
+                                 weighted_times=[t.weighted_time for t in linked_triggers],
+                                 weighted_freqs=[t.weighted_freq for t in linked_triggers],
+                                 snr_sums=[t.snr_sum for t in linked_triggers],
                                  id=coinc_id))
                 coinc_id += 1
 
