@@ -29,7 +29,7 @@ def fetch_raw_data(channel, start, end):
                                  epoch=LIGOTimeGPS(start),
                                  deltaT=data.metadata.dt)
 
-SEGLEN = 256 # should match sampling rate?
+SEGLEN = np.int64(256) # should match sampling rate?
 
 def process_coinc(group, coinc, time_buffer=2):
     from pylal import seriesutils
@@ -44,32 +44,34 @@ def process_coinc(group, coinc, time_buffer=2):
         freq_min, freq_max = map(np.float64, coinc.freq_bands[i])
         bandpassed = seriesutils.bandpass(raw_data, freq_min, freq_max, 
                                           inplace=False)
+        _write_coinc(group, channel, coinc, raw_data, bandpassed)
+        # stride = SEGLEN/4
+        # spectrum = seriesutils.compute_average_spectrum(raw_data, 
+        #                                                 SEGLEN, 
+        #                                                 stride)
 
-        stride = SEGLEN/4
-        spectrum = seriesutils.compute_average_spectrum(raw_data, 
-                                                        SEGLEN, 
-                                                        stride)
+        # step = SEGLEN/4
+        # spectrogram = seriesutils.compute_average_spectrogram(raw_data,
+        #                                                       step,
+        #                                                       SEGLEN,
+        #                                                       stride)
 
-        step = SEGLEN/4
-        spectrogram = seriesutils.compute_average_spectrogram(raw_data,
-                                                              step,
-                                                              SEGLEN,
-                                                              stride)
+        # _write_coinc(group, channel, coinc, raw_data, bandpassed, spectrum, 
+        #              spectrogram)
 
-        _write_coinc(group, channel, coinc, raw_data, bandpassed, spectrum, 
-                     spectrogram)
-
-def _write_coinc(group, channel, coinc, raw_data, bandpassed, spectrum, 
-                 spectrogram):
-    return raw_data, spectrum, spectrogram
-
+def _write_coinc(group, channel, coinc, raw_data, bandpassed):
     with hdf5.write_h5(make_raw_h5_path(group)) as h5:
         h5_group = h5.require_group("channel{0.id}".format(channel))
 
         dtype = make_dtype(raw=(raw_data.dtype, (len(raw_data),)),
-                           bandpassed=(bandpassed.dtype, (len(bandpassed),)),
-                           spectrum=(spectrum.dtype, (len(spectrum),)),
-                           spectrogram=(spectrogram[0].dtype, spectrogram[0].shape))
+                           bandpassed=(bandpassed.dtype, (len(bandpassed),)))
+        data = np.empty(1, dtype=dtype)
+        data[0]['raw'] = raw_data
+        data[0]['bandpassed'] = bandpassed
+
+        h5_group.create_dataset(name="coinc{0.id}".format(coinc),
+                                data=data)
+
 
 
 def add_raw_data(group, channel, coinc, start_time, frame_data):
