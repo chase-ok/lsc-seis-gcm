@@ -38,7 +38,7 @@ def create_h5_data(coinc, group):
     #temporary file, will create better file naming system soon
     name=RAW_DIR+str(coinc["id"])+'.h5'
     try:
-        os.system('rm '+name)
+        os.remove(name)
     except OSError:
         pass
         
@@ -48,6 +48,7 @@ def create_h5_data(coinc, group):
 
         #for each channel, generate bandpassed data
         for channel in group.channels:
+            
             channel_name=channel[1]+':'+channel[2]+'_'+channel[3]
             f=open(RAW_DIR+file_name)
             framedata = frutils.FrameCache(lal.Cache.fromfile(f),verbose=False).fetch(channel_name, start_time, end_time)
@@ -69,9 +70,9 @@ def create_h5_data(coinc, group):
             table.attrs.end_time = end_time
             table.attrs.sample_rate=int(1.0/deltaT)
                
-group = channels.get_group(2)
+group = channels.get_group(0)
 coincs = coinc.get_coincidences_with_offsets(group, 0.5, None)
-coinc=coincs[0]            
+coinc = coincs[0]
 try:
     with open(RAW_DIR+str(coinc["id"])+".cache"): pass
 except:
