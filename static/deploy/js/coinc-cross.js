@@ -29681,33 +29681,33 @@ goog.require("lsc_web.utils");
 goog.require("lsc_web.plots");
 goog.require("lsc_web.data");
 lsc_app.coinc_cross.load_coincs = function load_coincs(group) {
-  var url = [cljs.core.str("/coinc/group/"), cljs.core.str((new cljs.core.Keyword("\ufdd0:id")).call(null, group)), cljs.core.str("/all")].join("");
+  var url = [cljs.core.str(definitions.webRoot), cljs.core.str("/coinc/group/"), cljs.core.str((new cljs.core.Keyword("\ufdd0:id")).call(null, group)), cljs.core.str("/all")].join("");
   var out = cljs.core.async.chan.call(null, 1);
   var data_chan = lsc_web.data.unwrap_result.call(null, lsc_web.data.load_json.call(null, url));
-  var c__4701__auto___5464 = cljs.core.async.chan.call(null, 1);
+  var c__4701__auto___4825 = cljs.core.async.chan.call(null, 1);
   cljs.core.async.impl.dispatch.run.call(null, function() {
     var f__4702__auto__ = function() {
-      var switch__4627__auto__ = function(state_5458) {
-        var state_val_5459 = state_5458[1];
-        if(state_val_5459 === 3) {
-          var inst_5455 = state_5458[2];
-          var inst_5456 = cljs.core.async.close_BANG_.call(null, out);
-          var state_5458__$1 = function() {
-            var statearr_5460 = state_5458;
-            statearr_5460[5] = inst_5455;
-            return statearr_5460
+      var switch__4627__auto__ = function(state_4819) {
+        var state_val_4820 = state_4819[1];
+        if(state_val_4820 === 3) {
+          var inst_4816 = state_4819[2];
+          var inst_4817 = cljs.core.async.close_BANG_.call(null, out);
+          var state_4819__$1 = function() {
+            var statearr_4821 = state_4819;
+            statearr_4821[5] = inst_4816;
+            return statearr_4821
           }();
-          return cljs.core.async.impl.ioc_helpers.return_chan.call(null, state_5458__$1, inst_5456)
+          return cljs.core.async.impl.ioc_helpers.return_chan.call(null, state_4819__$1, inst_4817)
         }else {
-          if(state_val_5459 === 2) {
-            var inst_5452 = state_5458[2];
-            var inst_5453 = inst_5452.coincs;
-            var state_5458__$1 = state_5458;
-            return cljs.core.async.impl.ioc_helpers.put_BANG_.call(null, state_5458__$1, 3, out, inst_5453)
+          if(state_val_4820 === 2) {
+            var inst_4813 = state_4819[2];
+            var inst_4814 = inst_4813.coincs;
+            var state_4819__$1 = state_4819;
+            return cljs.core.async.impl.ioc_helpers.put_BANG_.call(null, state_4819__$1, 3, out, inst_4814)
           }else {
-            if(state_val_5459 === 1) {
-              var state_5458__$1 = state_5458;
-              return cljs.core.async.impl.ioc_helpers.take_BANG_.call(null, state_5458__$1, 2, data_chan)
+            if(state_val_4820 === 1) {
+              var state_4819__$1 = state_4819;
+              return cljs.core.async.impl.ioc_helpers.take_BANG_.call(null, state_4819__$1, 2, data_chan)
             }else {
               return null
             }
@@ -29718,14 +29718,14 @@ lsc_app.coinc_cross.load_coincs = function load_coincs(group) {
         return function() {
           var state_machine__4628__auto__ = null;
           var state_machine__4628__auto____0 = function() {
-            var statearr_5462 = new Array(6);
-            statearr_5462[0] = state_machine__4628__auto__;
-            statearr_5462[1] = 1;
-            return statearr_5462
+            var statearr_4823 = new Array(6);
+            statearr_4823[0] = state_machine__4628__auto__;
+            statearr_4823[1] = 1;
+            return statearr_4823
           };
-          var state_machine__4628__auto____1 = function(state_5458) {
+          var state_machine__4628__auto____1 = function(state_4819) {
             while(true) {
-              var result__4629__auto__ = switch__4627__auto__.call(null, state_5458);
+              var result__4629__auto__ = switch__4627__auto__.call(null, state_4819);
               if(result__4629__auto__ === "\ufdd0:recur") {
                 continue
               }else {
@@ -29734,12 +29734,12 @@ lsc_app.coinc_cross.load_coincs = function load_coincs(group) {
               break
             }
           };
-          state_machine__4628__auto__ = function(state_5458) {
+          state_machine__4628__auto__ = function(state_4819) {
             switch(arguments.length) {
               case 0:
                 return state_machine__4628__auto____0.call(this);
               case 1:
-                return state_machine__4628__auto____1.call(this, state_5458)
+                return state_machine__4628__auto____1.call(this, state_4819)
             }
             throw new Error("Invalid arity: " + arguments.length);
           };
@@ -29750,9 +29750,9 @@ lsc_app.coinc_cross.load_coincs = function load_coincs(group) {
       }(switch__4627__auto__)
     }();
     var state__4703__auto__ = function() {
-      var statearr_5463 = f__4702__auto__.call(null);
-      statearr_5463[cljs.core.async.impl.ioc_helpers.USER_START_IDX] = c__4701__auto___5464;
-      return statearr_5463
+      var statearr_4824 = f__4702__auto__.call(null);
+      statearr_4824[cljs.core.async.impl.ioc_helpers.USER_START_IDX] = c__4701__auto___4825;
+      return statearr_4824
     }();
     return cljs.core.async.impl.ioc_helpers.run_state_machine.call(null, state__4703__auto__)
   });
@@ -29763,27 +29763,27 @@ lsc_app.coinc_cross.get_group = function get_group() {
 };
 lsc_app.coinc_cross.map_over_values = function map_over_values(f, m) {
   return cljs.core.into.call(null, cljs.core.ObjMap.EMPTY, function() {
-    var iter__3042__auto__ = function iter__5473(s__5474) {
+    var iter__3042__auto__ = function iter__4834(s__4835) {
       return new cljs.core.LazySeq(null, false, function() {
-        var s__5474__$1 = s__5474;
+        var s__4835__$1 = s__4835;
         while(true) {
-          var temp__4092__auto__ = cljs.core.seq.call(null, s__5474__$1);
+          var temp__4092__auto__ = cljs.core.seq.call(null, s__4835__$1);
           if(temp__4092__auto__) {
-            var s__5474__$2 = temp__4092__auto__;
-            if(cljs.core.chunked_seq_QMARK_.call(null, s__5474__$2)) {
-              var c__3040__auto__ = cljs.core.chunk_first.call(null, s__5474__$2);
+            var s__4835__$2 = temp__4092__auto__;
+            if(cljs.core.chunked_seq_QMARK_.call(null, s__4835__$2)) {
+              var c__3040__auto__ = cljs.core.chunk_first.call(null, s__4835__$2);
               var size__3041__auto__ = cljs.core.count.call(null, c__3040__auto__);
-              var b__5476 = cljs.core.chunk_buffer.call(null, size__3041__auto__);
+              var b__4837 = cljs.core.chunk_buffer.call(null, size__3041__auto__);
               if(function() {
-                var i__5475 = 0;
+                var i__4836 = 0;
                 while(true) {
-                  if(i__5475 < size__3041__auto__) {
-                    var vec__5479 = cljs.core._nth.call(null, c__3040__auto__, i__5475);
-                    var key = cljs.core.nth.call(null, vec__5479, 0, null);
-                    var value = cljs.core.nth.call(null, vec__5479, 1, null);
-                    cljs.core.chunk_append.call(null, b__5476, cljs.core.PersistentVector.fromArray([key, f.call(null, value)], true));
-                    var G__5481 = i__5475 + 1;
-                    i__5475 = G__5481;
+                  if(i__4836 < size__3041__auto__) {
+                    var vec__4840 = cljs.core._nth.call(null, c__3040__auto__, i__4836);
+                    var key = cljs.core.nth.call(null, vec__4840, 0, null);
+                    var value = cljs.core.nth.call(null, vec__4840, 1, null);
+                    cljs.core.chunk_append.call(null, b__4837, cljs.core.PersistentVector.fromArray([key, f.call(null, value)], true));
+                    var G__4842 = i__4836 + 1;
+                    i__4836 = G__4842;
                     continue
                   }else {
                     return true
@@ -29791,15 +29791,15 @@ lsc_app.coinc_cross.map_over_values = function map_over_values(f, m) {
                   break
                 }
               }()) {
-                return cljs.core.chunk_cons.call(null, cljs.core.chunk.call(null, b__5476), iter__5473.call(null, cljs.core.chunk_rest.call(null, s__5474__$2)))
+                return cljs.core.chunk_cons.call(null, cljs.core.chunk.call(null, b__4837), iter__4834.call(null, cljs.core.chunk_rest.call(null, s__4835__$2)))
               }else {
-                return cljs.core.chunk_cons.call(null, cljs.core.chunk.call(null, b__5476), null)
+                return cljs.core.chunk_cons.call(null, cljs.core.chunk.call(null, b__4837), null)
               }
             }else {
-              var vec__5480 = cljs.core.first.call(null, s__5474__$2);
-              var key = cljs.core.nth.call(null, vec__5480, 0, null);
-              var value = cljs.core.nth.call(null, vec__5480, 1, null);
-              return cljs.core.cons.call(null, cljs.core.PersistentVector.fromArray([key, f.call(null, value)], true), iter__5473.call(null, cljs.core.rest.call(null, s__5474__$2)))
+              var vec__4841 = cljs.core.first.call(null, s__4835__$2);
+              var key = cljs.core.nth.call(null, vec__4841, 0, null);
+              var value = cljs.core.nth.call(null, vec__4841, 1, null);
+              return cljs.core.cons.call(null, cljs.core.PersistentVector.fromArray([key, f.call(null, value)], true), iter__4834.call(null, cljs.core.rest.call(null, s__4835__$2)))
             }
           }else {
             return null
@@ -29813,27 +29813,27 @@ lsc_app.coinc_cross.map_over_values = function map_over_values(f, m) {
 };
 lsc_app.coinc_cross.map_over_key_values = function map_over_key_values(f, m) {
   return cljs.core.into.call(null, cljs.core.ObjMap.EMPTY, function() {
-    var iter__3042__auto__ = function iter__5490(s__5491) {
+    var iter__3042__auto__ = function iter__4851(s__4852) {
       return new cljs.core.LazySeq(null, false, function() {
-        var s__5491__$1 = s__5491;
+        var s__4852__$1 = s__4852;
         while(true) {
-          var temp__4092__auto__ = cljs.core.seq.call(null, s__5491__$1);
+          var temp__4092__auto__ = cljs.core.seq.call(null, s__4852__$1);
           if(temp__4092__auto__) {
-            var s__5491__$2 = temp__4092__auto__;
-            if(cljs.core.chunked_seq_QMARK_.call(null, s__5491__$2)) {
-              var c__3040__auto__ = cljs.core.chunk_first.call(null, s__5491__$2);
+            var s__4852__$2 = temp__4092__auto__;
+            if(cljs.core.chunked_seq_QMARK_.call(null, s__4852__$2)) {
+              var c__3040__auto__ = cljs.core.chunk_first.call(null, s__4852__$2);
               var size__3041__auto__ = cljs.core.count.call(null, c__3040__auto__);
-              var b__5493 = cljs.core.chunk_buffer.call(null, size__3041__auto__);
+              var b__4854 = cljs.core.chunk_buffer.call(null, size__3041__auto__);
               if(function() {
-                var i__5492 = 0;
+                var i__4853 = 0;
                 while(true) {
-                  if(i__5492 < size__3041__auto__) {
-                    var vec__5496 = cljs.core._nth.call(null, c__3040__auto__, i__5492);
-                    var key = cljs.core.nth.call(null, vec__5496, 0, null);
-                    var value = cljs.core.nth.call(null, vec__5496, 1, null);
-                    cljs.core.chunk_append.call(null, b__5493, cljs.core.PersistentVector.fromArray([key, f.call(null, key, value)], true));
-                    var G__5498 = i__5492 + 1;
-                    i__5492 = G__5498;
+                  if(i__4853 < size__3041__auto__) {
+                    var vec__4857 = cljs.core._nth.call(null, c__3040__auto__, i__4853);
+                    var key = cljs.core.nth.call(null, vec__4857, 0, null);
+                    var value = cljs.core.nth.call(null, vec__4857, 1, null);
+                    cljs.core.chunk_append.call(null, b__4854, cljs.core.PersistentVector.fromArray([key, f.call(null, key, value)], true));
+                    var G__4859 = i__4853 + 1;
+                    i__4853 = G__4859;
                     continue
                   }else {
                     return true
@@ -29841,15 +29841,15 @@ lsc_app.coinc_cross.map_over_key_values = function map_over_key_values(f, m) {
                   break
                 }
               }()) {
-                return cljs.core.chunk_cons.call(null, cljs.core.chunk.call(null, b__5493), iter__5490.call(null, cljs.core.chunk_rest.call(null, s__5491__$2)))
+                return cljs.core.chunk_cons.call(null, cljs.core.chunk.call(null, b__4854), iter__4851.call(null, cljs.core.chunk_rest.call(null, s__4852__$2)))
               }else {
-                return cljs.core.chunk_cons.call(null, cljs.core.chunk.call(null, b__5493), null)
+                return cljs.core.chunk_cons.call(null, cljs.core.chunk.call(null, b__4854), null)
               }
             }else {
-              var vec__5497 = cljs.core.first.call(null, s__5491__$2);
-              var key = cljs.core.nth.call(null, vec__5497, 0, null);
-              var value = cljs.core.nth.call(null, vec__5497, 1, null);
-              return cljs.core.cons.call(null, cljs.core.PersistentVector.fromArray([key, f.call(null, key, value)], true), iter__5490.call(null, cljs.core.rest.call(null, s__5491__$2)))
+              var vec__4858 = cljs.core.first.call(null, s__4852__$2);
+              var key = cljs.core.nth.call(null, vec__4858, 0, null);
+              var value = cljs.core.nth.call(null, vec__4858, 1, null);
+              return cljs.core.cons.call(null, cljs.core.PersistentVector.fromArray([key, f.call(null, key, value)], true), iter__4851.call(null, cljs.core.rest.call(null, s__4852__$2)))
             }
           }else {
             return null
@@ -29870,8 +29870,8 @@ lsc_app.coinc_cross.time_series_url = function time_series_url(group, coinc) {
 lsc_app.coinc_cross.make_data_set = function make_data_set(group, coincs) {
   var cross = lsc_web.cross.cross.call(null, coincs);
   var get_date = function(cross) {
-    return function(p1__5499_SHARP_) {
-      return new Date(lsc_web.utils.gps__GT_unix.call(null, cljs.core.first.call(null, p1__5499_SHARP_.times)) * 1E3)
+    return function(p1__4860_SHARP_) {
+      return new Date(lsc_web.utils.gps__GT_unix.call(null, cljs.core.first.call(null, p1__4860_SHARP_.times)) * 1E3)
     }
   }(cross);
   var channel_ids = cljs.core.to_array.call(null, cljs.core.map.call(null, "\ufdd0:id", (new cljs.core.Keyword("\ufdd0:channels")).call(null, group)));
@@ -29879,24 +29879,24 @@ lsc_app.coinc_cross.make_data_set = function make_data_set(group, coincs) {
     return function(name, array_func, format, width) {
       return cljs.core.apply.call(null, cljs.core.vector, function() {
         var iter__3042__auto__ = function(cross, get_date, channel_ids) {
-          return function iter__5530(s__5531) {
+          return function iter__4891(s__4892) {
             return new cljs.core.LazySeq(null, false, function(cross, get_date, channel_ids) {
               return function() {
-                var s__5531__$1 = s__5531;
+                var s__4892__$1 = s__4892;
                 while(true) {
-                  var temp__4092__auto__ = cljs.core.seq.call(null, s__5531__$1);
+                  var temp__4092__auto__ = cljs.core.seq.call(null, s__4892__$1);
                   if(temp__4092__auto__) {
-                    var s__5531__$2 = temp__4092__auto__;
-                    if(cljs.core.chunked_seq_QMARK_.call(null, s__5531__$2)) {
-                      var c__3040__auto__ = cljs.core.chunk_first.call(null, s__5531__$2);
+                    var s__4892__$2 = temp__4092__auto__;
+                    if(cljs.core.chunked_seq_QMARK_.call(null, s__4892__$2)) {
+                      var c__3040__auto__ = cljs.core.chunk_first.call(null, s__4892__$2);
                       var size__3041__auto__ = cljs.core.count.call(null, c__3040__auto__);
-                      var b__5533 = cljs.core.chunk_buffer.call(null, size__3041__auto__);
+                      var b__4894 = cljs.core.chunk_buffer.call(null, size__3041__auto__);
                       if(function() {
-                        var i__5532 = 0;
+                        var i__4893 = 0;
                         while(true) {
-                          if(i__5532 < size__3041__auto__) {
-                            var chan = cljs.core._nth.call(null, c__3040__auto__, i__5532);
-                            cljs.core.chunk_append.call(null, b__5533, lsc_web.cross.field.call(null, "\ufdd0:name", [cljs.core.str("#"), cljs.core.str((new cljs.core.Keyword("\ufdd0:id")).call(null, chan)), cljs.core.str(" "), cljs.core.str(name)].join(""), "\ufdd0:dimension", lsc_web.cross.dimension.call(null, cross, function(i__5532, chan, c__3040__auto__, size__3041__auto__, b__5533, s__5531__$2, temp__4092__auto__, cross, get_date, channel_ids) {
+                          if(i__4893 < size__3041__auto__) {
+                            var chan = cljs.core._nth.call(null, c__3040__auto__, i__4893);
+                            cljs.core.chunk_append.call(null, b__4894, lsc_web.cross.field.call(null, "\ufdd0:name", [cljs.core.str("#"), cljs.core.str((new cljs.core.Keyword("\ufdd0:id")).call(null, chan)), cljs.core.str(" "), cljs.core.str(name)].join(""), "\ufdd0:dimension", lsc_web.cross.dimension.call(null, cross, function(i__4893, chan, c__3040__auto__, size__3041__auto__, b__4894, s__4892__$2, temp__4092__auto__, cross, get_date, channel_ids) {
                               return function(coinc) {
                                 var index = coinc.channel_ids.indexOf((new cljs.core.Keyword("\ufdd0:id")).call(null, chan));
                                 if(cljs.core._EQ_.call(null, index, -1)) {
@@ -29905,17 +29905,17 @@ lsc_app.coinc_cross.make_data_set = function make_data_set(group, coincs) {
                                   return array_func.call(null, coinc)[index]
                                 }
                               }
-                            }(i__5532, chan, c__3040__auto__, size__3041__auto__, b__5533, s__5531__$2, temp__4092__auto__, cross, get_date, channel_ids)), "\ufdd0:views", cljs.core.PersistentVector.fromArray([lsc_web.cross.column_view.call(null, "\ufdd0:format", function(i__5532, chan, c__3040__auto__, size__3041__auto__, b__5533, s__5531__$2, temp__4092__auto__, cross, get_date, channel_ids) {
-                              return function(p1__5500_SHARP_) {
-                                if(cljs.core._EQ_.call(null, p1__5500_SHARP_, -1)) {
+                            }(i__4893, chan, c__3040__auto__, size__3041__auto__, b__4894, s__4892__$2, temp__4092__auto__, cross, get_date, channel_ids)), "\ufdd0:views", cljs.core.PersistentVector.fromArray([lsc_web.cross.column_view.call(null, "\ufdd0:format", function(i__4893, chan, c__3040__auto__, size__3041__auto__, b__4894, s__4892__$2, temp__4092__auto__, cross, get_date, channel_ids) {
+                              return function(p1__4861_SHARP_) {
+                                if(cljs.core._EQ_.call(null, p1__4861_SHARP_, -1)) {
                                   return"---"
                                 }else {
-                                  return format.call(null, p1__5500_SHARP_)
+                                  return format.call(null, p1__4861_SHARP_)
                                 }
                               }
-                            }(i__5532, chan, c__3040__auto__, size__3041__auto__, b__5533, s__5531__$2, temp__4092__auto__, cross, get_date, channel_ids), "\ufdd0:width", width)], true)));
-                            var G__5548 = i__5532 + 1;
-                            i__5532 = G__5548;
+                            }(i__4893, chan, c__3040__auto__, size__3041__auto__, b__4894, s__4892__$2, temp__4092__auto__, cross, get_date, channel_ids), "\ufdd0:width", width)], true)));
+                            var G__4909 = i__4893 + 1;
+                            i__4893 = G__4909;
                             continue
                           }else {
                             return true
@@ -29923,13 +29923,13 @@ lsc_app.coinc_cross.make_data_set = function make_data_set(group, coincs) {
                           break
                         }
                       }()) {
-                        return cljs.core.chunk_cons.call(null, cljs.core.chunk.call(null, b__5533), iter__5530.call(null, cljs.core.chunk_rest.call(null, s__5531__$2)))
+                        return cljs.core.chunk_cons.call(null, cljs.core.chunk.call(null, b__4894), iter__4891.call(null, cljs.core.chunk_rest.call(null, s__4892__$2)))
                       }else {
-                        return cljs.core.chunk_cons.call(null, cljs.core.chunk.call(null, b__5533), null)
+                        return cljs.core.chunk_cons.call(null, cljs.core.chunk.call(null, b__4894), null)
                       }
                     }else {
-                      var chan = cljs.core.first.call(null, s__5531__$2);
-                      return cljs.core.cons.call(null, lsc_web.cross.field.call(null, "\ufdd0:name", [cljs.core.str("#"), cljs.core.str((new cljs.core.Keyword("\ufdd0:id")).call(null, chan)), cljs.core.str(" "), cljs.core.str(name)].join(""), "\ufdd0:dimension", lsc_web.cross.dimension.call(null, cross, function(chan, s__5531__$2, temp__4092__auto__, cross, get_date, channel_ids) {
+                      var chan = cljs.core.first.call(null, s__4892__$2);
+                      return cljs.core.cons.call(null, lsc_web.cross.field.call(null, "\ufdd0:name", [cljs.core.str("#"), cljs.core.str((new cljs.core.Keyword("\ufdd0:id")).call(null, chan)), cljs.core.str(" "), cljs.core.str(name)].join(""), "\ufdd0:dimension", lsc_web.cross.dimension.call(null, cross, function(chan, s__4892__$2, temp__4092__auto__, cross, get_date, channel_ids) {
                         return function(coinc) {
                           var index = coinc.channel_ids.indexOf((new cljs.core.Keyword("\ufdd0:id")).call(null, chan));
                           if(cljs.core._EQ_.call(null, index, -1)) {
@@ -29938,15 +29938,15 @@ lsc_app.coinc_cross.make_data_set = function make_data_set(group, coincs) {
                             return array_func.call(null, coinc)[index]
                           }
                         }
-                      }(chan, s__5531__$2, temp__4092__auto__, cross, get_date, channel_ids)), "\ufdd0:views", cljs.core.PersistentVector.fromArray([lsc_web.cross.column_view.call(null, "\ufdd0:format", function(chan, s__5531__$2, temp__4092__auto__, cross, get_date, channel_ids) {
-                        return function(p1__5500_SHARP_) {
-                          if(cljs.core._EQ_.call(null, p1__5500_SHARP_, -1)) {
+                      }(chan, s__4892__$2, temp__4092__auto__, cross, get_date, channel_ids)), "\ufdd0:views", cljs.core.PersistentVector.fromArray([lsc_web.cross.column_view.call(null, "\ufdd0:format", function(chan, s__4892__$2, temp__4092__auto__, cross, get_date, channel_ids) {
+                        return function(p1__4861_SHARP_) {
+                          if(cljs.core._EQ_.call(null, p1__4861_SHARP_, -1)) {
                             return"---"
                           }else {
-                            return format.call(null, p1__5500_SHARP_)
+                            return format.call(null, p1__4861_SHARP_)
                           }
                         }
-                      }(chan, s__5531__$2, temp__4092__auto__, cross, get_date, channel_ids), "\ufdd0:width", width)], true)), iter__5530.call(null, cljs.core.rest.call(null, s__5531__$2)))
+                      }(chan, s__4892__$2, temp__4092__auto__, cross, get_date, channel_ids), "\ufdd0:width", width)], true)), iter__4891.call(null, cljs.core.rest.call(null, s__4892__$2)))
                     }
                   }else {
                     return null
@@ -29962,10 +29962,10 @@ lsc_app.coinc_cross.make_data_set = function make_data_set(group, coincs) {
     }
   }(cross, get_date, channel_ids);
   return lsc_web.cross.data_set.call(null, cross, lsc_web.cross.field.call(null, "\ufdd0:name", "Time [UTC]", "\ufdd0:dimension", lsc_web.cross.dimension.call(null, cross, get_date), "\ufdd0:views", cljs.core.PersistentVector.fromArray([lsc_web.cross.time_bar_view.call(null, "\ufdd0:domain", cljs.core.PersistentVector.fromArray([get_date.call(null, cljs.core.first.call(null, coincs)), get_date.call(null, cljs.core.last.call(null, coincs))], true), "\ufdd0:grouping", "\ufdd0:hour", "\ufdd0:size", 
-  "\ufdd0:medium"), lsc_web.cross.column_view.call(null, "\ufdd0:format", lsc_web.plots.d3.time.format.utc("%H:%M:%S.%L"), "\ufdd0:width", 80)], true)), lsc_web.cross.field.call(null, "\ufdd0:name", "Duration [s]", "\ufdd0:dimension", lsc_web.cross.dimension.call(null, cross, function(p1__5501_SHARP_) {
-    return p1__5501_SHARP_.time_max - p1__5501_SHARP_.time_min
-  }), "\ufdd0:views", cljs.core.PersistentVector.fromArray([lsc_web.cross.bar_view.call(null, "\ufdd0:domain", cljs.core.PersistentVector.fromArray([0, 100], true), "\ufdd0:grouping", lsc_web.utils.floor, "\ufdd0:size", "\ufdd0:medium"), lsc_web.cross.column_view.call(null, "\ufdd0:format", lsc_web.plots.d3.format(".2f"), "\ufdd0:width", 60)], true)), lsc_web.cross.field.call(null, "\ufdd0:name", "Max SNR", "\ufdd0:dimension", lsc_web.cross.dimension.call(null, cross, function(p1__5502_SHARP_) {
-    return cljs.core.apply.call(null, cljs.core.max, p1__5502_SHARP_.snrs)
+  "\ufdd0:medium"), lsc_web.cross.column_view.call(null, "\ufdd0:format", lsc_web.plots.d3.time.format.utc("%H:%M:%S.%L"), "\ufdd0:width", 80)], true)), lsc_web.cross.field.call(null, "\ufdd0:name", "Duration [s]", "\ufdd0:dimension", lsc_web.cross.dimension.call(null, cross, function(p1__4862_SHARP_) {
+    return p1__4862_SHARP_.time_max - p1__4862_SHARP_.time_min
+  }), "\ufdd0:views", cljs.core.PersistentVector.fromArray([lsc_web.cross.bar_view.call(null, "\ufdd0:domain", cljs.core.PersistentVector.fromArray([0, 100], true), "\ufdd0:grouping", lsc_web.utils.floor, "\ufdd0:size", "\ufdd0:medium"), lsc_web.cross.column_view.call(null, "\ufdd0:format", lsc_web.plots.d3.format(".2f"), "\ufdd0:width", 60)], true)), lsc_web.cross.field.call(null, "\ufdd0:name", "Max SNR", "\ufdd0:dimension", lsc_web.cross.dimension.call(null, cross, function(p1__4863_SHARP_) {
+    return cljs.core.apply.call(null, cljs.core.max, p1__4863_SHARP_.snrs)
   }), "\ufdd0:views", cljs.core.PersistentVector.fromArray([lsc_web.cross.bar_view.call(null, "\ufdd0:domain", cljs.core.PersistentVector.fromArray([6, 25], true), "\ufdd0:bar-width", 0.25, "\ufdd0:size", "\ufdd0:medium"), lsc_web.cross.column_view.call(null, "\ufdd0:format", lsc_web.plots.d3.format(".1f"), "\ufdd0:width", 50)], true)), lsc_web.cross.field.call(null, "\ufdd0:name", "SNR Ratio", "\ufdd0:dimension", lsc_web.cross.dimension.call(null, cross, function(coinc) {
     var first_snr = cljs.core.first.call(null, coinc.snrs);
     var last_snr = cljs.core.last.call(null, coinc.snrs);
@@ -29974,36 +29974,36 @@ lsc_app.coinc_cross.make_data_set = function make_data_set(group, coincs) {
     }else {
       return 1.2
     }
-  }), "\ufdd0:views", cljs.core.PersistentVector.fromArray([lsc_web.cross.bar_view.call(null, "\ufdd0:domain", cljs.core.PersistentVector.fromArray([0.8, 1.2], true), "\ufdd0:bar-width", 0.01, "\ufdd0:size", "\ufdd0:medium"), lsc_web.cross.column_view.call(null, "\ufdd0:format", lsc_web.plots.d3.format(".2f"), "\ufdd0:width", 50)], true)), lsc_web.cross.field.call(null, "\ufdd0:name", "Chain Length", "\ufdd0:dimension", lsc_web.cross.dimension.call(null, cross, function(p1__5503_SHARP_) {
-    return p1__5503_SHARP_.length
-  }), "\ufdd0:views", cljs.core.PersistentVector.fromArray([lsc_web.cross.bar_view.call(null, "\ufdd0:domain", cljs.core.PersistentVector.fromArray([2, cljs.core.count.call(null, (new cljs.core.Keyword("\ufdd0:channels")).call(null, group))], true), "\ufdd0:size", "\ufdd0:small"), lsc_web.cross.column_view.call(null, "\ufdd0:width", 50)], true)), lsc_web.cross.field.call(null, "\ufdd0:name", "Start Channel", "\ufdd0:dimension", lsc_web.cross.dimension.call(null, cross, function(p1__5504_SHARP_) {
-    return channel_ids.indexOf(cljs.core.first.call(null, p1__5504_SHARP_.channel_ids))
-  }), "\ufdd0:views", cljs.core.PersistentVector.fromArray([lsc_web.cross.bar_view.call(null, "\ufdd0:domain", cljs.core.PersistentVector.fromArray([0, cljs.core.count.call(null, (new cljs.core.Keyword("\ufdd0:channels")).call(null, group)) - 1], true), "\ufdd0:size", "\ufdd0:small"), lsc_web.cross.column_view.call(null, "\ufdd0:width", 50)], true)), lsc_web.cross.field.call(null, "\ufdd0:name", "Weighted Peak Frequency [Hz]", "\ufdd0:dimension", lsc_web.cross.dimension.call(null, cross, function(p1__5505_SHARP_) {
-    return lsc_app.coinc_cross.mean.call(null, p1__5505_SHARP_.weighted_freqs)
-  }), "\ufdd0:views", cljs.core.PersistentVector.fromArray([lsc_web.cross.bar_view.call(null, "\ufdd0:domain", cljs.core.PersistentVector.fromArray([0, 16], true), "\ufdd0:bar-width", 0.25, "\ufdd0:size", "\ufdd0:medium"), lsc_web.cross.column_view.call(null, "\ufdd0:format", lsc_web.plots.d3.format(".1f"), "\ufdd0:width", 90)], true)), lsc_web.cross.field.call(null, "\ufdd0:name", "Mean (Peak Time - Start Time)  [s]", "\ufdd0:dimension", lsc_web.cross.dimension.call(null, cross, function(p1__5506_SHARP_) {
-    return lsc_app.coinc_cross.mean.call(null, p1__5506_SHARP_.weighted_times) - p1__5506_SHARP_.time_min
+  }), "\ufdd0:views", cljs.core.PersistentVector.fromArray([lsc_web.cross.bar_view.call(null, "\ufdd0:domain", cljs.core.PersistentVector.fromArray([0.8, 1.2], true), "\ufdd0:bar-width", 0.01, "\ufdd0:size", "\ufdd0:medium"), lsc_web.cross.column_view.call(null, "\ufdd0:format", lsc_web.plots.d3.format(".2f"), "\ufdd0:width", 50)], true)), lsc_web.cross.field.call(null, "\ufdd0:name", "Chain Length", "\ufdd0:dimension", lsc_web.cross.dimension.call(null, cross, function(p1__4864_SHARP_) {
+    return p1__4864_SHARP_.length
+  }), "\ufdd0:views", cljs.core.PersistentVector.fromArray([lsc_web.cross.bar_view.call(null, "\ufdd0:domain", cljs.core.PersistentVector.fromArray([2, cljs.core.count.call(null, (new cljs.core.Keyword("\ufdd0:channels")).call(null, group))], true), "\ufdd0:size", "\ufdd0:small"), lsc_web.cross.column_view.call(null, "\ufdd0:width", 50)], true)), lsc_web.cross.field.call(null, "\ufdd0:name", "Start Channel", "\ufdd0:dimension", lsc_web.cross.dimension.call(null, cross, function(p1__4865_SHARP_) {
+    return channel_ids.indexOf(cljs.core.first.call(null, p1__4865_SHARP_.channel_ids))
+  }), "\ufdd0:views", cljs.core.PersistentVector.fromArray([lsc_web.cross.bar_view.call(null, "\ufdd0:domain", cljs.core.PersistentVector.fromArray([0, cljs.core.count.call(null, (new cljs.core.Keyword("\ufdd0:channels")).call(null, group)) - 1], true), "\ufdd0:size", "\ufdd0:small"), lsc_web.cross.column_view.call(null, "\ufdd0:width", 50)], true)), lsc_web.cross.field.call(null, "\ufdd0:name", "Weighted Peak Frequency [Hz]", "\ufdd0:dimension", lsc_web.cross.dimension.call(null, cross, function(p1__4866_SHARP_) {
+    return lsc_app.coinc_cross.mean.call(null, p1__4866_SHARP_.weighted_freqs)
+  }), "\ufdd0:views", cljs.core.PersistentVector.fromArray([lsc_web.cross.bar_view.call(null, "\ufdd0:domain", cljs.core.PersistentVector.fromArray([0, 16], true), "\ufdd0:bar-width", 0.25, "\ufdd0:size", "\ufdd0:medium"), lsc_web.cross.column_view.call(null, "\ufdd0:format", lsc_web.plots.d3.format(".1f"), "\ufdd0:width", 90)], true)), lsc_web.cross.field.call(null, "\ufdd0:name", "Mean (Peak Time - Start Time)  [s]", "\ufdd0:dimension", lsc_web.cross.dimension.call(null, cross, function(p1__4867_SHARP_) {
+    return lsc_app.coinc_cross.mean.call(null, p1__4867_SHARP_.weighted_times) - p1__4867_SHARP_.time_min
   }), "\ufdd0:views", cljs.core.PersistentVector.fromArray([lsc_web.cross.bar_view.call(null, "\ufdd0:domain", cljs.core.PersistentVector.fromArray([0, 60], true), "\ufdd0:grouping", lsc_web.utils.floor, "\ufdd0:size", "\ufdd0:medium")], true)), lsc_web.cross.field.call(null, "\ufdd0:name", "Mean Delay [s]", "\ufdd0:dimension", lsc_web.cross.dimension.call(null, cross, function(coinc) {
     var t0 = cljs.core.first.call(null, coinc.times);
     return lsc_app.coinc_cross.mean.call(null, function() {
-      var iter__3042__auto__ = function iter__5534(s__5535) {
+      var iter__3042__auto__ = function iter__4895(s__4896) {
         return new cljs.core.LazySeq(null, false, function() {
-          var s__5535__$1 = s__5535;
+          var s__4896__$1 = s__4896;
           while(true) {
-            var temp__4092__auto__ = cljs.core.seq.call(null, s__5535__$1);
+            var temp__4092__auto__ = cljs.core.seq.call(null, s__4896__$1);
             if(temp__4092__auto__) {
-              var s__5535__$2 = temp__4092__auto__;
-              if(cljs.core.chunked_seq_QMARK_.call(null, s__5535__$2)) {
-                var c__3040__auto__ = cljs.core.chunk_first.call(null, s__5535__$2);
+              var s__4896__$2 = temp__4092__auto__;
+              if(cljs.core.chunked_seq_QMARK_.call(null, s__4896__$2)) {
+                var c__3040__auto__ = cljs.core.chunk_first.call(null, s__4896__$2);
                 var size__3041__auto__ = cljs.core.count.call(null, c__3040__auto__);
-                var b__5537 = cljs.core.chunk_buffer.call(null, size__3041__auto__);
+                var b__4898 = cljs.core.chunk_buffer.call(null, size__3041__auto__);
                 if(function() {
-                  var i__5536 = 0;
+                  var i__4897 = 0;
                   while(true) {
-                    if(i__5536 < size__3041__auto__) {
-                      var t = cljs.core._nth.call(null, c__3040__auto__, i__5536);
-                      cljs.core.chunk_append.call(null, b__5537, t - t0);
-                      var G__5549 = i__5536 + 1;
-                      i__5536 = G__5549;
+                    if(i__4897 < size__3041__auto__) {
+                      var t = cljs.core._nth.call(null, c__3040__auto__, i__4897);
+                      cljs.core.chunk_append.call(null, b__4898, t - t0);
+                      var G__4910 = i__4897 + 1;
+                      i__4897 = G__4910;
                       continue
                     }else {
                       return true
@@ -30011,13 +30011,13 @@ lsc_app.coinc_cross.make_data_set = function make_data_set(group, coincs) {
                     break
                   }
                 }()) {
-                  return cljs.core.chunk_cons.call(null, cljs.core.chunk.call(null, b__5537), iter__5534.call(null, cljs.core.chunk_rest.call(null, s__5535__$2)))
+                  return cljs.core.chunk_cons.call(null, cljs.core.chunk.call(null, b__4898), iter__4895.call(null, cljs.core.chunk_rest.call(null, s__4896__$2)))
                 }else {
-                  return cljs.core.chunk_cons.call(null, cljs.core.chunk.call(null, b__5537), null)
+                  return cljs.core.chunk_cons.call(null, cljs.core.chunk.call(null, b__4898), null)
                 }
               }else {
-                var t = cljs.core.first.call(null, s__5535__$2);
-                return cljs.core.cons.call(null, t - t0, iter__5534.call(null, cljs.core.rest.call(null, s__5535__$2)))
+                var t = cljs.core.first.call(null, s__4896__$2);
+                return cljs.core.cons.call(null, t - t0, iter__4895.call(null, cljs.core.rest.call(null, s__4896__$2)))
               }
             }else {
               return null
@@ -30030,27 +30030,27 @@ lsc_app.coinc_cross.make_data_set = function make_data_set(group, coincs) {
     }())
   }), "\ufdd0:views", cljs.core.PersistentVector.fromArray([lsc_web.cross.bar_view.call(null, "\ufdd0:domain", cljs.core.PersistentVector.fromArray([0, 0.5], true), "\ufdd0:bar-width", 0.01, "\ufdd0:size", "\ufdd0:medium"), lsc_web.cross.column_view.call(null, "\ufdd0:format", lsc_web.plots.d3.format(".3f"), "\ufdd0:width", 60)], true)), lsc_web.cross.field.call(null, "\ufdd0:name", "Mean Frequency Bandwidth [Hz]", "\ufdd0:dimension", lsc_web.cross.dimension.call(null, cross, function(coinc) {
     return lsc_app.coinc_cross.mean.call(null, function() {
-      var iter__3042__auto__ = function iter__5538(s__5539) {
+      var iter__3042__auto__ = function iter__4899(s__4900) {
         return new cljs.core.LazySeq(null, false, function() {
-          var s__5539__$1 = s__5539;
+          var s__4900__$1 = s__4900;
           while(true) {
-            var temp__4092__auto__ = cljs.core.seq.call(null, s__5539__$1);
+            var temp__4092__auto__ = cljs.core.seq.call(null, s__4900__$1);
             if(temp__4092__auto__) {
-              var s__5539__$2 = temp__4092__auto__;
-              if(cljs.core.chunked_seq_QMARK_.call(null, s__5539__$2)) {
-                var c__3040__auto__ = cljs.core.chunk_first.call(null, s__5539__$2);
+              var s__4900__$2 = temp__4092__auto__;
+              if(cljs.core.chunked_seq_QMARK_.call(null, s__4900__$2)) {
+                var c__3040__auto__ = cljs.core.chunk_first.call(null, s__4900__$2);
                 var size__3041__auto__ = cljs.core.count.call(null, c__3040__auto__);
-                var b__5541 = cljs.core.chunk_buffer.call(null, size__3041__auto__);
+                var b__4902 = cljs.core.chunk_buffer.call(null, size__3041__auto__);
                 if(function() {
-                  var i__5540 = 0;
+                  var i__4901 = 0;
                   while(true) {
-                    if(i__5540 < size__3041__auto__) {
-                      var vec__5544 = cljs.core._nth.call(null, c__3040__auto__, i__5540);
-                      var f_low = cljs.core.nth.call(null, vec__5544, 0, null);
-                      var f_high = cljs.core.nth.call(null, vec__5544, 1, null);
-                      cljs.core.chunk_append.call(null, b__5541, f_high - f_low);
-                      var G__5550 = i__5540 + 1;
-                      i__5540 = G__5550;
+                    if(i__4901 < size__3041__auto__) {
+                      var vec__4905 = cljs.core._nth.call(null, c__3040__auto__, i__4901);
+                      var f_low = cljs.core.nth.call(null, vec__4905, 0, null);
+                      var f_high = cljs.core.nth.call(null, vec__4905, 1, null);
+                      cljs.core.chunk_append.call(null, b__4902, f_high - f_low);
+                      var G__4911 = i__4901 + 1;
+                      i__4901 = G__4911;
                       continue
                     }else {
                       return true
@@ -30058,15 +30058,15 @@ lsc_app.coinc_cross.make_data_set = function make_data_set(group, coincs) {
                     break
                   }
                 }()) {
-                  return cljs.core.chunk_cons.call(null, cljs.core.chunk.call(null, b__5541), iter__5538.call(null, cljs.core.chunk_rest.call(null, s__5539__$2)))
+                  return cljs.core.chunk_cons.call(null, cljs.core.chunk.call(null, b__4902), iter__4899.call(null, cljs.core.chunk_rest.call(null, s__4900__$2)))
                 }else {
-                  return cljs.core.chunk_cons.call(null, cljs.core.chunk.call(null, b__5541), null)
+                  return cljs.core.chunk_cons.call(null, cljs.core.chunk.call(null, b__4902), null)
                 }
               }else {
-                var vec__5545 = cljs.core.first.call(null, s__5539__$2);
-                var f_low = cljs.core.nth.call(null, vec__5545, 0, null);
-                var f_high = cljs.core.nth.call(null, vec__5545, 1, null);
-                return cljs.core.cons.call(null, f_high - f_low, iter__5538.call(null, cljs.core.rest.call(null, s__5539__$2)))
+                var vec__4906 = cljs.core.first.call(null, s__4900__$2);
+                var f_low = cljs.core.nth.call(null, vec__4906, 0, null);
+                var f_high = cljs.core.nth.call(null, vec__4906, 1, null);
+                return cljs.core.cons.call(null, f_high - f_low, iter__4899.call(null, cljs.core.rest.call(null, s__4900__$2)))
               }
             }else {
               return null
@@ -30077,19 +30077,19 @@ lsc_app.coinc_cross.make_data_set = function make_data_set(group, coincs) {
       };
       return iter__3042__auto__.call(null, coinc.freq_bands)
     }())
-  }), "\ufdd0:views", cljs.core.PersistentVector.fromArray([lsc_web.cross.bar_view.call(null, "\ufdd0:domain", cljs.core.PersistentVector.fromArray([0, 16], true), "\ufdd0:bar-width", 0.25, "\ufdd0:size", "\ufdd0:medium"), lsc_web.cross.column_view.call(null, "\ufdd0:format", lsc_web.plots.d3.format(".1f"), "\ufdd0:width", 90)], true)), array_dim.call(null, "Frequency [Hz]", function(p1__5507_SHARP_) {
-    return p1__5507_SHARP_.weighted_freqs
-  }, lsc_web.plots.d3.format(".2f"), 70), array_dim.call(null, "SNR", function(p1__5508_SHARP_) {
-    return p1__5508_SHARP_.snrs
-  }, lsc_web.plots.d3.format(".2f"), 50), lsc_web.cross.field.call(null, "\ufdd0:name", "Time Series", "\ufdd0:dimension", lsc_web.cross.dimension.call(null, cross, function(p1__5509_SHARP_) {
-    return p1__5509_SHARP_.id
+  }), "\ufdd0:views", cljs.core.PersistentVector.fromArray([lsc_web.cross.bar_view.call(null, "\ufdd0:domain", cljs.core.PersistentVector.fromArray([0, 16], true), "\ufdd0:bar-width", 0.25, "\ufdd0:size", "\ufdd0:medium"), lsc_web.cross.column_view.call(null, "\ufdd0:format", lsc_web.plots.d3.format(".1f"), "\ufdd0:width", 90)], true)), array_dim.call(null, "Frequency [Hz]", function(p1__4868_SHARP_) {
+    return p1__4868_SHARP_.weighted_freqs
+  }, lsc_web.plots.d3.format(".2f"), 70), array_dim.call(null, "SNR", function(p1__4869_SHARP_) {
+    return p1__4869_SHARP_.snrs
+  }, lsc_web.plots.d3.format(".2f"), 50), lsc_web.cross.field.call(null, "\ufdd0:name", "Time Series", "\ufdd0:dimension", lsc_web.cross.dimension.call(null, cross, function(p1__4870_SHARP_) {
+    return p1__4870_SHARP_.id
   }), "\ufdd0:views", cljs.core.PersistentVector.fromArray([lsc_web.cross.column_view.call(null, "\ufdd0:format", function() {
     return""
-  }, "\ufdd0:width", 60, "\ufdd0:describe", function(elem, p__5546) {
-    var vec__5547 = p__5546;
-    var coinc = cljs.core.nth.call(null, vec__5547, 0, null);
-    var _ = cljs.core.nth.call(null, vec__5547, 1, null);
-    var ___$1 = cljs.core.nth.call(null, vec__5547, 2, null);
+  }, "\ufdd0:width", 60, "\ufdd0:describe", function(elem, p__4907) {
+    var vec__4908 = p__4907;
+    var coinc = cljs.core.nth.call(null, vec__4908, 0, null);
+    var _ = cljs.core.nth.call(null, vec__4908, 1, null);
+    var ___$1 = cljs.core.nth.call(null, vec__4908, 2, null);
     if(cljs.core.truth_(coinc)) {
       return elem.append("a").attr("href", lsc_app.coinc_cross.time_series_url.call(null, group, coinc)).attr("target", "_blank").text("View")
     }else {
@@ -30099,8 +30099,8 @@ lsc_app.coinc_cross.make_data_set = function make_data_set(group, coincs) {
 };
 lsc_app.coinc_cross.add_label = function add_label(group, container) {
   lsc_web.plots.style_BANG_.call(null, container.append("div"), cljs.core.PersistentArrayMap.fromArray(["\ufdd0:font-weight", "bold", "\ufdd0:font-size", "18px"], true)).text((new cljs.core.Keyword("\ufdd0:name")).call(null, group));
-  return lsc_web.plots.style_BANG_.call(null, lsc_web.plots.style_BANG_.call(null, container.append("div"), cljs.core.PersistentArrayMap.fromArray(["\ufdd0:clear", "both"], true)).selectAll("div.channel-info").data(cljs.core.to_array.call(null, (new cljs.core.Keyword("\ufdd0:channels")).call(null, group))).enter().append("div").classed("channel-info", true).text(function(p1__5511_SHARP_, p2__5510_SHARP_) {
-    return[cljs.core.str("#"), cljs.core.str(p2__5510_SHARP_), cljs.core.str(" "), cljs.core.str((new cljs.core.Keyword("\ufdd0:subsystem")).call(null, p1__5511_SHARP_)), cljs.core.str(":"), cljs.core.str((new cljs.core.Keyword("\ufdd0:name")).call(null, p1__5511_SHARP_))].join("")
+  return lsc_web.plots.style_BANG_.call(null, lsc_web.plots.style_BANG_.call(null, container.append("div"), cljs.core.PersistentArrayMap.fromArray(["\ufdd0:clear", "both"], true)).selectAll("div.channel-info").data(cljs.core.to_array.call(null, (new cljs.core.Keyword("\ufdd0:channels")).call(null, group))).enter().append("div").classed("channel-info", true).text(function(p1__4872_SHARP_, p2__4871_SHARP_) {
+    return[cljs.core.str("#"), cljs.core.str(p2__4871_SHARP_), cljs.core.str(" "), cljs.core.str((new cljs.core.Keyword("\ufdd0:subsystem")).call(null, p1__4872_SHARP_)), cljs.core.str(":"), cljs.core.str((new cljs.core.Keyword("\ufdd0:name")).call(null, p1__4872_SHARP_))].join("")
   }), cljs.core.PersistentArrayMap.fromArray(["\ufdd0:font-size", "10px", "\ufdd0:padding", "8px", "\ufdd0:float", "left"], true))
 };
 lsc_app.coinc_cross.run = function run() {
@@ -30111,19 +30111,19 @@ lsc_app.coinc_cross.run = function run() {
   var c__4701__auto__ = cljs.core.async.chan.call(null, 1);
   cljs.core.async.impl.dispatch.run.call(null, function() {
     var f__4702__auto__ = function() {
-      var switch__4627__auto__ = function(state_5568) {
-        var state_val_5569 = state_5568[1];
-        if(state_val_5569 === 2) {
-          var inst_5563 = state_5568[2];
-          var inst_5564 = lsc_app.coinc_cross.make_data_set.call(null, group, inst_5563);
-          var inst_5565 = lsc_web.plots.select.call(null, "body");
-          var inst_5566 = lsc_web.cross.show_views.call(null, inst_5564, inst_5565, 30, "Max SNR");
-          var state_5568__$1 = state_5568;
-          return cljs.core.async.impl.ioc_helpers.return_chan.call(null, state_5568__$1, inst_5566)
+      var switch__4627__auto__ = function(state_4929) {
+        var state_val_4930 = state_4929[1];
+        if(state_val_4930 === 2) {
+          var inst_4924 = state_4929[2];
+          var inst_4925 = lsc_app.coinc_cross.make_data_set.call(null, group, inst_4924);
+          var inst_4926 = lsc_web.plots.select.call(null, "body");
+          var inst_4927 = lsc_web.cross.show_views.call(null, inst_4925, inst_4926, 30, "Max SNR");
+          var state_4929__$1 = state_4929;
+          return cljs.core.async.impl.ioc_helpers.return_chan.call(null, state_4929__$1, inst_4927)
         }else {
-          if(state_val_5569 === 1) {
-            var state_5568__$1 = state_5568;
-            return cljs.core.async.impl.ioc_helpers.take_BANG_.call(null, state_5568__$1, 2, coinc_chan)
+          if(state_val_4930 === 1) {
+            var state_4929__$1 = state_4929;
+            return cljs.core.async.impl.ioc_helpers.take_BANG_.call(null, state_4929__$1, 2, coinc_chan)
           }else {
             return null
           }
@@ -30133,14 +30133,14 @@ lsc_app.coinc_cross.run = function run() {
         return function() {
           var state_machine__4628__auto__ = null;
           var state_machine__4628__auto____0 = function() {
-            var statearr_5571 = new Array(5);
-            statearr_5571[0] = state_machine__4628__auto__;
-            statearr_5571[1] = 1;
-            return statearr_5571
+            var statearr_4932 = new Array(5);
+            statearr_4932[0] = state_machine__4628__auto__;
+            statearr_4932[1] = 1;
+            return statearr_4932
           };
-          var state_machine__4628__auto____1 = function(state_5568) {
+          var state_machine__4628__auto____1 = function(state_4929) {
             while(true) {
-              var result__4629__auto__ = switch__4627__auto__.call(null, state_5568);
+              var result__4629__auto__ = switch__4627__auto__.call(null, state_4929);
               if(result__4629__auto__ === "\ufdd0:recur") {
                 continue
               }else {
@@ -30149,12 +30149,12 @@ lsc_app.coinc_cross.run = function run() {
               break
             }
           };
-          state_machine__4628__auto__ = function(state_5568) {
+          state_machine__4628__auto__ = function(state_4929) {
             switch(arguments.length) {
               case 0:
                 return state_machine__4628__auto____0.call(this);
               case 1:
-                return state_machine__4628__auto____1.call(this, state_5568)
+                return state_machine__4628__auto____1.call(this, state_4929)
             }
             throw new Error("Invalid arity: " + arguments.length);
           };
@@ -30165,9 +30165,9 @@ lsc_app.coinc_cross.run = function run() {
       }(switch__4627__auto__)
     }();
     var state__4703__auto__ = function() {
-      var statearr_5572 = f__4702__auto__.call(null);
-      statearr_5572[cljs.core.async.impl.ioc_helpers.USER_START_IDX] = c__4701__auto__;
-      return statearr_5572
+      var statearr_4933 = f__4702__auto__.call(null);
+      statearr_4933[cljs.core.async.impl.ioc_helpers.USER_START_IDX] = c__4701__auto__;
+      return statearr_4933
     }();
     return cljs.core.async.impl.ioc_helpers.run_state_machine.call(null, state__4703__auto__)
   });

@@ -15,7 +15,7 @@
 
 (defn- load-coincs
   [group]
-  (let [url (str "/coinc/group/" (:id group) "/all")
+  (let [url (str (.-webRoot js/definitions) "/coinc/group/" (:id group) "/all")
         out (async/chan 1)
         data-chan (data/unwrap-result (data/load-json url))]
     (go (let [data (async/<! data-chan)]

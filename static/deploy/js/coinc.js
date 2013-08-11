@@ -27496,7 +27496,7 @@ goog.require("lsc_web.utils");
 goog.require("lsc_web.plots");
 goog.require("lsc_web.data");
 lsc_app.coinc.load_coincs = function load_coincs(group) {
-  var url = [cljs.core.str("/coinc/group/"), cljs.core.str((new cljs.core.Keyword("\ufdd0:id")).call(null, group)), cljs.core.str("/all")].join("");
+  var url = [cljs.core.str(definitions.webRoot), cljs.core.str("/coinc/group/"), cljs.core.str((new cljs.core.Keyword("\ufdd0:id")).call(null, group)), cljs.core.str("/all")].join("");
   var out = cljs.core.async.chan.call(null, 1);
   var data_chan = lsc_web.data.unwrap_result.call(null, lsc_web.data.load_json.call(null, url));
   var c__4701__auto___4825 = cljs.core.async.chan.call(null, 1);
