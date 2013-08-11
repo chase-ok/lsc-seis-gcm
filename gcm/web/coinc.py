@@ -9,6 +9,10 @@ import numpy as np
 def get_group(group_id):
     return {'root': WEB_ROOT, 'group': _get_group(group_id)}
 
+@bottle.get('/coinc/cross/group/<group_id:int>')
+@bottle.view('coinc_cross.html')
+def get_group(group_id):
+    return {'root': WEB_ROOT, 'group': _get_group(group_id)}
 
 @bottle.get('/coinc/group/<group_id:int>/all')
 @succeed_or_fail
