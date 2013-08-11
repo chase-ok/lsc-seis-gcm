@@ -37,7 +37,7 @@ def process_coinc(group, coinc, time_buffer=2):
     start = coinc.time_min - time_buffer
     end = coinc.time_max + time_buffer
 
-    for i, channel_id in enumerate(coinc.channel_ids):
+    for i, channel_id in enumerate(coinc.channel_ids[coinc.length]):
         channel = chn.get_channel(channel_id)
         raw_data = fetch_raw_data(channel, start, end)
 
