@@ -29510,7 +29510,7 @@ lsc_app.coinc.run = function run() {
   });
   return c__4701__auto__
 };
-document_ready(lsc_app.coinc.run);
+jayq.core.document_ready.call(null, lsc_app.coinc.run);
 goog.provide("lsc_web.cross");
 goog.require("cljs.core");
 goog.require("lsc_web.utils");

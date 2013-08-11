@@ -405,4 +405,4 @@
     (go (let [coincs (async/<! coinc-chan)]
           (draw-histogram! canvas-context coincs)
           (draw! plot canvas-context coincs)))))
-(js/document-ready run)
+(jq/document-ready run)
