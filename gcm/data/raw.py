@@ -41,7 +41,7 @@ def process_coinc(group, coinc, time_buffer=2):
         channel = chn.get_channel(channel_id)
         raw_data = fetch_raw_data(channel, start, end)
 
-        freq_min, freq_max = coinc.freq_bands[i]
+        freq_min, freq_max = map(np.float64, coinc.freq_bands[i])
         bandpassed = seriesutils.bandpass(raw_data, freq_min, freq_max, 
                                           inplace=False)
 
