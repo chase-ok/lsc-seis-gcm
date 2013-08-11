@@ -7,17 +7,70 @@ import bisect
 from os.path import join
 
 RAW_DIR = "raw/"
-
 def make_raw_h5_path(group):
-    name = "{0.name}.h5".format(group)
-    return make_data_path(join(RAW_DIR, name))
+    return make_data_path(join(RAW_DIR, "{0.name}.h5".format(group)))
 
-def find_raw_data_for_coincs(group):
-    coincs = co.coincs_to_list(group)
+@utils.memoized
+def get_cache(frametype):
+    from pylal import frutils
+    return frutils.AutoqueryingFrameCache(frametype=frametype,
+                                          scratchdir="/usr1/chase.kernan")
+
+IFO_TO_FRAMETYPE = {'H1': 'H1_R', 'L1': 'L1_R'}
+
+def fetch_raw_data(channel, start, end):
+    from pylal import seriesutils
+    from lal import LIGOTimeGPS
+
+    cache = get_cache(IFO_TO_FRAMETYPE[channel.ifo])
+    data = cache.fetch("{0.ifo}:{0.subsystem}_{0.name}".format(channel),
+                       start, end)
+    return seriesutils.fromarray(data, 
+                                 epoch=LIGOTimeGPS(start),
+                                 deltaT=data.metadata.dt)
+
+SEGLEN = 256 # should match sampling rate?
+
+def process_coinc(group, coinc, time_buffer=2):
+    from pylal import seriesutils
+
+    start = coinc.time_min - time_buffer
+    end = coinc.time_max + time_buffer
+
+    for i, channel_id in enumerate(coinc.channel_ids):
+        channel = chn.get_channel(channel_id)
+        raw_data = fetch_raw_data(channel, start, end)
+
+        freq_min, freq_max = coinc.freq_bands[i]
+        bandpassed = seriesutils.bandpass(raw_data, freq_min, freq_max, 
+                                          inplace=False)
+
+        stride = SEGLEN/4
+        spectrum = seriesutils.compute_average_spectrum(raw_data, 
+                                                        SEGLEN, 
+                                                        stride)
+
+        step = SEGLEN/4
+        spectrogram = seriesutils.compute_average_spectrogram(raw_data,
+                                                              step,
+                                                              SEGLEN,
+                                                              stride)
+
+        _write_coinc(group, channel, coinc, raw_data, bandpassed, spectrum, 
+                     spectrogram)
+
+def _write_coinc(group, channel, coinc, raw_data, bandpassed, spectrum, 
+                 spectrogram):
+    return raw_data, spectrum, spectrogram
 
     with hdf5.write_h5(make_raw_h5_path(group)) as h5:
-        for coinc in coincs:
-            for channel_id in 
+        h5_group = h5.require_group("channel{0.id}".format(channel))
+
+        dtype = make_dtype(raw=(raw_data.dtype, (len(raw_data),)),
+                           bandpassed=(bandpassed.dtype, (len(bandpassed),)),
+                           spectrum=(spectrum.dtype, (len(spectrum),)),
+                           spectrogram=(spectrogram[0].dtype, spectrogram[0].shape))
+
 
 def add_raw_data(group, channel, coinc, start_time, frame_data):
     with hdf5.write_h5(make_raw_h5_path(group)) as h5:
@@ -35,9 +88,3 @@ def add_raw_data(group, channel, coinc, start_time, frame_data):
                                             compression=self.compression,
                                             fletcher32=True,
                                             exact=False)
-
-                           
-trigger_table = hdf5.GenericTable("triggers",
-                                  dtype=trigger_dtype,
-                                  chunk_size=2**10,
-                                  initial_size=2**14)
