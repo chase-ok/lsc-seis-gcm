@@ -6,7 +6,7 @@ import csv
 import numpy as np
 import os.path
 
-Channel = namedtuple("Channel", "id ifo subsystem name")
+Channel = namedtuple("Channel", "id ifo subsystem name units")
 Group = namedtuple("Group", "id name channels")
 
 CHANNELS_FILE = "channels.csv"

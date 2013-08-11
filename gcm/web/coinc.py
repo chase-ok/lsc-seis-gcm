@@ -18,6 +18,17 @@ def get_all_coinc(group_id):
     limit = int(bottle.request.query.limit or len(coincs))
     return {'coincs': map(convert_numpy_dict, coincs[:limit])}
 
+@bottle.get('/coinc/group/<group_id:int>/time-series/<coinc_id:int>')
+@bottle.view('coinc_time_series.html')
+def get_time_series(group_id, coinc_id):
+    return {'root': WEB_ROOT, 'group': _get_group(group_id)}
+
+@bottle.get('/coinc/group/<group_id:int>/time-series/<coinc_id:int>/all')
+@succeed_or_fail
+def get_time_series_data(group_id, coinc_id):
+    group = chn.get_group(group_id)
+    return {'raw': [], 'bandpassed': []}
+
 @bottle.get('/coinc/group/<group_id:int>/windows')
 @bottle.view('coinc_windows.html')
 def get_group(group_id):
