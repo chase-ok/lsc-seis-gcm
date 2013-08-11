@@ -64,7 +64,6 @@ module.exports = (grunt) ->
         
         clean:
             build: 'build'
-            deploy: 'deploy'
                 
         requirejs:
             channels: makeRequireJSTask "channels/main"
