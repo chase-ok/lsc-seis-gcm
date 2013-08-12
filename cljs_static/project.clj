@@ -41,5 +41,13 @@
             :output-to "../static/deploy/js/coinc-cross.min.js"
             :optimizations :simple
             :externs ["lib/d3.v3.js" "lib/jquery.min.js" "lib/crossfilter.min.js"]
-            :pretty-print false}}}
+            :pretty-print false}}
+        
+        :coinc-time-series-dev {
+          :source-paths ["src/lib" "src/apps/coinc_time_series"]
+          :compiler {
+            :output-to "../static/deploy/js/coinc-time-series.js"
+            :optimizations :whitespace
+            :externs ["lib/d3.v3.js" "lib/jquery.min.js"]
+            :pretty-print true}}}
   })

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Triggers {{channel['ifo']}}/{{channel['subsystem']}}/{{channel['name']}}</title>
+    <link rel="stylesheet" type="text/css" href="{{root}}/static/css/default_plot.css"/>
+    <link rel="stylesheet" type="text/clss" href="{{root}}/static/css/smoothness/smoothness-theme.css"/>
+    <script type="text/javascript">
+      var definitions = {
+          'channel': {{!str(channel)}},
+          'time_min': {{time_min}},
+          'time_max': {{time_max}},
+          'webRoot': "{{root}}"
+      };
+    </script>
+    <script type="text/javascript"> var require = { baseUrl: "{{root}}/static/js" }; </script>
+    <script type="text/javascript" src="{{root}}/static/js/lib/require.js" data-main="triggers/main"></script>
+  </head>
+  <body>
+    <div id="tabs">
+        <ul>
+            <li><a href="#tab-0">Info</a></li>
+            <li><a href="#tab-1">SNRs</a></li>
+            <li><a href="#tab-2">Frequencies</a></li>
+            <li><a href="#tab-3">Amplitudes</a></li>
+            <li><a href="#tab-4">Clusters</a></li>
+        </ul>
+        <div id="tab-0">
+            <p><emph>IFO</emph>: {{channel['ifo']}}</p>
+            <p><emph>Subsystem</emph>: {{channel['subsystem']}}</p>
+            <p><emph>Name</emph>: {{channel['name']}}</p>
+            <p><emph>ID</emph>: {{channel['id']}}</p>
+            <p><emph>#Triggers</emph>: {{num_triggers}}</p>
+            <p><emph>Time Range</emph>: {{time_min}}-{{time_max}}</p>
+            <p><emph>Duration</emph>:  {{int((time_max-time_min)/3600.0)}} hr</p>
+        </div>
+        <div id="tab-1">
+            <svg id="snrs" width="800" height="650"></svg>
+        </div>
+        <div id="tab-2">
+            <svg id="freqs" width="800" height="650"></svg>
+        </div>
+        <div id="tab-3">
+            <svg id="ampls" width="800" height="650"></svg>
+        </div>
+        <div id="tab-4">
+            <svg id="clusters" width="800" height="650"></svg>
+            <p>Click on the SNR density plot below to scroll to that time in the glitch series. Arrow keys will move the glitch series more slowly.</p>
+            <svg id="densities" width="800" height="250"></svg>
+        </div>
+    </div>
+  </body>
+</html>

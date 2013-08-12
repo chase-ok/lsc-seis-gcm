@@ -45,7 +45,7 @@ def parse_xml_triggers(path):
         triggers[i]['time'] = row.peak_time + row.peak_time_ns*1e-9
         triggers[i]['time_min'] = row.start_time + row.start_time_ns*1e-9
         triggers[i]['time_max'] = row.stop_time + row.stop_time_ns*1e-9
-        triggers[i]['freq'] = row.central_freq
+        triggers[i]['freq'] = row.peak_frequency
         triggers[i]['freq_min'] = row.flow
         triggers[i]['freq_max'] = row.fhigh
         triggers[i]['amplitude'] = row.amplitude
@@ -91,7 +91,7 @@ class Omicron(TriggerSource):
     
     def _get_start_time(self, file):
         # ..._TIME_DURATION.extension
-        return int(file.split(".")[-2].split("_")[-2])
+        return int(file.split(".")[-2].split("-")[-2])
 
 class _ScottXmlTriggers(Omicron):
     

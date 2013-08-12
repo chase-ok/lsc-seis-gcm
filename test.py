@@ -34,4 +34,9 @@ def analyze_coinc(group_num=0):
 if __name__ == '__main__':
     import sys
     group_num = int(sys.argv[1])
-    analyze_coinc(group_num)
+    
+    from gcm.data import channels as chn, coinc
+    from gcm.io import triggers as tri
+    tri.default_source.sync(chn.get_group(group_num))
+    coinc.find_coincidences(chn.get_group(group_num))
+    #analyze_coinc(group_num)
