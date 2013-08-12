@@ -1,4 +1,3 @@
-
 from gcm.data import make_data_path, make_dtype, hdf5
 from gcm.data import coinc as co, channels as chn
 from gcm import utils

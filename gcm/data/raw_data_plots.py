@@ -5,6 +5,7 @@ from gcm.data import channels, coinc, hdf5, make_data_path
 import numpy as np
 import os
 from glue import lal
+import matplotlib as plt
 
 RAW_DIR = "/home/scott.dossa/dev-seis/lsc-seis-gcm/gcm/data/raw/"
 
@@ -34,7 +35,7 @@ def create_h5_data(coinc, group):
     end_time = coinc['times'][0]+2
     freq = coinc['freqs'][0]
     channels = group.channels
-    
+
     #temporary file, will create better file naming system soon
     name=RAW_DIR+str(coinc["id"])+'.h5'
     try:
@@ -47,8 +48,8 @@ def create_h5_data(coinc, group):
 
 
         #for each channel, generate bandpassed data
-        for channel in group.channels:
-            
+        for channel in channels:
+            print coinc
             channel_name=channel[1]+':'+channel[2]+'_'+channel[3]
             f=open(RAW_DIR+file_name)
             framedata = frutils.FrameCache(lal.Cache.fromfile(f),verbose=False).fetch(channel_name, start_time, end_time)
@@ -56,10 +57,7 @@ def create_h5_data(coinc, group):
             data = np.array(framedata)
             deltaT=framedata.metadata.dt
             timeseries = seriesutils.fromarray(data, deltaT=framedata.metadata.dt)
-            if freq>1:
-                seriesutils.bandpass(timeseries,freq-1, freq+1)
-            else:
-                seriesutils.bandpass(timeseries, 0.0001, 2)
+            seriesutils.bandpass(timeseries,channel['weighted_freqs'][0],channel['weighted_freqs'][1])
             band_passed_data=timeseries.data.data
             times = np.arange(start_time, end_time, deltaT)
 
@@ -78,5 +76,5 @@ try:
 except:
     import_raw_frames(coinc, group)
 create_h5_data(coinc,group)
-
+print coinc
 
