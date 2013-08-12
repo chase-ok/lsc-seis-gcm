@@ -1,6 +1,6 @@
 
 import bottle
-from gcm.data import channels as chn, coinc
+from gcm.data import channels as chn, coinc as co, raw
 from gcm.web.utils import *
 import numpy as np
 
@@ -18,22 +18,28 @@ def get_group(group_id):
 @succeed_or_fail
 def get_all_coinc(group_id):
     group = chn.get_group(group_id)
-    coincs = coinc.coincs_to_list(group)
+    coincs = co.coincs_to_list(group)
     limit = int(bottle.request.query.limit or len(coincs))
-    return {'coincs': map(convert_numpy_dict, coincs[:limit])}
+    return {'coincs': coincs[:limit]}
 
 @bottle.get('/coinc/group/<group_id:int>/time-series/<coinc_id:int>')
 @bottle.view('coinc_time_series.html')
 def get_time_series(group_id, coinc_id):
-    return {'root': WEB_ROOT, 'group': _get_group(group_id)}
+    return {'root': WEB_ROOT, 
+            'group': _get_group(group_id), 
+            'coinc': _get_coinc(chn.get_group(group_id), coinc_id),
+            'sampling_rate': raw.SAMPLING_RATE}
 
 @bottle.get('/coinc/group/<group_id:int>/time-series/<coinc_id:int>/all')
 @succeed_or_fail
 def get_time_series_data(group_id, coinc_id):
     group = chn.get_group(group_id)
-    return {'raw': [], 'bandpassed': []}
+    with co.open_coincs(group, mode='r') as coincs:
+        coinc = coincs[coinc_id]
+    raw_series, bandpassed = raw.get_raw_coinc(group, coinc) 
+    return {'raw': [s.tolist() for s in raw_series], 
+            'bandpassed': [s.tolist() for s in bandpassed]}
 
-@bottle.get('/coinc/group/<group_id:int>/windows')
 @bottle.view('coinc_windows.html')
 def get_group(group_id):
     return {'root': WEB_ROOT, 'group': _get_group(group_id)}
@@ -47,3 +53,7 @@ def _get_group(group_id):
     group_dict = group._asdict()
     group_dict['channels'] = [c._asdict() for c in group.channels]
     return group_dict
+
+def _get_coinc(group, coinc_id):
+    with co.open_coincs(group, mode='r') as coincs:
+        return co.coinc_to_dict(coincs[coinc_id])

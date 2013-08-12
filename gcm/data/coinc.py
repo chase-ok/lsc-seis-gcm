@@ -44,21 +44,25 @@ def open_coincs(group, **kwargs):
 def coincs_to_list(group):
     coincs = []
     with open_coincs(group, mode='r') as coinc_table:
-        for coinc in coinc_table.iterdict():
-            length = coinc['length']
-            coinc['times'] = coinc['times'][:length]
-            coinc['freqs'] = coinc['freqs'][:length]
-            coinc['snrs'] = coinc['snrs'][:length]
-            coinc['channel_ids'] = coinc['channel_ids'][:length]
-            coinc['amplitudes'] = coinc['amplitudes'][:length]
-            coinc['trigger_counts'] = coinc['trigger_counts'][:length]
-            coinc['weighted_times'] = coinc['weighted_times'][:length]
-            coinc['weighted_freqs'] = coinc['weighted_freqs'][:length]
-            coinc['snr_sums'] = coinc['snr_sums'][:length]
-            coinc['freq_bands'] = coinc['freq_bands'][:length, :]
-            coincs.append(coinc)
+        for coinc in coinc_table:
+            coincs.append(coinc_to_dict(coinc))
     return coincs
 
+def coinc_to_dict(coinc):
+    length = coinc.length
+    coinc = coinc._asdict()
+    coinc['id'] = int(coinc['id'])
+    coinc['times'] = coinc['times'][:length].tolist()
+    coinc['freqs'] = coinc['freqs'][:length].tolist()
+    coinc['snrs'] = coinc['snrs'][:length].tolist()
+    coinc['channel_ids'] = map(int, coinc['channel_ids'][:length])
+    coinc['amplitudes'] = coinc['amplitudes'][:length].tolist()
+    coinc['trigger_counts'] = map(int, coinc['trigger_counts'][:length])
+    coinc['weighted_times'] = coinc['weighted_times'][:length].tolist()
+    coinc['weighted_freqs'] = coinc['weighted_freqs'][:length].tolist()
+    coinc['snr_sums'] = coinc['snr_sums'][:length].tolist()
+    coinc['freq_bands'] = coinc['freq_bands'][:length, :].tolist()
+    return coinc
 
 def find_coincidences(group, window=0.5):
     num_channels = len(group.channels)

@@ -10,13 +10,43 @@ RAW_DIR = "raw/"
 def make_raw_h5_path(group):
     return make_data_path(join(RAW_DIR, "{0.name}.h5".format(group)))
 
+IFO_TO_FRAMETYPE = {'H1': 'H1_R', 'L1': 'L1_R'}
+CHANNEL_DATASET = "channel{0}"
+SAMPLING_RATE = 64 # Hz
+SAMPLE_DURATION = 10 # s
+SAMPLE_BUFFER = 2 # s
+NUM_SAMPLES = SAMPLING_RATE*SAMPLE_DURATION
+
+raw_dtype = make_dtype(raw=(np.float64, (NUM_SAMPLES,)), 
+                       bandpassed=(np.float64, (NUM_SAMPLES,))) 
+
+def get_raw_table(channel):
+    return hdf5.GenericTable(CHANNEL_DATASET.format(channel.id),
+                             dtype=raw_dtype,
+                             chunk_size=1,
+                             initial_size=1024)
+
+def open_raw(group, channel, **kwargs):
+    return hdf5.open_table(make_raw_h5_path(group),
+                           get_raw_table(channel), **kwargs)
+
 @utils.memoized
 def get_cache(frametype):
     from pylal import frutils
     return frutils.AutoqueryingFrameCache(frametype=frametype,
                                           scratchdir="/usr1/chase.kernan")
 
-IFO_TO_FRAMETYPE = {'H1': 'H1_R', 'L1': 'L1_R'}
+def get_raw_coinc(group, coinc):
+    raw, bandpassed = [], []
+    
+    for channel_id in coinc.channel_ids:
+        with open_raw(group, chn.get_channel(channel_id)) as table:
+            # TODO: use bisect to make this faster
+            index = np.nonzero(table.attrs['index'] == coinc.id)[0][0]
+            raw.append(table[index].raw)
+            bandpassed.append(table[index].bandpassed)
+    
+    return raw, bandpassed 
 
 def fetch_raw_data(channel, start, end):
     from pylal import seriesutils
@@ -29,60 +59,44 @@ def fetch_raw_data(channel, start, end):
                                  epoch=LIGOTimeGPS(start),
                                  deltaT=data.metadata.dt)
 
-SEGLEN = np.int64(256) # should match sampling rate?
-
-def process_group(group, time_buffer=2, max_duration=10):
+def process_group(group):
     with co.open_coincs(group, mode='r') as table:
         for i, coinc in enumerate(table):
             print i, "of", len(table)
-	    process_coinc(group, coinc, time_buffer, max_duration)
+	    process_coinc(group, coinc)
 
-def process_coinc(group, coinc, time_buffer, max_duration):
+def process_coinc(group, coinc):
     from pylal import seriesutils
 
-    start = coinc.time_min - time_buffer
-    end = min(start + max_duration, coinc.time_max + time_buffer)
+    start = coinc.time_min - SAMPLE_BUFFER
+    end = start + SAMPLE_DURATION
 
     for i, channel_id in enumerate(coinc.channel_ids[:coinc.length]):
         channel = chn.get_channel(channel_id)
         raw_data = fetch_raw_data(channel, start, end)
+        seriesutils.resample(raw_data, SAMPLING_RATE)
         print i, start, end, raw_data.data.length
         
-	freq_min, freq_max = map(np.float64, coinc.freq_bands[i])
+        freq_min, freq_max = map(np.float64, coinc.freq_bands[i])
         bandpassed = seriesutils.bandpass(raw_data, freq_min, freq_max, 
                                           inplace=False)
-	
-	_write_coinc(group, channel, coinc, raw_data, bandpassed)
-        # stride = SEGLEN/4
-        # spectrum = seriesutils.compute_average_spectrum(raw_data, 
-        #                                                 SEGLEN, 
-        #                                                 stride)
+        
+        _write_coinc(group, channel, coinc, raw_data, bandpassed)
 
-        # step = SEGLEN/4
-        # spectrogram = seriesutils.compute_average_spectrogram(raw_data,
-        #                                                       step,
-        #                                                       SEGLEN,
-        #                                                       stride)
-
-        # _write_coinc(group, channel, coinc, raw_data, bandpassed, spectrum, 
-        #              spectrogram)
+def _coerce_to_sample_array(series):
+    empty = np.empty(NUM_SAMPLES, dtype=np.float64)
+    array = series.data.data
+    length = min(NUM_SAMPLES, array.size)
+    empty[:length] = array[:length]
+    return empty
 
 def _write_coinc(group, channel, coinc, raw_data, bandpassed):
-    with hdf5.write_h5(make_raw_h5_path(group)) as h5:
-        h5_group = h5.require_group("channel{0.id}".format(channel))
-
-        dtype = make_dtype(raw=(np.float64, (raw_data.data.length,)),
-                           bandpassed=(np.float64, (bandpassed.data.length,)))
-        data = np.empty(1, dtype=dtype)
-        data[0]['raw'] = raw_data.data.data
-        data[0]['bandpassed'] = bandpassed.data.data
+    with open_raw(group, channel, mode='w') as table:
+        index = table.attrs.get('index', np.array([], np.uint32))
         
-	dataset = h5_group.create_dataset(name="coinc{0.id}".format(coinc),
-                                          data=data, chunks=(1,), 
-                                          compression='gzip', compression_opts=9,
-                                          shuffle=True)
-        dataset.attrs.start_time = raw_data.epoch
-        dataset.attrs.dt = raw_data.deltaT
+        table.append_dict(raw=_coerce_to_sample_array(raw_data), 
+                          bandpassed=_coerce_to_sample_array(bandpassed))
+        table.attrs['index'] = np.concatenate((index, [coinc.id]))
 
 if __name__ == '__main__':
     import sys

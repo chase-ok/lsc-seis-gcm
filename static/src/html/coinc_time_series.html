@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Coincidence [{{coinc['id']}}]</title>
+    <link rel="stylesheet" type="text/css" href="{{root}}/static/css/default_plot.css"/>
+    <link rel="stylesheet" type="text/clss" href="{{root}}/static/css/smoothness/smoothness-theme.css"/>
+    <script type="text/javascript">
+      var definitions = {
+          'group': {{!str(group)}},
+          'coinc': {{!str(coinc)}},
+          'webRoot': "{{root}}"
+      };
+    </script>
+    <script type='text/javascript' src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/d3/3.2.2/d3.v3.js"></script>
+    <script type="text/javascript" src="//raw.github.com/d3/d3-plugins/master/horizon/horizon.js"></script>
+    <script type="text/javascript" src="{{root}}/static/js/coinc-time-series.js"></script>
+  </head>
+  <body>
+  </body>
+</html>
