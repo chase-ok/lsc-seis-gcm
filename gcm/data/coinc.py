@@ -4,7 +4,7 @@ from gcm import utils
 import numpy as np
 from itertools import combinations, permutations
 import bisect
-from os.path import join
+from os.path import join, exists
 from math import ceil
 
 COINC_DIR = "coincidences/"
@@ -17,6 +17,7 @@ NULL = -1
 def get_coinc_dtype(group):
     num_channels = len(group.channels)
     return make_dtype(times=(np.float64, (num_channels,)),
+                      time_maxs=(np.float64, (num_channels,)),
                       freqs=(np.float32, (num_channels,)),
                       snrs=(np.float32, (num_channels,)),
                       amplitudes=(np.float64, (num_channels,)),
@@ -53,6 +54,7 @@ def coinc_to_dict(coinc):
     coinc = coinc._asdict()
     coinc['id'] = int(coinc['id'])
     coinc['times'] = coinc['times'][:length].tolist()
+    coinc['time_maxs'] = coinc['time_maxs'][:length].tolist()
     coinc['freqs'] = coinc['freqs'][:length].tolist()
     coinc['snrs'] = coinc['snrs'][:length].tolist()
     coinc['channel_ids'] = map(int, coinc['channel_ids'][:length])
@@ -78,6 +80,7 @@ def find_coincidences(group, window=0.5):
 
         def append(coinc): 
             coincs.append_dict(times=to_array(coinc['times'], np.float64),
+                               time_maxs=to_array(coinc['time_maxs'], np.float64),
                                freqs=to_array(coinc['freqs'], np.float32),
                                snrs=to_array(coinc['snrs'], np.float32),
                                amplitudes=to_array(coinc['amplitudes'], np.float64),
@@ -264,6 +267,7 @@ def _find_coincidences(group, append_func, window, time_offsets=None):
             if len(linked_channels) > 1:
                 linked_triggers = [triggers[c][rows[c]] for c in linked_channels]
                 append_func(dict(times=[times[c] for c in linked_channels],
+                                 time_maxs=[t.time_max for t in linked_triggers],
                                  freqs=[t.freq for t in linked_triggers],
                                  snrs=[t.snr for t in linked_triggers],
                                  amplitudes=[t.amplitude for t in linked_triggers],
@@ -290,7 +294,7 @@ def _find_coincidences(group, append_func, window, time_offsets=None):
                     del times[channel]
 
     finally:
-            _close_all_triggers(contexts)
+        _close_all_triggers(contexts)
 
 # TODO: this is a poor context management implementation
 # maybe use contextlib instead?
@@ -299,9 +303,13 @@ def _open_all_triggers(channels):
     triggers = {}
     contexts = []
     for channel in channels:
-        context = tr.open_clusters(channel, mode='r')
-        triggers[channel] = context.__enter__()
-        contexts.append(context)
+        if tr.has_triggers(channel): 
+            context = tr.open_clusters(channel, mode='r')
+            triggers[channel] = context.__enter__()
+            contexts.append(context)
+        else:
+            print "Warning: no triggers for {0}".format(channel)
+            triggers[channel] = []
     return triggers, contexts
 
 def _close_all_triggers(contexts):

@@ -24,6 +24,18 @@
       (go (do-load-json url out on-error num-retries))
       out))
 
+(defn- do-load-json-v2
+  [url out]
+  (.json js/d3 url (fn [json]
+    (put! out json)
+    (close! out))))
+
+(defn load-json-v2
+  [url]
+  (let [out (chan 1)]
+    (go (do-load-json-v2 url out))
+    out))
+
 (defn unwrap-result
   [data-chan & {:keys [on-error] :or {on-error log-error}}]
   (let [out (chan 1)]

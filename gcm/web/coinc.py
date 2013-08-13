@@ -28,7 +28,9 @@ def get_time_series(group_id, coinc_id):
     return {'root': WEB_ROOT, 
             'group': _get_group(group_id), 
             'coinc': _get_coinc(chn.get_group(group_id), coinc_id),
-            'sampling_rate': raw.SAMPLING_RATE}
+            'sampling_rate': raw.SAMPLING_RATE,
+            'sample_buffer': raw.SAMPLE_BUFFER,
+            'sample_duration': raw.SAMPLE_DURATION}
 
 @bottle.get('/coinc/group/<group_id:int>/time-series/<coinc_id:int>/all')
 @succeed_or_fail

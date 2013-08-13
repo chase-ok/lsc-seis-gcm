@@ -466,7 +466,10 @@ class GenericTable(object):
 
         @property
         def _length(self):
-            return self.dataset.attrs["length"]
+            try:
+                return self.dataset.attrs["length"]
+            except:
+                return 0
 
         @_length.setter
         def _length(self, value):

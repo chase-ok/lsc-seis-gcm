@@ -3,13 +3,21 @@ from gcm.data import make_data_path, make_dtype, hdf5
 from gcm import utils
 import numpy as np
 import bisect
-from os.path import join
+from os.path import join, exists
 
 TRIGGER_DIR = "triggers/"
 
 def make_trigger_h5_path(channel):
     name = "{0.ifo}-{0.subsystem}-{0.name}.h5".format(channel)
     return make_data_path(join(TRIGGER_DIR, name))
+
+def has_triggers(channel):
+    path = make_trigger_h5_path(channel)
+    if exists(path):
+        with hdf5.read_h5(path) as h5:
+            return "triggers" in h5
+    else:
+        return False
 
 # TODO: change time to float64
 trigger_dtype = make_dtype(time=np.float32,
@@ -144,8 +152,8 @@ def _do_clustering(source):
         if not found_match:
             snr = trigger["snr"]
             as_cluster["trigger_count"] = 1
-            as_cluster["weighted_time"] = snr*trigger["time"]
-            as_cluster["weighted_freq"] = snr*trigger["freq"]
+            as_cluster["weighted_time"] = snr*np.float128(trigger["time"])
+            as_cluster["weighted_freq"] = snr*np.float128(trigger["freq"])
             as_cluster["snr_sum"] = snr
 
         current_clusters.append(as_cluster)
@@ -155,8 +163,10 @@ def _do_clustering(source):
     clusters.sort(key=lambda cluster: cluster['time_min'])
 
     for cluster in clusters:
-        cluster["weighted_time"] /= cluster["snr_sum"]
-        cluster["weighted_freq"] /= cluster["snr_sum"]
+        cluster["weighted_time"] = np.float64(cluster["weighted_time"]
+                                              /cluster["snr_sum"])
+        cluster["weighted_freq"] = np.float64(cluster["weighted_freq"]
+                                              /cluster["snr_sum"])
 
     return clusters
 
@@ -189,11 +199,13 @@ def _merge_trigger_into(trigger, cluster):
 
     cluster["trigger_count"] += trigger.get("trigger_count", 1)
     cluster["weighted_time"] += trigger.get("weighted_time", 
-                                            trigger_snr*trigger["time"])
+                                            trigger_snr
+                                            *np.float128(trigger["time"]))
     cluster["weighted_freq"] += trigger.get("weighted_freq", 
-                                            trigger_snr*trigger["freq"])
+                                            trigger_snr
+                                            *np.float128(trigger["freq"]))
     cluster["snr_sum"] += trigger.get("snr_sum", trigger_snr)
 
     return cluster
-    
+
     

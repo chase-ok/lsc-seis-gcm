@@ -35,8 +35,10 @@ if __name__ == '__main__':
     import sys
     group_num = int(sys.argv[1])
     
-    from gcm.data import channels as chn, coinc
+    from gcm.data import channels as chn, coinc, triggers as trd
     from gcm.io import triggers as tri
     tri.default_source.sync(chn.get_group(group_num))
-    coinc.find_coincidences(chn.get_group(group_num))
+    for channel in chn.get_group(group_num).channels:
+        trd.cluster_triggers(channel)
+    coinc.find_coincidences(chn.get_group(group_num), 30)
     #analyze_coinc(group_num)

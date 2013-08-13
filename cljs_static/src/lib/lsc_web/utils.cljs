@@ -10,6 +10,10 @@
   [gps-time]
   (+ gps-time 315964800 (count-leaps gps-time) (if (leaps gps-time) 0.5 0)))
 
+(defn unix->date
+  [unix]
+  (-> unix (* 1000) js/Date.))
+
 (defn floor [x] (.floor js/Math x))
 
 (defn to-map [f coll] (into {} (for [x coll] [x (f x)])))

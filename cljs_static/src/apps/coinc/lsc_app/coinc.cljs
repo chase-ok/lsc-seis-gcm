@@ -266,6 +266,7 @@
     (.log js/console link-group)
     (describe! path
                {:class "link"
+                :cursor "pointer"
                 :fill "none"
                 :stroke #(snr-ratio (:snr-ratio %))
                 :stroke-width #(snr (:snr %))
@@ -304,6 +305,13 @@
 
         (async/put! (-> context :chans :highlight-chains)
                     (fn [coinc-match] (= (.-id coinc) (.-id coinc-match)))))))
+   
+    (.log js/console "Shit man") 
+    (.on path "click" (fn [link]
+        (js/open (str (.-webRoot js/definitions) 
+                      "/coinc/group/" (-> context :group :id)
+                      "/time-series/" (.-id (:coinc link))) 
+                 "_blank")))
 
     (.on path "mouseout" (fn []
       ;(async/put! (-> context :chans :show-info) [])

@@ -5,16 +5,17 @@ from gcm import utils
 import numpy as np
 import bisect
 from os.path import join
+from random import randint
 
 RAW_DIR = "raw/"
 def make_raw_h5_path(group):
     return make_data_path(join(RAW_DIR, "{0.name}.h5".format(group)))
 
-IFO_TO_FRAMETYPE = {'H1': 'H1_R', 'L1': 'L1_R'}
+IFO_TO_FRAMETYPE = {'H1': 'H1_R', 'L1': 'R'}
 CHANNEL_DATASET = "channel{0}"
 SAMPLING_RATE = 64 # Hz
-SAMPLE_DURATION = 10 # s
-SAMPLE_BUFFER = 2 # s
+SAMPLE_DURATION = 20 # s
+SAMPLE_BUFFER = 4 # s
 NUM_SAMPLES = SAMPLING_RATE*SAMPLE_DURATION
 
 raw_dtype = make_dtype(raw=(np.float64, (NUM_SAMPLES,)), 
@@ -30,7 +31,7 @@ def open_raw(group, channel, **kwargs):
     return hdf5.open_table(make_raw_h5_path(group),
                            get_raw_table(channel), **kwargs)
 
-@utils.memoized
+#@utils.memoized
 def get_cache(frametype):
     from pylal import frutils
     return frutils.AutoqueryingFrameCache(frametype=frametype,
@@ -39,12 +40,10 @@ def get_cache(frametype):
 def get_raw_coinc(group, coinc):
     raw, bandpassed = [], []
     
-    for channel_id in coinc.channel_ids:
-        with open_raw(group, chn.get_channel(channel_id)) as table:
-            # TODO: use bisect to make this faster
-            index = np.nonzero(table.attrs['index'] == coinc.id)[0][0]
-            raw.append(table[index].raw)
-            bandpassed.append(table[index].bandpassed)
+    for channel in group.channels: 
+        with open_raw(group, channel) as table:
+            raw.append(table[coinc.id].raw)
+            bandpassed.append(table[coinc.id].bandpassed)
     
     return raw, bandpassed 
 
@@ -53,36 +52,56 @@ def fetch_raw_data(channel, start, end):
     from lal import LIGOTimeGPS
 
     cache = get_cache(IFO_TO_FRAMETYPE[channel.ifo])
-    data = cache.fetch("{0.ifo}:{0.subsystem}_{0.name}".format(channel),
-                       start, end)
+    try:
+        data = cache.fetch("{0.ifo}:{0.subsystem}_{0.name}".format(channel),
+                           start, end)
+        dt = data.metadata.dt
+    except ValueError:
+        print "WARNING: raw data missing for {0}-{1} on {2}"\
+              .format(start, end, channel)
+        data = np.zeros(NUM_SAMPLES, dtype=np.float64)
+        dt = 1.0/SAMPLING_RATE
+
     return seriesutils.fromarray(data, 
                                  epoch=LIGOTimeGPS(start),
-                                 deltaT=data.metadata.dt)
+                                 deltaT=dt)
 
 def process_group(group):
     with co.open_coincs(group, mode='r') as table:
-        for i, coinc in enumerate(table):
+        with open_raw(group, group.channels[0], mode='w') as raw:
+            to_sync = len(raw)
+        print to_sync, "already sync'd!"
+
+        for i, coinc in enumerate(table[to_sync:]):
             print i, "of", len(table)
-	    process_coinc(group, coinc)
+            process_coinc(group, coinc)
 
 def process_coinc(group, coinc):
     from pylal import seriesutils
 
     start = coinc.time_min - SAMPLE_BUFFER
     end = start + SAMPLE_DURATION
+    
+    freq_bands = coinc.freq_bands[:coinc.length, :]
+    coinc_freq_min = np.min(freq_bands[:, 0])
+    coinc_freq_max = np.max(freq_bands[:, 1])
 
-    for i, channel_id in enumerate(coinc.channel_ids[:coinc.length]):
-        channel = chn.get_channel(channel_id)
+    for channel in group.channels:
         raw_data = fetch_raw_data(channel, start, end)
         seriesutils.resample(raw_data, SAMPLING_RATE)
-        print i, start, end, raw_data.data.length
         
-        freq_min, freq_max = map(np.float64, coinc.freq_bands[i])
-        bandpassed = seriesutils.bandpass(raw_data, freq_min, freq_max, 
+        if channel.id in coinc.channel_ids:
+            index = np.nonzero(coinc.channel_ids == channel.id)[0][0]
+            freq_min, freq_max = freq_bands[index]
+        else:
+            freq_min, freq_max = coinc_freq_min, coinc_freq_max
+        bandpassed = seriesutils.bandpass(raw_data, 
+                                          np.float64(freq_min),
+                                          np.float64(freq_max),
                                           inplace=False)
         
-        _write_coinc(group, channel, coinc, raw_data, bandpassed)
-
+        _write_coinc(group, channel, raw_data, bandpassed)
+        
 def _coerce_to_sample_array(series):
     empty = np.empty(NUM_SAMPLES, dtype=np.float64)
     array = series.data.data
@@ -90,13 +109,10 @@ def _coerce_to_sample_array(series):
     empty[:length] = array[:length]
     return empty
 
-def _write_coinc(group, channel, coinc, raw_data, bandpassed):
+def _write_coinc(group, channel, raw_data, bandpassed):
     with open_raw(group, channel, mode='w') as table:
-        index = table.attrs.get('index', np.array([], np.uint32))
-        
         table.append_dict(raw=_coerce_to_sample_array(raw_data), 
                           bandpassed=_coerce_to_sample_array(bandpassed))
-        table.attrs['index'] = np.concatenate((index, [coinc.id]))
 
 if __name__ == '__main__':
     import sys
